@@ -140,15 +140,17 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   //쉐도우 캐스팅 끔
         line.receiveShadows = false;
         line.sortingOrder = int.MaxValue;   //가장 위에 나오게 최대값
+        line.textureMode = LineTextureMode.Tile;
 
-        line.startColor = lineColor;
-        line.endColor = lineColor;
+        lineMaterial.color = lineColor;
+        // line.startColor = lineColor;
+        // line.endColor = lineColor;
 
         lineRenderers.Add(obj);
 
         Debug.Log($"Start Draw Line : {startPos}");
 
-        AppendPoint(startPos);
+        //AppendPoint(startPos);
     }
 
     private Vector3 GetMousePos()
