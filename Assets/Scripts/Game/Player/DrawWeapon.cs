@@ -8,6 +8,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [SerializeField] private Material lineMaterial;         // Sprites / Default 사용
     [SerializeField] private float lineWidth = 0.1f;
     [SerializeField] private float minPointDis = 0.02f;     // 포인트간 최소 거리
+    [SerializeField] private Color lineColor = Color.white;
+
+    [Header("이어 그리기 허용 범위")][SerializeField] private float lineJointDistance = 0.5f;
 
     [Header("그릴 레이어")][SerializeField] private LayerMask targetLayer;
 
@@ -25,6 +28,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     private const int TextureMinSize = 2;
     private const int TextureMaxSize = 4096;
 
+    private bool isCreated;
+    private Color lastColor;
+    private Vector3 lastPoint;
+
 
     private new void Awake()
     {
@@ -39,10 +46,17 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         targetCamera.cullingMask = 1 << (targetLayer.value);                //target Layer
 
         cameraObj.hideFlags = HideFlags.HideInHierarchy;
+
+        isCreated = true;
     }
 
     private void Update()
     {
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
         //input System Event
         // begin - begindraw
         // continue - continuedraw
@@ -56,32 +70,32 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     //그리기 시작
     private void BeginDraw()
     {
-        points.Clear();     //저장된 포인트 비움
+        if (isCreated)
+        {
+            points.Clear();     //저장된 포인트 비움
+            isCreated = false;
+        }
+        Vector3 mousePos = GetMousePos();
 
-        //페인팅 될 오브젝트 생성
-        var obj = new GameObject("Paint");
-        obj.layer = 1 << targetLayer;
+        if (!isCreated
+            && Vector3.Distance(mousePos, lastPoint) <= lineJointDistance)
+        {
 
-        //오브젝트 세팅 (라인 렌더러)
-        line = obj.AddComponent<LineRenderer>();
-        line.positionCount = 0;
-        line.material = lineMaterial ?? new Material(Shader.Find("Sprites/Default"));   //마테리얼 있을 경우 넣고 아니면 기본 
-        line.widthMultiplier = lineWidth;
-        line.useWorldSpace = true;
-        line.numCapVertices = 8;        //끝부분 둥글게
-        line.numCornerVertices = 4;     //코너 깔끔하게
-        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   //쉐도우 캐스팅 끔
-        line.receiveShadows = false;
-        line.sortingOrder = int.MaxValue;   //가장 위에 나오게 최대값
+            AppendPoint(mousePos);
+        }
+        else
+        {
+            Debug.Log("New Line");
+            CreateNewLine(mousePos);
+        }
     }
 
     //마우스 Pos 저장
     private void ContinueDraw()
     {
-        Vector3 screenPos = Input.mousePosition;    //마우스 사용 시
-        Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x,
-                                                                screenPos.y,
-                                                                Mathf.Abs(Camera.main.transform.position.z - drawPlaneZValue)));
+        if (line == null) return;
+
+        Vector3 pos = GetMousePos();
 
         pos.z = drawPlaneZValue;
 
@@ -102,9 +116,65 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
             return;
         }
 
+        lastColor = lineColor;
+        lastPoint = GetMousePos();
+        line = null;
+    }
+
+    private List<GameObject> lineRenderers = new List<GameObject>();
+
+    private void CreateNewLine(Vector3 startPos)
+    {
+        //페인팅 될 오브젝트 생성
+        var obj = new GameObject("Paint");
+        obj.layer = targetLayer.value;
+
+        //오브젝트 세팅 (라인 렌더러)
+        line = obj.AddComponent<LineRenderer>();
+        line.positionCount = 0;
+        line.material = lineMaterial ?? new Material(Shader.Find("Sprites/Default"));   //마테리얼 있을 경우 넣고 아니면 기본 
+        line.widthMultiplier = lineWidth;
+        line.useWorldSpace = true;
+        line.numCapVertices = 8;        //끝부분 둥글게
+        line.numCornerVertices = 4;     //코너 깔끔하게
+        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   //쉐도우 캐스팅 끔
+        line.receiveShadows = false;
+        line.sortingOrder = int.MaxValue;   //가장 위에 나오게 최대값
+
+        line.startColor = lineColor;
+        line.endColor = lineColor;
+
+        lineRenderers.Add(obj);
+
+        Debug.Log($"Start Draw Line : {startPos}");
+
+        AppendPoint(startPos);
+    }
+
+    private Vector3 GetMousePos()
+    {
+        Vector3 screenPos = Input.mousePosition;
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x,
+                                                                screenPos.y,
+                                                                Mathf.Abs(Camera.main.transform.position.z - drawPlaneZValue)));
+
+        return mousePos;
+    }
+
+    public void CreateDrawObj()
+    {
         //라인 포인트 2개 이상일 경우 그리기
         SpawnDrawObj();
-        line = null;
+        InitLine();
+    }
+
+    private void InitLine()
+    {
+        foreach (var line in lineRenderers)
+        {
+            Destroy(line);
+        }
+        this.line = null;
     }
 
     private void AppendPoint(Vector3 pos)
@@ -177,6 +247,8 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         var boxCol = obj.AddComponent<BoxCollider2D>();
         boxCol.size = s.bounds.size;
+
+        isCreated = true;
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)
