@@ -10,7 +10,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [SerializeField] private float minPointDis = 0.02f;     // 포인트간 최소 거리
     [SerializeField] private Color lineColor = Color.white;
 
-    [Header("이어 그리기 허용 범위")][SerializeField] private float lineJointDistance = 0.5f;
+    [Header("이어 그리기 허용 범위")][SerializeField] private float lineJoinDistance = 0.5f;
 
     [Header("그릴 레이어")][SerializeField] private LayerMask targetLayer;
 
@@ -21,6 +21,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
 
     private Camera targetCamera;        //오브젝트 만들기 위해 가상 레이어 카메라 캐싱
+    private Camera mainCamera;
     private LineRenderer line;
 
     private readonly List<Vector3> points = new List<Vector3>();
@@ -33,9 +34,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     private Vector3 lastPoint;
 
 
-    private new void Awake()
+    protected override void Awake()
     {
         base.Awake();
+
+        mainCamera = Camera.main;
 
         var cameraObj = new GameObject("TargetCamera");
         targetCamera = cameraObj.AddComponent<Camera>();
@@ -43,16 +46,25 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         targetCamera.enabled = false;                                       //수동 렌더를 위해 false
         targetCamera.clearFlags = CameraClearFlags.SolidColor;              //단색 타입
         targetCamera.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);   //배경 색 투명
-        targetCamera.cullingMask = 1 << (targetLayer.value);                //target Layer
+        targetCamera.cullingMask = targetLayer;                //target Layer
 
         cameraObj.hideFlags = HideFlags.HideInHierarchy;
 
         isCreated = true;
     }
 
+    void OnDestroy()
+    {
+        if (targetCamera)
+        {
+            Destroy(targetCamera.gameObject);
+        }
+    }
+
     private void Update()
     {
-        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        if (UnityEngine.EventSystems.EventSystem.current != null &&
+            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
@@ -78,8 +90,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         Vector3 mousePos = GetMousePos();
 
         if (!isCreated
-            && Vector3.Distance(mousePos, lastPoint) <= lineJointDistance)
+            && Vector3.Distance(mousePos, lastPoint) <= lineJoinDistance)
         {
+            if (line == null) CreateNewLine(mousePos);
 
             AppendPoint(mousePos);
         }
@@ -110,6 +123,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         if (points.Count == 1)
         {
+            lineRenderers.Remove(line.gameObject);
             Destroy(line.gameObject);   //풀링으로 추후 변경
             line = null;
 
@@ -117,7 +131,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
 
         lastColor = lineColor;
-        lastPoint = GetMousePos();
+        lastPoint = points[^1];
         line = null;
     }
 
@@ -127,7 +141,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     {
         //페인팅 될 오브젝트 생성
         var obj = new GameObject("Paint");
-        obj.layer = targetLayer.value;
+        obj.layer = Mathf.RoundToInt(Mathf.Log(targetLayer.value, 2));
+
+        //마테리얼 컬러 변경 시 사용 (인스턴스화 필요)
+        // var mat = lineMaterial != null ? new Material(lineMaterial) : new Material(Shader.Find("Sprites/Default"));
+        // mat.color = lineColor;
 
         //오브젝트 세팅 (라인 렌더러)
         line = obj.AddComponent<LineRenderer>();
@@ -139,26 +157,25 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         line.numCornerVertices = 4;     //코너 깔끔하게
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   //쉐도우 캐스팅 끔
         line.receiveShadows = false;
-        line.sortingOrder = int.MaxValue;   //가장 위에 나오게 최대값
+        line.sortingOrder = 10000;   //가장 위에 나오게 최대값
         line.textureMode = LineTextureMode.Tile;
 
-        lineMaterial.color = lineColor;
-        // line.startColor = lineColor;
-        // line.endColor = lineColor;
+        line.startColor = lineColor;
+        line.endColor = lineColor;
 
         lineRenderers.Add(obj);
 
         Debug.Log($"Start Draw Line : {startPos}");
 
-        //AppendPoint(startPos);
+        AppendPoint(startPos);
     }
 
     private Vector3 GetMousePos()
     {
         Vector3 screenPos = Input.mousePosition;
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x,
+        Vector3 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(screenPos.x,
                                                                 screenPos.y,
-                                                                Mathf.Abs(Camera.main.transform.position.z - drawPlaneZValue)));
+                                                                Mathf.Abs(mainCamera.transform.position.z - drawPlaneZValue)));
 
         return mousePos;
     }
@@ -174,9 +191,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     {
         foreach (var line in lineRenderers)
         {
-            Destroy(line);
+            if (line) Destroy(line);
         }
-        this.line = null;
+        lineRenderers.Clear();
+        line = null;
     }
 
     private void AppendPoint(Vector3 pos)
@@ -247,10 +265,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         var rigid = obj.AddComponent<Rigidbody2D>();
         rigid.gravityScale = 0.0f;
 
-        var boxCol = obj.AddComponent<BoxCollider2D>();
-        boxCol.size = s.bounds.size;
+        AddPolygonCollider(obj, points, lineWidth);
 
         isCreated = true;
+        InitLine();
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)
@@ -266,8 +284,51 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
 
         //선 굵기 처리
-        b.Expand(new Vector3(width, width, 0f));
+        b.Expand(new Vector3(width * 0.5f, width * 0.5f, 0f));
 
         return b;
+    }
+
+    private void AddPolygonCollider(GameObject obj, List<Vector3> points, float lineWidth)
+    {
+        // 1. 압축 Distance
+        List<Vector2> simplified = new List<Vector2>();
+
+        simplified.Add(points[0]);
+
+        for (int i = 1; i < points.Count; i++)
+        {
+            if (Vector2.Distance(simplified[^1], (Vector2)points[i]) > lineJoinDistance)
+            {
+                simplified.Add(points[i]);
+            }
+        }
+
+        Vector3 origin = obj.transform.position;
+
+        // 2. 두께 반영: Offset Path 만들기
+        List<Vector2> path = new List<Vector2>();
+        float halfWidth = lineWidth * 0.5f;
+
+        // 위쪽 라인 (바깥쪽)
+        for (int i = 0; i < simplified.Count - 1; i++)
+        {
+            Vector2 dir = (simplified[i + 1] - simplified[i]).normalized;
+            Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
+            path.Add(simplified[i] + normal - (Vector2)origin);
+        }
+
+        // 아래쪽 라인 (안쪽)
+        for (int i = simplified.Count - 1; i > 0; i--)
+        {
+            Vector2 dir = (simplified[i] - simplified[i - 1]).normalized;
+            Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
+            path.Add(simplified[i] - normal - (Vector2)origin);
+        }
+
+        // 3. 콜라이더 생성
+        var poly = obj.AddComponent<PolygonCollider2D>();
+        poly.pathCount = 1;
+        poly.SetPath(0, path.ToArray());
     }
 }

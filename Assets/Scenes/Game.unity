@@ -576,7 +576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d29b4186277dc5545b9cde8fa5215c2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineMaterial: {fileID: 2100000, guid: 273b0d99cc391c1439ed929b67ac8bf1, type: 2}
+  lineMaterial: {fileID: 2100000, guid: e9f33c183b0503249bab939bc4d3da9d, type: 2}
   lineWidth: 0.1
   minPointDis: 0.02
   lineColor: {r: 1, g: 1, b: 1, a: 1}
