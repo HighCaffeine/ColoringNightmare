@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -9,6 +10,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [SerializeField] private float lineWidth = 0.1f;
     [SerializeField] private float minPointDis = 0.02f;     // 포인트간 최소 거리
     [SerializeField] private Color lineColor = Color.white;
+    [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f;              //채도
 
     [Header("이어 그리기 허용 범위")][SerializeField] private float lineJoinDistance = 0.5f;
 
@@ -94,7 +96,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         {
             if (line == null) CreateNewLine(mousePos);
 
-            AppendPoint(mousePos);
+            //AppendPoint(mousePos);
         }
         else
         {
@@ -143,31 +145,43 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         var obj = new GameObject("Paint");
         obj.layer = Mathf.RoundToInt(Mathf.Log(targetLayer.value, 2));
 
-        //마테리얼 컬러 변경 시 사용 (인스턴스화 필요)
-        // var mat = lineMaterial != null ? new Material(lineMaterial) : new Material(Shader.Find("Sprites/Default"));
-        // mat.color = lineColor;
 
         //오브젝트 세팅 (라인 렌더러)
         line = obj.AddComponent<LineRenderer>();
         line.positionCount = 0;
-        line.material = lineMaterial ?? new Material(Shader.Find("Sprites/Default"));   //마테리얼 있을 경우 넣고 아니면 기본 
         line.widthMultiplier = lineWidth;
         line.useWorldSpace = true;
-        line.numCapVertices = 8;        //끝부분 둥글게
-        line.numCornerVertices = 4;     //코너 깔끔하게
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   //쉐도우 캐스팅 끔
         line.receiveShadows = false;
         line.sortingOrder = 10000;   //가장 위에 나오게 최대값
-        line.textureMode = LineTextureMode.Tile;
 
-        line.startColor = lineColor;
-        line.endColor = lineColor;
+        line.textureMode = LineTextureMode.Tile;
+        line.numCornerVertices = 0;     //코너 깔끔하게
+        line.numCapVertices = 4;
+
+        //마테리얼 컬러 변경 시 사용(인스턴스화 필요)
+        var mat = lineMaterial != null ? new Material(lineMaterial) : new Material(Shader.Find("Sprites/Default"));
+        //mat.SetColor("_Color", AdjustSaturation(lineColor, saturation));
+        mat.SetColor("_Color", AdjustSaturationHSV(lineColor, saturation));
+        line.material = mat;
 
         lineRenderers.Add(obj);
 
         Debug.Log($"Start Draw Line : {startPos}");
 
-        AppendPoint(startPos);
+        //AppendPoint(startPos);
+    }
+
+    Color AdjustSaturation(Color color, float saturation)
+    {
+        float gray = color.r * 0.3f + color.g * 0.59f + color.b * 0.11f;
+        return Color.Lerp(new Color(gray, gray, gray, color.a), color, saturation);
+    }
+    Color AdjustSaturationHSV(Color color, float saturation)
+    {
+        Color.RGBToHSV(color, out float h, out float s, out float v);
+        s = Mathf.Clamp01(s * saturation);
+        return Color.HSVToRGB(h, s, v);
     }
 
     private Vector3 GetMousePos()
