@@ -33,7 +33,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     private bool isCreated;
     private Color lastColor;
-    private Vector3 lastPoint;
+    private int lastPointCount = 0;
 
 
     protected override void Awake()
@@ -91,18 +91,21 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
         Vector3 mousePos = GetMousePos();
 
-        if (!isCreated
-            && Vector3.Distance(mousePos, lastPoint) <= lineJoinDistance)
-        {
-            if (line == null) CreateNewLine(mousePos);
+        // if (!isCreated
+        //     && Vector3.Distance(mousePos, lastPoint) <= lineJoinDistance)
+        // {
+        //     if (line == null) CreateNewLine(mousePos);
 
-            //AppendPoint(mousePos);
-        }
-        else
-        {
-            Debug.Log("New Line");
-            CreateNewLine(mousePos);
-        }
+        // }
+        // else
+        // {
+        //     Debug.Log("New Line");
+        //CreateNewLine(mousePos);
+        //}
+        //AppendPoint(mousePos);
+
+
+        CreateNewLine(mousePos);
     }
 
     //마우스 Pos 저장
@@ -133,14 +136,14 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
 
         lastColor = lineColor;
-        lastPoint = points[^1];
+        lastPointCount = 0;
         line = null;
     }
 
     private List<GameObject> lineRenderers = new List<GameObject>();
-
     private void CreateNewLine(Vector3 startPos)
     {
+        lastPointCount = points.Count;
         //페인팅 될 오브젝트 생성
         var obj = new GameObject("Paint");
         obj.layer = Mathf.RoundToInt(Mathf.Log(targetLayer.value, 2));
@@ -169,7 +172,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         Debug.Log($"Start Draw Line : {startPos}");
 
-        //AppendPoint(startPos);
+        AppendPoint(startPos);
     }
 
     Color AdjustSaturation(Color color, float saturation)
@@ -218,10 +221,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         if (points.Count == 0 || Vector3.Distance(pos, points[^1]) >= minPointDis)
         {
             points.Add(pos);
-            line.positionCount = points.Count;
-            line.SetPosition(points.Count - 1, pos);
+            line.positionCount = points.Count - lastPointCount;
+            line.SetPosition(points.Count - 1 - lastPointCount, pos);
         }
     }
+
 
     private void SpawnDrawObj()
     {
