@@ -90,21 +90,6 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
             isCreated = false;
         }
         Vector3 mousePos = GetMousePos();
-
-        // if (!isCreated
-        //     && Vector3.Distance(mousePos, lastPoint) <= lineJoinDistance)
-        // {
-        //     if (line == null) CreateNewLine(mousePos);
-
-        // }
-        // else
-        // {
-        //     Debug.Log("New Line");
-        //CreateNewLine(mousePos);
-        //}
-        //AppendPoint(mousePos);
-
-
         CreateNewLine(mousePos);
     }
 
@@ -283,7 +268,12 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         var rigid = obj.AddComponent<Rigidbody2D>();
         rigid.gravityScale = 0.0f;
 
-        AddPolygonCollider(obj, points, lineWidth);
+
+        AddEdgeCollider(obj, points);
+
+
+
+        //AddPolygonCollider(obj, points, lineWidth);
 
         isCreated = true;
         InitLine();
@@ -291,62 +281,198 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     private Bounds CalculateBound(List<Vector3> points, float width)
     {
-        //포인트가 없으면 bounds 0으로
         if (points.Count == 0) return new Bounds(Vector3.zero, Vector3.zero);
 
-        Bounds b = new Bounds(points[0], Vector3.zero);
+        float minX = float.MaxValue;
+        float minY = float.MaxValue;
+        float maxX = float.MinValue;
+        float maxY = float.MinValue;
 
-        for (int i = 0; i < points.Count; i++)
+        foreach (var point in points)
         {
-            b.Encapsulate(points[i]);
+            minX = Mathf.Min(minX, point.x);
+            minY = Mathf.Min(minY, point.y);
+            maxX = Mathf.Max(maxX, point.x);
+            maxY = Mathf.Max(maxY, point.y);
         }
 
-        //선 굵기 처리
-        b.Expand(new Vector3(width * 0.5f, width * 0.5f, 0f));
+        float expansion = width * 0.5f;
+
+        Bounds b = new Bounds();
+        b.min = new Vector3(minX - expansion, minY - expansion, 0);
+        b.max = new Vector3(maxX + expansion, maxY + expansion, 0);
 
         return b;
     }
 
-    private void AddPolygonCollider(GameObject obj, List<Vector3> points, float lineWidth)
+    //안쓸듯 라인 굵기가 바뀐다면 사용
+    // private void AddPolygonCollider(GameObject obj, List<Vector3> points, float lineWidth)
+    // {
+    //     // 1. 압축 Distance
+    //     List<Vector2> simplified = new List<Vector2>();
+
+    //     simplified.Add(points[0]);
+
+    //     for (int i = 1; i < points.Count; i++)
+    //     {
+    //         if (Vector2.Distance(simplified[^1], (Vector2)points[i]) > lineJoinDistance)
+    //         {
+    //             simplified.Add(points[i]);
+    //         }
+    //     }
+
+    //     Vector3 origin = obj.transform.position;
+
+    //     // 2. 두께 반영: Offset Path 만들기
+    //     List<Vector2> path = new List<Vector2>();
+    //     float halfWidth = lineWidth * 0.5f;
+
+    //     // 위쪽 라인 (바깥쪽)
+    //     for (int i = 0; i < simplified.Count - 1; i++)
+    //     {
+    //         Vector2 dir = (simplified[i + 1] - simplified[i]).normalized;
+    //         Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
+    //         path.Add(simplified[i] + normal - (Vector2)origin);
+    //     }
+
+    //     // 아래쪽 라인 (안쪽)
+    //     for (int i = simplified.Count - 1; i > 0; i--)
+    //     {
+    //         Vector2 dir = (simplified[i] - simplified[i - 1]).normalized;
+    //         Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
+    //         path.Add(simplified[i] - normal - (Vector2)origin);
+    //     }
+
+    //     // 3. 콜라이더 생성
+    //     var poly = obj.AddComponent<PolygonCollider2D>();
+
+    //     poly.pathCount = 1;
+    //     poly.SetPath(0, path.ToArray());
+    // }
+
+    private void AddEdgeCollider(GameObject obj, List<Vector3> points)
     {
-        // 1. 압축 Distance
-        List<Vector2> simplified = new List<Vector2>();
+        // Douglas Peucker 다각형 근사화 알고리즘.
+        List<Vector2> simplified = SimplifyPath(points, 0.1f);
 
-        simplified.Add(points[0]);
+        Vector3 origin = obj.transform.position;
+        List<Vector2> localPoints = new List<Vector2>();
 
-        for (int i = 1; i < points.Count; i++)
+        foreach (Vector2 p in simplified)
         {
-            if (Vector2.Distance(simplified[^1], (Vector2)points[i]) > lineJoinDistance)
+            localPoints.Add(p - (Vector2)origin);
+        }
+
+        var edge = obj.AddComponent<EdgeCollider2D>();
+        edge.points = localPoints.ToArray();
+
+        edge.edgeRadius = lineWidth * 0.5f;
+    }
+
+    // Douglas Peucker 다각형 근사화 알고리즘.
+    // 시작 점과 끝점부터 안쪽 점까지 거리를 계산 tolerance보다 크면 가능한 지점
+    private List<Vector2> SimplifyPath(List<Vector3> points, float tolerance)
+    {
+        if (points.Count <= 2) return points.ConvertAll(p => (Vector2)p);
+
+        int d = 0;
+        float maxDistance = 0f;
+        Vector2 start = points[0];
+        Vector2 end = points[^1];
+
+        for (int i = 1; i < points.Count - 1; i++)
+        {
+            float distance = PerpendicularDistance(points[i], start, end);
+            if (distance > maxDistance)
             {
-                simplified.Add(points[i]);
+                maxDistance = distance;
+                d = i;
             }
         }
 
-        Vector3 origin = obj.transform.position;
-
-        // 2. 두께 반영: Offset Path 만들기
-        List<Vector2> path = new List<Vector2>();
-        float halfWidth = lineWidth * 0.5f;
-
-        // 위쪽 라인 (바깥쪽)
-        for (int i = 0; i < simplified.Count - 1; i++)
+        if (maxDistance > tolerance)
         {
-            Vector2 dir = (simplified[i + 1] - simplified[i]).normalized;
-            Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
-            path.Add(simplified[i] + normal - (Vector2)origin);
+            List<Vector2> results1 = SimplifyPath(points.GetRange(0, d + 1), tolerance);
+            List<Vector2> results2 = SimplifyPath(points.GetRange(d, points.Count - d), tolerance);
+
+            List<Vector2> combinedResults = new List<Vector2>();
+            combinedResults.AddRange(results1);
+            combinedResults.AddRange(results2);
+
+            return combinedResults;
+        }
+        else
+        {
+            List<Vector2> simplified = new List<Vector2>();
+            simplified.Add(start);
+            simplified.Add(end);
+            return simplified;
+        }
+    }
+
+    // 점과 선분 사이의 수직 거리 계산
+    private float PerpendicularDistance(Vector3 point, Vector2 lineStart, Vector2 lineEnd)
+    {
+        //방향 벡터
+        float dx = lineEnd.x - lineStart.x;
+        float dy = lineEnd.y - lineStart.y;
+        float len = Mathf.Sqrt(dx * dx + dy * dy); //피타고라스 정리
+
+        //예외처리
+        if (len == 0) return Vector2.Distance(point, lineStart);
+
+        //방향 벡터랑 point에서 linestart로 향하는 벡터를 내적, 길이 제곱으로 정규화
+        float t = ((point.x - lineStart.x) * dx + (point.y - lineStart.y) * dy) / (len * len);
+        t = Mathf.Clamp(t, 0, 1);   //넘어 가는 값이면 선분에 위치하지 않은 놈임 임의로 위치시킴
+        Vector2 projection = new Vector2(lineStart.x + t * dx, lineStart.y + t * dy);   //실제 좌표 구함
+
+        return Vector2.Distance(point, projection); //거리 도출
+    }
+
+    int CountPixels(RenderTexture rt)
+    {
+        RenderTexture.active = rt;
+        Texture2D tex = new Texture2D(rt.width, rt.height, TextureFormat.RGBA32, false);
+        tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+        tex.Apply();
+
+        Color32[] pixels = tex.GetPixels32();
+        int total = 0;
+        Dictionary<Color, int> colorCount = new();
+
+        foreach (var p in pixels)
+        {
+            if (p.a == 0) continue; // 투명 제외
+
+            // 단색만 들어있으므로 R/G/B 직접 체크
+            if (p.r > 200 && p.g < 50 && p.b < 50)
+            {
+                AddColor(colorCount, Color.red, ref total);
+            }
+            else if (p.g > 200 && p.r < 50 && p.b < 50)
+            {
+                AddColor(colorCount, Color.green, ref total);
+            }
+            else if (p.b > 200 && p.r < 50 && p.g < 50)
+            {
+                AddColor(colorCount, Color.blue, ref total);
+            }
         }
 
-        // 아래쪽 라인 (안쪽)
-        for (int i = simplified.Count - 1; i > 0; i--)
+        // 퍼센트 출력
+        foreach (var kv in colorCount)
         {
-            Vector2 dir = (simplified[i] - simplified[i - 1]).normalized;
-            Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
-            path.Add(simplified[i] - normal - (Vector2)origin);
+            float percent = (kv.Value / (float)total) * 100f;
+            Debug.Log($"{kv.Key} : {percent:F2}%");
         }
 
-        // 3. 콜라이더 생성
-        var poly = obj.AddComponent<PolygonCollider2D>();
-        poly.pathCount = 1;
-        poly.SetPath(0, path.ToArray());
+        return total;
+    }
+
+    void AddColor(Dictionary<Color, int> dict, Color c, ref int total)
+    {
+        if (!dict.ContainsKey(c)) dict[c] = 0;
+        dict[c]++;
+        total++;
     }
 }
