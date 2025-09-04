@@ -126,6 +126,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     }
 
     private List<GameObject> lineRenderers = new List<GameObject>();
+    private int beforeLayer = 1000;
     private void CreateNewLine(Vector3 startPos)
     {
         lastPointCount = points.Count;
@@ -141,7 +142,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         line.useWorldSpace = true;
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   //쉐도우 캐스팅 끔
         line.receiveShadows = false;
-        line.sortingOrder = 10000;   //가장 위에 나오게 최대값
+        line.sortingOrder = ++beforeLayer;   //가장 위에 나오게 최대값
+
+        beforeLayer = line.sortingOrder;
 
         line.textureMode = LineTextureMode.Tile;
         line.numCornerVertices = 0;     //코너 깔끔하게
@@ -235,6 +238,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         targetCamera.transform.rotation = Quaternion.identity;
 
         targetCamera.Render(); //렌더
+
+        //색 검사
+        CountPixels(render);
 
         //Texture2D로 변경
         RenderTexture prev = RenderTexture.active;
@@ -380,6 +386,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         Vector2 start = points[0];
         Vector2 end = points[^1];
 
+        //가장 먼 점을 찾음
         for (int i = 1; i < points.Count - 1; i++)
         {
             float distance = PerpendicularDistance(points[i], start, end);
@@ -390,8 +397,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
             }
         }
 
+        //임계값 범위내
         if (maxDistance > tolerance)
         {
+            //시작 - 끝 지점을 구함
+            //시작 중간 / 중간 끝 두 구역으로 나눠서 재귀 반복
             List<Vector2> results1 = SimplifyPath(points.GetRange(0, d + 1), tolerance);
             List<Vector2> results2 = SimplifyPath(points.GetRange(d, points.Count - d), tolerance);
 
@@ -401,8 +411,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
             return combinedResults;
         }
-        else
+        else    //임계값 벗어남
         {
+            //여기 부분에 존재하는 중간 점들은 모두 제거
             List<Vector2> simplified = new List<Vector2>();
             simplified.Add(start);
             simplified.Add(end);
@@ -428,6 +439,15 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         return Vector2.Distance(point, projection); //거리 도출
     }
+
+
+    //===========컬러 체크
+    [Space(5.0f)]
+    [Header("Color Value")]
+    [SerializeField] private TMPro.TextMeshProUGUI totalTxt;
+    [SerializeField] private TMPro.TextMeshProUGUI redTxt;
+    [SerializeField] private TMPro.TextMeshProUGUI greenTxt;
+    [SerializeField] private TMPro.TextMeshProUGUI blueTxt;
 
     int CountPixels(RenderTexture rt)
     {
@@ -459,11 +479,26 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
             }
         }
 
+        totalTxt.text = $"Total Pixel : {total}";
+
         // 퍼센트 출력
-        foreach (var kv in colorCount)
+        foreach (var p in colorCount)
         {
-            float percent = (kv.Value / (float)total) * 100f;
-            Debug.Log($"{kv.Key} : {percent:F2}%");
+            float percent = (p.Value / (float)total) * 100f;
+            Debug.Log($"{p.Key} : {percent:F2}%");
+
+            if (p.Key == Color.red)
+            {
+                redTxt.text = $"Red Pixel : {p.Value}({percent:F2}%)";
+            }
+            else if (p.Key == Color.green)
+            {
+                greenTxt.text = $"Green Pixel : {p.Value}({percent:F2}%)";
+            }
+            else
+            {
+                blueTxt.text = $"Blue Pixel : {p.Value}({percent:F2}%)";
+            }
         }
 
         return total;
