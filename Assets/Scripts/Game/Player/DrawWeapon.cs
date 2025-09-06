@@ -214,6 +214,200 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
     }
 
+    private Texture2D RenderSpriteToTexture(Sprite sprite, int width, int height)
+    {
+        // RenderTexture 생성
+        var render = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
+
+        // 임시 카메라 생성
+        GameObject cameraObj = new GameObject("TempCamera");
+        cameraObj.hideFlags = HideFlags.HideAndDontSave;
+        Camera cam = cameraObj.AddComponent<Camera>();
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = new Color(0, 0, 0, 0); // 투명 배경
+        cam.orthographic = true;
+        cam.orthographicSize = (float)height / (2f * sprite.pixelsPerUnit);
+        cam.aspect = (float)width / height;
+
+        // 임시 스프라이트 오브젝트 생성
+        GameObject spriteObj = new GameObject("TempSprite");
+        spriteObj.hideFlags = HideFlags.HideAndDontSave;
+        SpriteRenderer sr = spriteObj.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 0;
+
+        // 안전하게 임시 레이어 지정 (Default에 두고 카메라도 동일 레이어로 설정)
+        int tempLayer = 0; // Default
+        spriteObj.layer = tempLayer;
+        cam.cullingMask = 1 << tempLayer; // 이 레이어만 렌더링
+
+        // pivot 보정: sprite의 pivot이 카메라 중앙에 오도록 카메라 위치를 이동
+        Vector3 pivotOffset = new Vector3(
+            (sprite.pivot.x / sprite.pixelsPerUnit) - (sprite.rect.width / sprite.pixelsPerUnit / 2f),
+            (sprite.pivot.y / sprite.pixelsPerUnit) - (sprite.rect.height / sprite.pixelsPerUnit / 2f),
+            0f);
+
+        // spriteObj는 (0,0,0)에 두고 카메라를 이동시켜 pivot 기준으로 중앙에 오게 한다
+        spriteObj.transform.position = Vector3.zero;
+        cam.transform.position = new Vector3(-pivotOffset.x, -pivotOffset.y, -10f);
+
+        // 렌더링
+        cam.targetTexture = render;
+        cam.Render();
+
+        // RenderTexture -> Texture2D
+        RenderTexture prev = RenderTexture.active;
+        RenderTexture.active = render;
+        Texture2D newTexture = new Texture2D(width, height, TextureFormat.ARGB32, false);
+        newTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+        newTexture.Apply();
+
+        // 정리
+        RenderTexture.active = prev;
+        RenderTexture.ReleaseTemporary(render);
+        Object.DestroyImmediate(cameraObj);
+        Object.DestroyImmediate(spriteObj);
+
+        return newTexture;
+    }
+
+
+    public float CalculateCompleteness(SpriteRenderer referenceRenderer, Sprite userDrawingSprite)
+    {
+        Sprite referenceSprite = referenceRenderer.sprite;
+        // 도안 SpriteRenderer의 실제 월드 크기를 픽셀 단위로 계산하여 캔버스 크기로 설정
+        float pixelPerUnit = referenceSprite.pixelsPerUnit;
+        int evalTextureW = Mathf.RoundToInt(referenceRenderer.bounds.size.x * pixelPerUnit);
+        int evalTextureH = Mathf.RoundToInt(referenceRenderer.bounds.size.y * pixelPerUnit);
+
+        Texture2D userDrawingTexture = RenderSpriteToTexture(userDrawingSprite, evalTextureW, evalTextureH);
+        Texture2D renderedReferenceTexture = RenderSpriteToTexture(referenceSprite, evalTextureW, evalTextureH);
+
+        float[] userDrawingVector = GetAlphaBinaryVector(userDrawingTexture);
+        float[] referenceVector = GetAlphaBinaryVector(renderedReferenceTexture);
+
+        Object.DestroyImmediate(userDrawingTexture);
+        Object.DestroyImmediate(renderedReferenceTexture);
+
+        if (userDrawingVector.Length != referenceVector.Length)
+        {
+            Debug.Log("userDrawingTexture size: " + userDrawingTexture.width + "x" + userDrawingTexture.height
+                      + ", center alpha: " + userDrawingTexture.GetPixel(evalTextureW / 2, evalTextureH / 2).a);
+
+            Debug.Log("refTexture center alpha: " + renderedReferenceTexture.GetPixel(evalTextureW / 2, evalTextureH / 2).a);
+            return 0f;
+        }
+
+        // 코사인 유사도 계산
+        float dotProduct = 0;
+        float userMagnitude = 0;
+        float referenceMagnitude = 0;
+
+        for (int i = 0; i < userDrawingVector.Length; i++)
+        {
+            dotProduct += userDrawingVector[i] * referenceVector[i];
+            userMagnitude += userDrawingVector[i] * userDrawingVector[i];
+            referenceMagnitude += referenceVector[i] * referenceVector[i];
+        }
+
+        userMagnitude = Mathf.Sqrt(userMagnitude);
+        referenceMagnitude = Mathf.Sqrt(referenceMagnitude);
+
+        if (userMagnitude * referenceMagnitude == 0)
+        {
+            return 0f;
+        }
+
+        return dotProduct / (userMagnitude * referenceMagnitude);
+    }
+
+    private static float[] GetAlphaBinaryVector(Texture2D texture)
+    {
+        // 원본 텍스처가 읽기 가능하지 않을 경우, 임시 텍스처에 복사
+        if (!texture.isReadable)
+        {
+            RenderTexture tempRenderTexture = RenderTexture.GetTemporary(
+                texture.width, texture.height, 0, RenderTextureFormat.ARGB32
+            );
+            Graphics.Blit(texture, tempRenderTexture);
+
+            RenderTexture prev = RenderTexture.active;
+            RenderTexture.active = tempRenderTexture;
+
+            Texture2D tempTexture = new Texture2D(texture.width, texture.height);
+            tempTexture.ReadPixels(new Rect(0, 0, tempRenderTexture.width, tempRenderTexture.height), 0, 0);
+            tempTexture.Apply();
+
+            RenderTexture.active = prev;
+            RenderTexture.ReleaseTemporary(tempRenderTexture);
+
+            Color[] pixels = tempTexture.GetPixels();
+            Object.DestroyImmediate(tempTexture); // 임시 텍스처 제거
+
+            return ConvertToBinaryVector(pixels);
+        }
+        else
+        {
+            // 원본 텍스처가 읽기 가능할 경우 바로 처리
+            return ConvertToBinaryVector(texture.GetPixels());
+        }
+    }
+
+    // 픽셀 배열을 이진 벡터로 변환하는 헬퍼 함수
+    private static float[] ConvertToBinaryVector(Color[] pixels)
+    {
+        float[] binaryVector = new float[pixels.Length];
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            binaryVector[i] = (pixels[i].a > 0) ? 1.0f : 0.0f;
+        }
+        return binaryVector;
+    }
+
+    [SerializeField] private SpriteRenderer refSprite;
+    [SerializeField] private Vector3 finalOffset;
+
+    [Space(5f)]
+    [Header("유사도")]
+    [SerializeField] private UnityEngine.UI.Image similarityImage;
+    [SerializeField] private TMPro.TextMeshProUGUI similarityText;
+
+    private bool CheckDrawedWeapon()
+    {
+        int textureH = refSprite.sprite.texture.height;
+        int textureW = refSprite.sprite.texture.width;
+
+        float unitW = textureW / refSprite.sprite.pixelsPerUnit;
+        float unitH = textureH / refSprite.sprite.pixelsPerUnit;
+        Bounds b = CalculateBound(points, lineWidth);
+
+        var render = RenderTexture.GetTemporary(textureW, textureH, 0, RenderTextureFormat.ARGB32);
+        targetCamera.targetTexture = render;
+        targetCamera.orthographicSize = b.size.y * 0.5f;
+        targetCamera.aspect = (float)textureW / textureH;
+        targetCamera.transform.position = new Vector3(b.center.x, b.center.y, -10f);
+        targetCamera.Render();
+
+        RenderTexture prev = RenderTexture.active;
+        RenderTexture.active = render;
+        var evalTexture = new Texture2D(textureW, textureH, TextureFormat.ARGB32, false);
+        evalTexture.ReadPixels(new Rect(0, 0, textureW, textureH), 0, 0, false);
+        evalTexture.Apply();
+        RenderTexture.active = prev;
+        RenderTexture.ReleaseTemporary(render);
+
+        Rect r = new Rect(0, 0, textureW, textureH);
+        var s = Sprite.Create(evalTexture, r, new Vector2(0.5f, 0.5f), pixelPerUnit, 0, SpriteMeshType.Tight);
+
+        float cosaineValue = CalculateCompleteness(refSprite, s);
+
+        similarityImage.fillAmount = cosaineValue;
+        similarityText.text = string.Format($"similarity : {cosaineValue * 100:F2}");
+
+        Debug.Log(cosaineValue);
+
+        return true;
+    }
 
     private void SpawnDrawObj()
     {
@@ -260,26 +454,54 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         //Sprite 생성
         Rect r = new Rect(0, 0, textureW, textureH);
-        var s = Sprite.Create(texture, r, new Vector2(0.5f, 0.5f), pixelPerUnit, 0, SpriteMeshType.Tight);
+
+        // world -> pixel scale : (texture 픽 수) / (b.size in world units)
+        //    b.size.x 이 0 이 되는 극단 상황 방지
+        float worldToPixelX = (b.size.x > 0.0001f) ? (textureW / b.size.x) : pixelPerUnit;
+        float worldToPixelY = (b.size.y > 0.0001f) ? (textureH / b.size.y) : pixelPerUnit;
+
+        //ref pivot 의 월드 위치 (SpriteRenderer.transform.position은 Sprite의 pivot 위치임)
+        Vector3 refPivotWorld = refSprite.transform.position;
+
+        //텍스처에서의 왼쪽하단 월드 좌표 = b.center - 0.5 * b.size
+        Vector2 textureWorldMin = new Vector2(b.center.x - b.size.x * 0.5f, b.center.y - b.size.y * 0.5f);
+
+        //ref pivot이 텍스처 내 어느 픽셀에 대응하는지 계산
+        float pivotPixelX = (refPivotWorld.x - textureWorldMin.x) * worldToPixelX;
+        float pivotPixelY = (refPivotWorld.y - textureWorldMin.y) * worldToPixelY;
+
+        //정규화 
+        float normPX = Mathf.Clamp01(pivotPixelX / (float)textureW);
+        float normPY = Mathf.Clamp01(pivotPixelY / (float)textureH);
+
+        Vector2 normalizedPivot = new Vector2(normPX, normPY);
+
+        var s = Sprite.Create(texture, r, normalizedPivot, pixelPerUnit, 0, SpriteMeshType.Tight);
+        bool isAllowCreate = CheckDrawedWeapon();
+
+        if (isAllowCreate)
+        {
+            //오브젝트화
+            var obj = new GameObject("DrawedObject");
+            var spriteRender = obj.AddComponent<SpriteRenderer>();
+            spriteRender.sprite = s;
+
+            obj.transform.position = refPivotWorld;
+
+            //Physics 적용
+            var rigid = obj.AddComponent<Rigidbody2D>();
+            rigid.gravityScale = 0.0f;
 
 
-        //오브젝트화
-        var obj = new GameObject("DrawedObject");
-        var spriteRender = obj.AddComponent<SpriteRenderer>();
-        spriteRender.sprite = s;
-        obj.transform.position = b.center;
-
-
-        //Physics 적용
-        var rigid = obj.AddComponent<Rigidbody2D>();
-        rigid.gravityScale = 0.0f;
-
-
-        AddEdgeCollider(obj, points);
-
-
-
-        //AddPolygonCollider(obj, points, lineWidth);
+            AddEdgeCollider(obj, points);
+            //AddPolygonCollider(obj, points, lineWidth);
+        }
+        else
+        {
+            // 삭제
+            Destroy(s.texture);
+            Destroy(s);
+        }
 
         isCreated = true;
         InitLine();
