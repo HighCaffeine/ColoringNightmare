@@ -193,11 +193,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     public void CreateDrawObj()
     {
-        // 1. 유사도 계산
-        var (cos, jacad, dice, final) = CalculateSimilarity();
+        //유사도 
+        var (cos, jacad, dice) = CalculateSimilarity();
 
-        // 2. 결과에 따라 오브젝트 생성 또는 삭제
-        if (final * 100 > 60) // 예시로 60% 이상일 경우 생성
+        if (dice > 70) // 예시로 60% 이상일 경우 생성
         {
             SpawnDrawObj();
         }
@@ -272,7 +271,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [Header("유사도")]
     [SerializeField] private TMPro.TextMeshProUGUI similarityText;
 
-    public (float cosine, float jaccard, float dice, float finalScore) CalculateSimilarity()
+    public (float cosine, float jaccard, float dice) CalculateSimilarity()
     {
         // 레퍼런스 스프라이트 정보
         Sprite referenceSprite = refSprite.sprite;
@@ -280,7 +279,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         int textureW = referenceSprite.texture.width;
         int textureH = referenceSprite.texture.height;
 
-        // 레퍼런스 텍스처를 직접 가져오기 (이 방법이 가장 정확)
+        // 레퍼런스 텍스쳐 가져옴
         Texture2D referenceTexture = referenceSprite.texture;
 
         // 사용자 그림을 동일한 바운드와 크기로 텍스처에 렌더링
@@ -293,7 +292,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         Object.DestroyImmediate(userDrawingTexture);
 
         if (userVector.Length != refVector.Length)
-            return (0f, 0f, 0f, 0f);
+        {
+            return (0f, 0f, 0f);
+        }
 
         int intersection = 0;
         int union = 0;
@@ -321,17 +322,16 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         float cosine = (magU * magR == 0) ? 0f : dot / (Mathf.Sqrt(magU) * Mathf.Sqrt(magR));
         float jaccard = (union == 0) ? 0f : (float)intersection / union;
         float dice = (userCount + refCount == 0) ? 0f : (2f * intersection) / (userCount + refCount);
-        float recall = (refCount == 0) ? 0f : (float)intersection / refCount;
-        float precision = (userCount == 0) ? 0f : (float)intersection / userCount;
-        float f1 = (precision + recall == 0) ? 0f : (2f * precision * recall) / (precision + recall);
+        // float recall = (refCount == 0) ? 0f : (float)intersection / refCount;
+        // float precision = (userCount == 0) ? 0f : (float)intersection / userCount;
+        // float f1 = (precision + recall == 0) ? 0f : (2f * precision * recall) / (precision + recall);
 
-        float avg = (cosine + jaccard + dice) / 3f;
-        float finalScore = avg * f1;
+        // float avg = (cosine + jaccard + dice) / 3f;
+        // float finalScore = avg * f1;
 
-        // UI 업데이트
         similarityText.text = string.Format($"Similarity - Cosine: {cosine * 100f:F3}, Jaccard: {jaccard * 100f:F3}, Dice: {dice * 100f:F3}");
 
-        return (cosine, jaccard, dice, finalScore);
+        return (cosine, jaccard, dice);
     }
 
     private void SpawnDrawObj()
@@ -637,8 +637,6 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
             colorPixelsCount++;
         }
-
-        //UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(colorPixelsParent.GetComponent<RectTransform>());
 
         return total;
     }
