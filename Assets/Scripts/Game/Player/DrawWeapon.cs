@@ -6,11 +6,11 @@ using UnityEngine;
 public class DrawWeapon : GenericSingleton<DrawWeapon>
 {
     [Header("Drawing")]
-    [SerializeField] private Material lineMaterial;         // Sprites / Default 사용
+    [SerializeField] private Material lineMaterial; // Sprites / Default 사용
     [SerializeField] private float lineWidth = 0.1f;
-    [SerializeField] private float minPointDis = 0.02f;     // 포인트간 최소 거리
+    [SerializeField] private float minPointDis = 0.02f; // 포인트간 최소 거리
     [SerializeField] private Color lineColor = Color.white;
-    [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f;              //채도
+    [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f; //채도
 
     [Header("이어 그리기 허용 범위")][SerializeField] private float lineJoinDistance = 0.5f;
 
@@ -19,14 +19,17 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [Header("스프라이트 데이터")]
     [SerializeField] private int pixelPerUnit = 100;
     [SerializeField] private int paddingPixels = 12;
-    [SerializeField] private float drawPlaneZValue = 0.0f;  //2d라 기본 0.0f로 설정
+    [SerializeField] private float drawPlaneZValue = 0.0f; //2d라 기본 0.0f로 설정
 
 
-    private Camera targetCamera;        //오브젝트 만들기 위해 가상 레이어 카메라 캐싱
+    private Camera targetCamera; //오브젝트 만들기 위해 가상 레이어 카메라 캐싱
     private Camera mainCamera;
     private LineRenderer line;
 
     private readonly List<Vector3> points = new List<Vector3>();
+    private List<GameObject> lineRenderers = new List<GameObject>();
+    private int beforeLayer = 1000;
+
 
     private const int TextureMinSize = 2;
     private const int TextureMaxSize = 4096;
@@ -45,10 +48,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         var cameraObj = new GameObject("TargetCamera");
         targetCamera = cameraObj.AddComponent<Camera>();
         targetCamera.orthographic = true;
-        targetCamera.enabled = false;                                       //수동 렌더를 위해 false
-        targetCamera.clearFlags = CameraClearFlags.SolidColor;              //단색 타입
-        targetCamera.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);   //배경 색 투명
-        targetCamera.cullingMask = targetLayer;                //target Layer
+        targetCamera.enabled = false; //수동 렌더를 위해 false
+        targetCamera.clearFlags = CameraClearFlags.SolidColor; //단색 타입
+        targetCamera.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f); //배경 색 투명
+        targetCamera.cullingMask = targetLayer; //target Layer
 
         cameraObj.hideFlags = HideFlags.HideInHierarchy;
 
@@ -86,7 +89,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     {
         if (isCreated)
         {
-            points.Clear();     //저장된 포인트 비움
+            points.Clear(); //저장된 포인트 비움
             isCreated = false;
         }
         Vector3 mousePos = GetMousePos();
@@ -114,7 +117,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         if (points.Count == 1)
         {
             lineRenderers.Remove(line.gameObject);
-            Destroy(line.gameObject);   //풀링으로 추후 변경
+            Destroy(line.gameObject); //풀링으로 추후 변경
             line = null;
 
             return;
@@ -125,8 +128,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         line = null;
     }
 
-    private List<GameObject> lineRenderers = new List<GameObject>();
-    private int beforeLayer = 1000;
+    public void SetLineColor(Color c)
+    {
+        lineColor = c;
+    }
+
     private void CreateNewLine(Vector3 startPos)
     {
         lastPointCount = points.Count;
@@ -140,14 +146,14 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         line.positionCount = 0;
         line.widthMultiplier = lineWidth;
         line.useWorldSpace = true;
-        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   //쉐도우 캐스팅 끔
+        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; //쉐도우 캐스팅 끔
         line.receiveShadows = false;
-        line.sortingOrder = ++beforeLayer;   //가장 위에 나오게 최대값
+        line.sortingOrder = ++beforeLayer; //가장 위에 나오게 최대값
 
         beforeLayer = line.sortingOrder;
 
         line.textureMode = LineTextureMode.Tile;
-        line.numCornerVertices = 0;     //코너 깔끔하게
+        line.numCornerVertices = 0; //코너 깔끔하게
         line.numCapVertices = 4;
 
         //마테리얼 컬러 변경 시 사용(인스턴스화 필요)
@@ -179,16 +185,27 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     {
         Vector3 screenPos = Input.mousePosition;
         Vector3 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(screenPos.x,
-                                                                screenPos.y,
-                                                                Mathf.Abs(mainCamera.transform.position.z - drawPlaneZValue)));
+            screenPos.y,
+            Mathf.Abs(mainCamera.transform.position.z - drawPlaneZValue)));
 
         return mousePos;
     }
 
     public void CreateDrawObj()
     {
-        //라인 포인트 2개 이상일 경우 그리기
-        SpawnDrawObj();
+        // 1. 유사도 계산
+        var (cos, jacad, dice, final) = CalculateSimilarity();
+
+        // 2. 결과에 따라 오브젝트 생성 또는 삭제
+        if (final * 100 > 60) // 예시로 60% 이상일 경우 생성
+        {
+            SpawnDrawObj();
+        }
+        else
+        {
+            Debug.Log("유사도가 낮아 무기를 생성하지 않습니다.");
+        }
+
         InitLine();
     }
 
@@ -202,9 +219,21 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         line = null;
     }
 
+    [SerializeField] private LineDrawArea drawArea;
+
     private void AppendPoint(Vector3 pos)
     {
         pos.z = drawPlaneZValue;
+
+        if (drawArea != null)
+        {
+            //바운드 밖이 경우 그리지 않음
+            if (!drawArea.GetBounds().Contains(pos))
+            {
+                EndDraw();
+                return;
+            }
+        }
 
         if (points.Count == 0 || Vector3.Distance(pos, points[^1]) >= minPointDis)
         {
@@ -214,199 +243,95 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
     }
 
-    private Texture2D RenderSpriteToTexture(Sprite sprite, int width, int height)
+    private Texture2D RenderDrawingToTexture(List<GameObject> lines, Bounds bounds, int width, int height)
     {
-        // RenderTexture 생성
         var render = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
 
-        // 임시 카메라 생성
-        GameObject cameraObj = new GameObject("TempCamera");
-        cameraObj.hideFlags = HideFlags.HideAndDontSave;
-        Camera cam = cameraObj.AddComponent<Camera>();
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = new Color(0, 0, 0, 0); // 투명 배경
-        cam.orthographic = true;
-        cam.orthographicSize = (float)height / (2f * sprite.pixelsPerUnit);
-        cam.aspect = (float)width / height;
-
-        // 임시 스프라이트 오브젝트 생성
-        GameObject spriteObj = new GameObject("TempSprite");
-        spriteObj.hideFlags = HideFlags.HideAndDontSave;
-        SpriteRenderer sr = spriteObj.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 0;
-
-        // 안전하게 임시 레이어 지정 (Default에 두고 카메라도 동일 레이어로 설정)
-        int tempLayer = 0; // Default
-        spriteObj.layer = tempLayer;
-        cam.cullingMask = 1 << tempLayer; // 이 레이어만 렌더링
-
-        // pivot 보정: sprite의 pivot이 카메라 중앙에 오도록 카메라 위치를 이동
-        Vector3 pivotOffset = new Vector3(
-            (sprite.pivot.x / sprite.pixelsPerUnit) - (sprite.rect.width / sprite.pixelsPerUnit / 2f),
-            (sprite.pivot.y / sprite.pixelsPerUnit) - (sprite.rect.height / sprite.pixelsPerUnit / 2f),
-            0f);
-
-        // spriteObj는 (0,0,0)에 두고 카메라를 이동시켜 pivot 기준으로 중앙에 오게 한다
-        spriteObj.transform.position = Vector3.zero;
-        cam.transform.position = new Vector3(-pivotOffset.x, -pivotOffset.y, -10f);
-
-        // 렌더링
-        cam.targetTexture = render;
-        cam.Render();
-
-        // RenderTexture -> Texture2D
-        RenderTexture prev = RenderTexture.active;
-        RenderTexture.active = render;
-        Texture2D newTexture = new Texture2D(width, height, TextureFormat.ARGB32, false);
-        newTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-        newTexture.Apply();
-
-        // 정리
-        RenderTexture.active = prev;
-        RenderTexture.ReleaseTemporary(render);
-        Object.DestroyImmediate(cameraObj);
-        Object.DestroyImmediate(spriteObj);
-
-        return newTexture;
-    }
-
-
-    public float CalculateCompleteness(SpriteRenderer referenceRenderer, Sprite userDrawingSprite)
-    {
-        Sprite referenceSprite = referenceRenderer.sprite;
-        // 도안 SpriteRenderer의 실제 월드 크기를 픽셀 단위로 계산하여 캔버스 크기로 설정
-        float pixelPerUnit = referenceSprite.pixelsPerUnit;
-        int evalTextureW = Mathf.RoundToInt(referenceRenderer.bounds.size.x * pixelPerUnit);
-        int evalTextureH = Mathf.RoundToInt(referenceRenderer.bounds.size.y * pixelPerUnit);
-
-        Texture2D userDrawingTexture = RenderSpriteToTexture(userDrawingSprite, evalTextureW, evalTextureH);
-        Texture2D renderedReferenceTexture = RenderSpriteToTexture(referenceSprite, evalTextureW, evalTextureH);
-
-        float[] userDrawingVector = GetAlphaBinaryVector(userDrawingTexture);
-        float[] referenceVector = GetAlphaBinaryVector(renderedReferenceTexture);
-
-        Object.DestroyImmediate(userDrawingTexture);
-        Object.DestroyImmediate(renderedReferenceTexture);
-
-        if (userDrawingVector.Length != referenceVector.Length)
-        {
-            Debug.Log("userDrawingTexture size: " + userDrawingTexture.width + "x" + userDrawingTexture.height
-                      + ", center alpha: " + userDrawingTexture.GetPixel(evalTextureW / 2, evalTextureH / 2).a);
-
-            Debug.Log("refTexture center alpha: " + renderedReferenceTexture.GetPixel(evalTextureW / 2, evalTextureH / 2).a);
-            return 0f;
-        }
-
-        // 코사인 유사도 계산
-        float dotProduct = 0;
-        float userMagnitude = 0;
-        float referenceMagnitude = 0;
-
-        for (int i = 0; i < userDrawingVector.Length; i++)
-        {
-            dotProduct += userDrawingVector[i] * referenceVector[i];
-            userMagnitude += userDrawingVector[i] * userDrawingVector[i];
-            referenceMagnitude += referenceVector[i] * referenceVector[i];
-        }
-
-        userMagnitude = Mathf.Sqrt(userMagnitude);
-        referenceMagnitude = Mathf.Sqrt(referenceMagnitude);
-
-        if (userMagnitude * referenceMagnitude == 0)
-        {
-            return 0f;
-        }
-
-        return dotProduct / (userMagnitude * referenceMagnitude);
-    }
-
-    private static float[] GetAlphaBinaryVector(Texture2D texture)
-    {
-        // 원본 텍스처가 읽기 가능하지 않을 경우, 임시 텍스처에 복사
-        if (!texture.isReadable)
-        {
-            RenderTexture tempRenderTexture = RenderTexture.GetTemporary(
-                texture.width, texture.height, 0, RenderTextureFormat.ARGB32
-            );
-            Graphics.Blit(texture, tempRenderTexture);
-
-            RenderTexture prev = RenderTexture.active;
-            RenderTexture.active = tempRenderTexture;
-
-            Texture2D tempTexture = new Texture2D(texture.width, texture.height);
-            tempTexture.ReadPixels(new Rect(0, 0, tempRenderTexture.width, tempRenderTexture.height), 0, 0);
-            tempTexture.Apply();
-
-            RenderTexture.active = prev;
-            RenderTexture.ReleaseTemporary(tempRenderTexture);
-
-            Color[] pixels = tempTexture.GetPixels();
-            Object.DestroyImmediate(tempTexture); // 임시 텍스처 제거
-
-            return ConvertToBinaryVector(pixels);
-        }
-        else
-        {
-            // 원본 텍스처가 읽기 가능할 경우 바로 처리
-            return ConvertToBinaryVector(texture.GetPixels());
-        }
-    }
-
-    // 픽셀 배열을 이진 벡터로 변환하는 헬퍼 함수
-    private static float[] ConvertToBinaryVector(Color[] pixels)
-    {
-        float[] binaryVector = new float[pixels.Length];
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            binaryVector[i] = (pixels[i].a > 0) ? 1.0f : 0.0f;
-        }
-        return binaryVector;
-    }
-
-    [SerializeField] private SpriteRenderer refSprite;
-    [SerializeField] private Vector3 finalOffset;
-
-    [Space(5f)]
-    [Header("유사도")]
-    [SerializeField] private UnityEngine.UI.Image similarityImage;
-    [SerializeField] private TMPro.TextMeshProUGUI similarityText;
-
-    private bool CheckDrawedWeapon()
-    {
-        int textureH = refSprite.sprite.texture.height;
-        int textureW = refSprite.sprite.texture.width;
-
-        float unitW = textureW / refSprite.sprite.pixelsPerUnit;
-        float unitH = textureH / refSprite.sprite.pixelsPerUnit;
-        Bounds b = CalculateBound(points, lineWidth);
-
-        var render = RenderTexture.GetTemporary(textureW, textureH, 0, RenderTextureFormat.ARGB32);
         targetCamera.targetTexture = render;
-        targetCamera.orthographicSize = b.size.y * 0.5f;
-        targetCamera.aspect = (float)textureW / textureH;
-        targetCamera.transform.position = new Vector3(b.center.x, b.center.y, -10f);
+        targetCamera.orthographicSize = bounds.size.y * 0.5f;
+        targetCamera.aspect = (float)width / height;
+        targetCamera.transform.position = new Vector3(bounds.center.x, bounds.center.y, -10f);
         targetCamera.Render();
 
         RenderTexture prev = RenderTexture.active;
         RenderTexture.active = render;
-        var evalTexture = new Texture2D(textureW, textureH, TextureFormat.ARGB32, false);
-        evalTexture.ReadPixels(new Rect(0, 0, textureW, textureH), 0, 0, false);
+
+        var evalTexture = new Texture2D(width, height, TextureFormat.ARGB32, false);
+        evalTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
         evalTexture.Apply();
+
         RenderTexture.active = prev;
         RenderTexture.ReleaseTemporary(render);
 
-        Rect r = new Rect(0, 0, textureW, textureH);
-        var s = Sprite.Create(evalTexture, r, new Vector2(0.5f, 0.5f), pixelPerUnit, 0, SpriteMeshType.Tight);
+        return evalTexture;
+    }
 
-        float cosaineValue = CalculateCompleteness(refSprite, s);
+    [SerializeField] private SpriteRenderer refSprite;
 
-        similarityImage.fillAmount = cosaineValue;
-        similarityText.text = string.Format($"similarity : {cosaineValue * 100:F2}");
+    [Space(5f)]
+    [Header("유사도")]
+    [SerializeField] private TMPro.TextMeshProUGUI similarityText;
 
-        Debug.Log(cosaineValue);
+    public (float cosine, float jaccard, float dice, float finalScore) CalculateSimilarity()
+    {
+        // 레퍼런스 스프라이트 정보
+        Sprite referenceSprite = refSprite.sprite;
+        Bounds refBounds = refSprite.bounds;
+        int textureW = referenceSprite.texture.width;
+        int textureH = referenceSprite.texture.height;
 
-        return true;
+        // 레퍼런스 텍스처를 직접 가져오기 (이 방법이 가장 정확)
+        Texture2D referenceTexture = referenceSprite.texture;
+
+        // 사용자 그림을 동일한 바운드와 크기로 텍스처에 렌더링
+        Texture2D userDrawingTexture = RenderDrawingToTexture(lineRenderers, refBounds, textureW, textureH);
+
+        // 이진 벡터로 변환
+        float[] userVector = GetAlphaBinaryVector(userDrawingTexture);
+        float[] refVector = GetAlphaBinaryVector(referenceTexture);
+
+        Object.DestroyImmediate(userDrawingTexture);
+
+        if (userVector.Length != refVector.Length)
+            return (0f, 0f, 0f, 0f);
+
+        int intersection = 0;
+        int union = 0;
+        int userCount = 0;
+        int refCount = 0;
+
+        for (int i = 0; i < userVector.Length; i++)
+        {
+            bool u = userVector[i] > 0.5f;
+            bool r = refVector[i] > 0.5f;
+
+            if (u) userCount++;
+            if (r) refCount++;
+            if (u || r) union++;
+            if (u && r) intersection++;
+        }
+
+        float dot = 0, magU = 0, magR = 0;
+        for (int i = 0; i < userVector.Length; i++)
+        {
+            dot += userVector[i] * refVector[i];
+            magU += userVector[i] * userVector[i];
+            magR += refVector[i] * refVector[i];
+        }
+        float cosine = (magU * magR == 0) ? 0f : dot / (Mathf.Sqrt(magU) * Mathf.Sqrt(magR));
+        float jaccard = (union == 0) ? 0f : (float)intersection / union;
+        float dice = (userCount + refCount == 0) ? 0f : (2f * intersection) / (userCount + refCount);
+        float recall = (refCount == 0) ? 0f : (float)intersection / refCount;
+        float precision = (userCount == 0) ? 0f : (float)intersection / userCount;
+        float f1 = (precision + recall == 0) ? 0f : (2f * precision * recall) / (precision + recall);
+
+        float avg = (cosine + jaccard + dice) / 3f;
+        float finalScore = avg * f1;
+
+        // UI 업데이트
+        similarityText.text = string.Format($"Similarity - Cosine: {cosine * 100f:F3}, Jaccard: {jaccard * 100f:F3}, Dice: {dice * 100f:F3}");
+
+        return (cosine, jaccard, dice, finalScore);
     }
 
     private void SpawnDrawObj()
@@ -428,7 +353,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         targetCamera.targetTexture = render;
         targetCamera.orthographicSize = b.size.y * 0.5f;
         targetCamera.aspect = (float)textureW / textureH;
-        targetCamera.transform.position = new Vector3(b.center.x, b.center.y, -10f);        //카메라쪽으로
+        targetCamera.transform.position = new Vector3(b.center.x, b.center.y, -10f); //카메라쪽으로
         targetCamera.transform.rotation = Quaternion.identity;
 
         targetCamera.Render(); //렌더
@@ -445,9 +370,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         texture.Apply();
 
         RenderTexture.active = prev;
-        targetCamera.targetTexture = null;      //초기화
+        targetCamera.targetTexture = null; //초기화
         render.Release();
-        Destroy(render);        //추후 풀링으로 변경
+        Destroy(render); //추후 풀링으로 변경
 
         //랜더에 남은 선 제거
         if (line != null) Destroy(line.gameObject); //풀링으로 변경
@@ -456,7 +381,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         Rect r = new Rect(0, 0, textureW, textureH);
 
         // world -> pixel scale : (texture 픽 수) / (b.size in world units)
-        //    b.size.x 이 0 이 되는 극단 상황 방지
+        // b.size.x 이 0 이 되는 극단 상황 방지
         float worldToPixelX = (b.size.x > 0.0001f) ? (textureW / b.size.x) : pixelPerUnit;
         float worldToPixelY = (b.size.y > 0.0001f) ? (textureH / b.size.y) : pixelPerUnit;
 
@@ -470,41 +395,27 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         float pivotPixelX = (refPivotWorld.x - textureWorldMin.x) * worldToPixelX;
         float pivotPixelY = (refPivotWorld.y - textureWorldMin.y) * worldToPixelY;
 
-        //정규화 
+        //정규화
         float normPX = Mathf.Clamp01(pivotPixelX / (float)textureW);
         float normPY = Mathf.Clamp01(pivotPixelY / (float)textureH);
 
         Vector2 normalizedPivot = new Vector2(normPX, normPY);
 
         var s = Sprite.Create(texture, r, normalizedPivot, pixelPerUnit, 0, SpriteMeshType.Tight);
-        bool isAllowCreate = CheckDrawedWeapon();
 
-        if (isAllowCreate)
-        {
-            //오브젝트화
-            var obj = new GameObject("DrawedObject");
-            var spriteRender = obj.AddComponent<SpriteRenderer>();
-            spriteRender.sprite = s;
+        //오브젝트화
+        var obj = new GameObject("DrawedObject");
+        var spriteRender = obj.AddComponent<SpriteRenderer>();
+        spriteRender.sprite = s;
 
-            obj.transform.position = refPivotWorld;
+        obj.transform.position = refPivotWorld;
 
-            //Physics 적용
-            var rigid = obj.AddComponent<Rigidbody2D>();
-            rigid.gravityScale = 0.0f;
+        //Physics 적용
+        var rigid = obj.AddComponent<Rigidbody2D>();
+        rigid.gravityScale = 0.0f;
 
 
-            AddEdgeCollider(obj, points);
-            //AddPolygonCollider(obj, points, lineWidth);
-        }
-        else
-        {
-            // 삭제
-            Destroy(s.texture);
-            Destroy(s);
-        }
-
-        isCreated = true;
-        InitLine();
+        AddEdgeCollider(obj, points);
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)
@@ -532,51 +443,6 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         return b;
     }
-
-    //안쓸듯 라인 굵기가 바뀐다면 사용
-    // private void AddPolygonCollider(GameObject obj, List<Vector3> points, float lineWidth)
-    // {
-    //     // 1. 압축 Distance
-    //     List<Vector2> simplified = new List<Vector2>();
-
-    //     simplified.Add(points[0]);
-
-    //     for (int i = 1; i < points.Count; i++)
-    //     {
-    //         if (Vector2.Distance(simplified[^1], (Vector2)points[i]) > lineJoinDistance)
-    //         {
-    //             simplified.Add(points[i]);
-    //         }
-    //     }
-
-    //     Vector3 origin = obj.transform.position;
-
-    //     // 2. 두께 반영: Offset Path 만들기
-    //     List<Vector2> path = new List<Vector2>();
-    //     float halfWidth = lineWidth * 0.5f;
-
-    //     // 위쪽 라인 (바깥쪽)
-    //     for (int i = 0; i < simplified.Count - 1; i++)
-    //     {
-    //         Vector2 dir = (simplified[i + 1] - simplified[i]).normalized;
-    //         Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
-    //         path.Add(simplified[i] + normal - (Vector2)origin);
-    //     }
-
-    //     // 아래쪽 라인 (안쪽)
-    //     for (int i = simplified.Count - 1; i > 0; i--)
-    //     {
-    //         Vector2 dir = (simplified[i] - simplified[i - 1]).normalized;
-    //         Vector2 normal = new Vector2(-dir.y, dir.x) * halfWidth;
-    //         path.Add(simplified[i] - normal - (Vector2)origin);
-    //     }
-
-    //     // 3. 콜라이더 생성
-    //     var poly = obj.AddComponent<PolygonCollider2D>();
-
-    //     poly.pathCount = 1;
-    //     poly.SetPath(0, path.ToArray());
-    // }
 
     private void AddEdgeCollider(GameObject obj, List<Vector3> points)
     {
@@ -633,7 +499,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
             return combinedResults;
         }
-        else    //임계값 벗어남
+        else //임계값 벗어남
         {
             //여기 부분에 존재하는 중간 점들은 모두 제거
             List<Vector2> simplified = new List<Vector2>();
@@ -656,20 +522,21 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         //방향 벡터랑 point에서 linestart로 향하는 벡터를 내적, 길이 제곱으로 정규화
         float t = ((point.x - lineStart.x) * dx + (point.y - lineStart.y) * dy) / (len * len);
-        t = Mathf.Clamp(t, 0, 1);   //넘어 가는 값이면 선분에 위치하지 않은 놈임 임의로 위치시킴
-        Vector2 projection = new Vector2(lineStart.x + t * dx, lineStart.y + t * dy);   //실제 좌표 구함
+        t = Mathf.Clamp(t, 0, 1); //넘어 가는 값이면 선분에 위치하지 않은 놈임 임의로 위치시킴
+        Vector2 projection = new Vector2(lineStart.x + t * dx, lineStart.y + t * dy); //실제 좌표 구함
 
         return Vector2.Distance(point, projection); //거리 도출
     }
 
 
-    //===========컬러 체크
+    //컬러 체크
     [Space(5.0f)]
     [Header("Color Value")]
     [SerializeField] private TMPro.TextMeshProUGUI totalTxt;
-    [SerializeField] private TMPro.TextMeshProUGUI redTxt;
-    [SerializeField] private TMPro.TextMeshProUGUI greenTxt;
-    [SerializeField] private TMPro.TextMeshProUGUI blueTxt;
+    [Header("Pixel Count Check")]
+    [SerializeField] private TMPro.TextMeshProUGUI colorPrefab;
+    [SerializeField] private Transform colorPixelsParent;
+    private List<TMPro.TextMeshProUGUI> tmproList = new List<TMPro.TextMeshProUGUI>();
 
     int CountPixels(RenderTexture rt)
     {
@@ -680,28 +547,72 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         Color32[] pixels = tex.GetPixels32();
         int total = 0;
-        Dictionary<Color, int> colorCount = new();
+        Dictionary<ColorMixer.ColorType, int> colorCount = new();
 
         foreach (var p in pixels)
         {
+            float h = 0.0f, s = 0.0f, v = 0.0f;
+            Color.RGBToHSV(p, out h, out s, out v);
+
+            h *= 360f;
+            s *= 100f;
+            v *= 100f;
+
             if (p.a == 0) continue; // 투명 제외
 
-            // 단색만 들어있으므로 R/G/B 직접 체크
-            if (p.r > 200 && p.g < 50 && p.b < 50)
+
+            if (v < 20) { AddColor(colorCount, ColorMixer.ColorType.Black, ref total); continue; }
+
+            if (s < 20)
             {
-                AddColor(colorCount, Color.red, ref total);
+                if (v > 80) { AddColor(colorCount, ColorMixer.ColorType.Black, ref total); continue; }
+                AddColor(colorCount, ColorMixer.ColorType.Gray, ref total); continue;
             }
-            else if (p.g > 200 && p.r < 50 && p.b < 50)
+
+            bool dark = false, bright = false;
+            ColorMixer.ColorType colorType = ColorMixer.ColorType.None;
+
+            if (v < 50) dark = true;
+            else if (s < 70) bright = true;
+
+
+            if (h >= 330 || h < 30)
             {
-                AddColor(colorCount, Color.green, ref total);
+                colorType = dark ? ColorMixer.ColorType.DarkRed : bright ? ColorMixer.ColorType.LightRed : ColorMixer.ColorType.Red;
             }
-            else if (p.b > 200 && p.r < 50 && p.g < 50)
+            else if (h >= 30 && h < 45)
             {
-                AddColor(colorCount, Color.blue, ref total);
+                colorType = ColorMixer.ColorType.Orange;
             }
+            else if (h >= 45 && h < 90)
+            {
+                colorType = dark ? ColorMixer.ColorType.DarkYellow : bright ? ColorMixer.ColorType.LightYellow : ColorMixer.ColorType.Yellow;
+            }
+            //90~150은 초록 구간
+            else if (h >= 150 && h < 210)
+            {
+                colorType = ColorMixer.ColorType.Cyan;
+            }
+            else if (h >= 210 && h < 270)
+            {
+                colorType = dark ? ColorMixer.ColorType.DarkBlue : bright ? ColorMixer.ColorType.LightBlue : ColorMixer.ColorType.Blue;
+            }
+            else if (h >= 270 && h < 330)
+            {
+                colorType = ColorMixer.ColorType.Magenta;
+            }
+
+            AddColor(colorCount, colorType, ref total);
         }
 
         totalTxt.text = $"Total Pixel : {total}";
+
+        int colorPixelsCount = 0;
+
+        foreach (var txt in tmproList)
+        {
+            txt.gameObject.SetActive(false);
+        }
 
         // 퍼센트 출력
         foreach (var p in colorCount)
@@ -709,27 +620,74 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
             float percent = (p.Value / (float)total) * 100f;
             Debug.Log($"{p.Key} : {percent:F2}%");
 
-            if (p.Key == Color.red)
+            TMPro.TextMeshProUGUI txt;
+            if (colorPixelsCount >= tmproList.Count)
             {
-                redTxt.text = $"Red Pixel : {p.Value}({percent:F2}%)";
-            }
-            else if (p.Key == Color.green)
-            {
-                greenTxt.text = $"Green Pixel : {p.Value}({percent:F2}%)";
+                txt = Instantiate(colorPrefab, colorPixelsParent);
+                tmproList.Add(txt);
             }
             else
             {
-                blueTxt.text = $"Blue Pixel : {p.Value}({percent:F2}%)";
+                txt = tmproList[colorPixelsCount];
             }
+
+            txt.gameObject.SetActive(true);
+            txt.text = $"{p.Key} : {p.Value}({percent:F2}%)";
+            txt.color = ColorMixer.Instance.GetColor(p.Key);
+
+            colorPixelsCount++;
         }
+
+        //UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(colorPixelsParent.GetComponent<RectTransform>());
 
         return total;
     }
 
-    void AddColor(Dictionary<Color, int> dict, Color c, ref int total)
+
+    void AddColor(Dictionary<ColorMixer.ColorType, int> dict, ColorMixer.ColorType c, ref int total)
     {
         if (!dict.ContainsKey(c)) dict[c] = 0;
         dict[c]++;
         total++;
+    }
+
+    private static float[] GetAlphaBinaryVector(Texture2D texture)
+    {
+        if (!texture.isReadable)
+        {
+            RenderTexture tempRenderTexture = RenderTexture.GetTemporary(
+                texture.width, texture.height, 0, RenderTextureFormat.ARGB32
+            );
+            Graphics.Blit(texture, tempRenderTexture);
+
+            RenderTexture prev = RenderTexture.active;
+            RenderTexture.active = tempRenderTexture;
+
+            Texture2D tempTexture = new Texture2D(texture.width, texture.height);
+            tempTexture.ReadPixels(new Rect(0, 0, tempRenderTexture.width, tempRenderTexture.height), 0, 0);
+            tempTexture.Apply();
+
+            RenderTexture.active = prev;
+            RenderTexture.ReleaseTemporary(tempRenderTexture);
+
+            Color[] pixels = tempTexture.GetPixels();
+            Object.DestroyImmediate(tempTexture);
+
+            return ConvertToBinaryVector(pixels);
+        }
+        else
+        {
+            return ConvertToBinaryVector(texture.GetPixels());
+        }
+    }
+
+    private static float[] ConvertToBinaryVector(Color[] pixels)
+    {
+        float[] binaryVector = new float[pixels.Length];
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            binaryVector[i] = (pixels[i].a > 0) ? 1.0f : 0.0f;
+        }
+        return binaryVector;
     }
 }
