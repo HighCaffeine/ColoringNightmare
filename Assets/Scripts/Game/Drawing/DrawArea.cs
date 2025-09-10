@@ -13,7 +13,7 @@ public class LineDrawArea : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireCube(transform.position + offset, size);
     }
 }

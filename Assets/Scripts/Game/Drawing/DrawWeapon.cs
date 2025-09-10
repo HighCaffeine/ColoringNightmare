@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -66,27 +65,22 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
     }
 
-    private void Update()
+    private bool IsAllowEvents()
     {
         if (UnityEngine.EventSystems.EventSystem.current != null &&
-            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
-            return;
+            return false;
         }
 
-        //input System Event
-        // begin - begindraw
-        // continue - continuedraw
-        // end - endDraw (오브젝트화)
-
-        if (Input.GetMouseButtonDown(0)) BeginDraw();
-        if (Input.GetMouseButton(0)) ContinueDraw();
-        if (Input.GetMouseButtonUp(0)) EndDraw();
+        return true;
     }
 
     //그리기 시작
-    private void BeginDraw()
+    public void BeginDraw()
     {
+        if (!IsAllowEvents()) return;
+
         if (isCreated)
         {
             points.Clear(); //저장된 포인트 비움
@@ -97,8 +91,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     }
 
     //마우스 Pos 저장
-    private void ContinueDraw()
+    public void ContinueDraw()
     {
+        if (!IsAllowEvents()) return;
         if (line == null) return;
 
         Vector3 pos = GetMousePos();
@@ -109,9 +104,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     }
 
     //그리기 끝
-    private void EndDraw()
+    public void EndDraw()
     {
-        //라인이 없으면 스킵
+        if (!IsAllowEvents()) return;
         if (line == null) return;
 
         if (points.Count == 1)
@@ -194,9 +189,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     public void CreateDrawObj()
     {
         //유사도 
-        var (cos, jacad, dice) = CalculateSimilarity();
+        var (cos, jaccad, dice) = CalculateSimilarity();
 
-        if (dice > 70) // 예시로 60% 이상일 경우 생성
+        if (dice * 100.0f > 70)
         {
             SpawnDrawObj();
         }
@@ -560,44 +555,48 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
             if (p.a == 0) continue; // 투명 제외
 
+            int h_ = Mathf.FloorToInt(h);
+            int s_ = Mathf.FloorToInt(s);
+            int v_ = Mathf.FloorToInt(v);
 
-            if (v < 20) { AddColor(colorCount, ColorMixer.ColorType.Black, ref total); continue; }
 
-            if (s < 20)
+            if (v_ < 20) { AddColor(colorCount, ColorMixer.ColorType.Black, ref total); continue; }
+
+            if (s_ < 20)
             {
-                if (v > 80) { AddColor(colorCount, ColorMixer.ColorType.Black, ref total); continue; }
+                if (v_ > 80) { AddColor(colorCount, ColorMixer.ColorType.Black, ref total); continue; }
                 AddColor(colorCount, ColorMixer.ColorType.Gray, ref total); continue;
             }
 
             bool dark = false, bright = false;
             ColorMixer.ColorType colorType = ColorMixer.ColorType.None;
 
-            if (v < 50) dark = true;
-            else if (s < 70) bright = true;
+            if (v_ <= 50) dark = true;
+            else if (s_ < 70) bright = true;
 
 
-            if (h >= 330 || h < 30)
+            if (h_ >= 330 || h_ < 30)
             {
                 colorType = dark ? ColorMixer.ColorType.DarkRed : bright ? ColorMixer.ColorType.LightRed : ColorMixer.ColorType.Red;
             }
-            else if (h >= 30 && h < 45)
+            else if (h_ >= 30 && h_ < 45)
             {
                 colorType = ColorMixer.ColorType.Orange;
             }
-            else if (h >= 45 && h < 90)
+            else if (h_ >= 45 && h_ < 90)
             {
                 colorType = dark ? ColorMixer.ColorType.DarkYellow : bright ? ColorMixer.ColorType.LightYellow : ColorMixer.ColorType.Yellow;
             }
             //90~150은 초록 구간
-            else if (h >= 150 && h < 210)
+            else if (h_ >= 150 && h_ < 210)
             {
                 colorType = ColorMixer.ColorType.Cyan;
             }
-            else if (h >= 210 && h < 270)
+            else if (h_ >= 210 && h_ < 270)
             {
                 colorType = dark ? ColorMixer.ColorType.DarkBlue : bright ? ColorMixer.ColorType.LightBlue : ColorMixer.ColorType.Blue;
             }
-            else if (h >= 270 && h < 330)
+            else if (h_ >= 270 && h_ < 330)
             {
                 colorType = ColorMixer.ColorType.Magenta;
             }
