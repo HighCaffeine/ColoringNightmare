@@ -11,6 +11,10 @@ public enum PlayerType
 
 public class PlayerController : Character
 {
+    [Header("Move Area")]
+    [SerializeField]
+    private AreaData moveArea;
+
     private PlayerInputActions playerInput;
     private InputAction moveAction;
 
@@ -40,7 +44,7 @@ public class PlayerController : Character
                 //Move Callback
                 playerInput.Player1.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player1.Move.performed += callback => Move();
-                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); MoveCharacter(Vector2.zero); };
+                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); MoveCharacter(moveArea, Vector2.zero); };
 
                 moveAction = playerInput.FindAction("Move");
                 break;
@@ -51,7 +55,7 @@ public class PlayerController : Character
                 //Move Callback
                 playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player2.Move.performed += callback => Move();
-                playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); MoveCharacter(Vector2.zero); };
+                playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); MoveCharacter(moveArea, Vector2.zero); };
 
                 moveAction = playerInput.FindAction("Move");
 
@@ -85,7 +89,7 @@ public class PlayerController : Character
         axisX = input.x;
         axisY = input.y;
 
-        MoveCharacter(input);
+        MoveCharacter(moveArea, input);
     }
 
     protected new void Dead()

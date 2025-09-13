@@ -20,6 +20,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [SerializeField] private int paddingPixels = 12;
     [SerializeField] private float drawPlaneZValue = 0.0f; //2d라 기본 0.0f로 설정
 
+    [Header("Weapon Size")]
+    [Range(0.0f, 1.0f)][SerializeField] private float ratioFromSketchBook;
+
 
     private Camera targetCamera; //오브젝트 만들기 위해 가상 레이어 카메라 캐싱
     private Camera mainCamera;
@@ -67,6 +70,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     private bool IsAllowEvents()
     {
+        if (!drawArea.GetBounds().Contains(GetMousePos()))
+        {
+            return false;
+        }
+
         if (UnityEngine.EventSystems.EventSystem.current != null &&
                             UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
@@ -87,6 +95,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
             isCreated = false;
         }
         Vector3 mousePos = GetMousePos();
+
         CreateNewLine(mousePos);
     }
 
@@ -97,7 +106,6 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         if (line == null) return;
 
         Vector3 pos = GetMousePos();
-
         pos.z = drawPlaneZValue;
 
         AppendPoint(pos);
@@ -176,7 +184,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         return Color.HSVToRGB(h, s, v);
     }
 
-    private Vector3 GetMousePos()
+    public Vector3 GetMousePos()
     {
         Vector3 screenPos = Input.mousePosition;
         Vector3 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(screenPos.x,
@@ -218,16 +226,6 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     private void AppendPoint(Vector3 pos)
     {
         pos.z = drawPlaneZValue;
-
-        if (drawArea != null)
-        {
-            //바운드 밖이 경우 그리지 않음
-            if (!drawArea.GetBounds().Contains(pos))
-            {
-                EndDraw();
-                return;
-            }
-        }
 
         if (points.Count == 0 || Vector3.Distance(pos, points[^1]) >= minPointDis)
         {
@@ -401,6 +399,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         //오브젝트화
         var obj = new GameObject("DrawedObject");
         var spriteRender = obj.AddComponent<SpriteRenderer>();
+        obj.AddComponent<Weapon>();
+        obj.tag = "Weapon";
+
+        spriteRender.sortingOrder = targetLayer;
         spriteRender.sprite = s;
 
         obj.transform.position = refPivotWorld;
@@ -411,6 +413,8 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
 
         AddEdgeCollider(obj, points);
+
+        obj.transform.localScale = Vector3.one * ratioFromSketchBook;
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)

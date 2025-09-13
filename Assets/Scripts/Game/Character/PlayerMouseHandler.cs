@@ -14,18 +14,19 @@ public class PlayerMouseHandler : MonoBehaviour
     public void SetupMouse(PlayerController controller)
     {
         mouseAction = controller.GetPlayerInput().Player2.Mouse;
-        mouseAction.started += ctx => { isDrawing = true; OnMouseStarted?.Invoke(); };
-        mouseAction.canceled += ctx => { isDrawing = false; OnMouseCanceled?.Invoke(); };
+        mouseAction.started += callback => { isDrawing = true; OnMouseStarted?.Invoke(); };
+        mouseAction.performed += callback => { OnMousePerformed?.Invoke(); };
+        mouseAction.canceled += callback => { isDrawing = false; OnMouseCanceled?.Invoke(); };
         mouseAction.Enable();
     }
 
     private void OnDisable()
     {
         mouseAction.started -= callback => { isDrawing = true; OnMouseStarted?.Invoke(); };
+        mouseAction.performed -= callback => { OnMousePerformed?.Invoke(); };
         mouseAction.canceled -= callback => { isDrawing = false; OnMouseCanceled?.Invoke(); };
         mouseAction.Disable();
     }
-
 
     private void Update()
     {
@@ -34,15 +35,4 @@ public class PlayerMouseHandler : MonoBehaviour
             OnMousePerformed?.Invoke();
         }
     }
-
-    private void OnMouseClickStarted()
-    {
-        OnMouseStarted?.Invoke();
-    }
-
-    private void OnMouseClickCanceled()
-    {
-        OnMouseCanceled?.Invoke();
-    }
-
 }
