@@ -7,7 +7,6 @@ public class CharacterArea : MonoBehaviour
     [SerializeField] private AreaData sheepArea;
     [SerializeField] private AreaData wolfArea;
 
-
     public Bounds GetSheepArea() => sheepArea.GetBounds();
     public Bounds GetWolfArea() => wolfArea.GetBounds();
 

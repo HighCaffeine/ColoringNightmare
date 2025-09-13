@@ -14,6 +14,8 @@ public class WeaponDragController : MonoBehaviour
     private Camera mainCamera;
     private bool isAllowWeaponControl;
 
+    private Vector2 defaultPos;
+
     private void Awake()
     {
         mainCamera = Camera.main;
@@ -35,6 +37,8 @@ public class WeaponDragController : MonoBehaviour
                 isAllowWeaponControl = true;
                 weaponObj = hit.collider.GetComponent<Weapon>();
                 Debug.Log("Weapon selected");
+
+                defaultPos = weaponObj.transform.position;
             }
         }
         else
@@ -71,6 +75,10 @@ public class WeaponDragController : MonoBehaviour
                 isAllowWeaponControl = false;
                 targetWeaponController.SetupWeapon(weaponObj);
             }
+        }
+        else
+        {
+            weaponObj.transform.position = defaultPos;
         }
     }
 }
