@@ -6,13 +6,23 @@ public class WeaponController : MonoBehaviour
 
     [SerializeField] private Transform weaponPivot;
 
+    [Header("Spine Skeleton Target")]
+    [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
+
     public void SetupWeapon(Weapon weapon)
     {
         this.weapon = weapon;
 
         this.weapon.transform.SetParent(weaponPivot);
 
-        this.weapon.transform.localPosition = Vector3.zero;
-        this.weapon.transform.localRotation = Quaternion.identity;
+        // this.weapon.transform.localPosition = Vector3.zero;
+        // this.weapon.transform.localRotation = Quaternion.identity;
+
+        var boneFollower = weapon.gameObject.AddComponent<Spine.Unity.BoneFollower>();
+        boneFollower.SkeletonRenderer = skeletonAni;
+        boneFollower.boneName = "sword";
+        boneFollower.followBoneRotation = true;
+        boneFollower.followLocalScale = true;
+        boneFollower.followSkeletonFlip = true;
     }
 }

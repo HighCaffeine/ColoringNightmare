@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: sheep2_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
-  - {fileID: 11400000, guid: 085d65049cc20a548b2488aa73feda39, type: 2}
+  - {fileID: 11400000, guid: c6913e7a78e85cc43ad72a3d641f5626, type: 2}
   scale: 0.01
-  skeletonJSON: {fileID: 4900000, guid: 9698537c3c2ea7d4f9688488412f28f3, type: 3}
+  skeletonJSON: {fileID: 4900000, guid: 8d0b8d82be4797a41a8eaa0302be2c47, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
     requiresBlendModeMaterials: 0
@@ -28,4 +28,4 @@ MonoBehaviour:
   toAnimation: []
   duration: []
   defaultMix: 0.2
-  controller: {fileID: 9100000, guid: d876707b6cdc87f4bb3c97b64aac06ea, type: 2}
+  controller: {fileID: 0}

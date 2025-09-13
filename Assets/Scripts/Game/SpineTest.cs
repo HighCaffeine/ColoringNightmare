@@ -50,7 +50,7 @@ public class SpineTest : MonoBehaviour
             yield break;
         }
 
-        skeleton.AnimationState.SetAnimation(currentTrack, ani, false);
+        skeleton.AnimationState.SetAnimation(currentTrack, ani, true);
 
         yield return null;
     }
