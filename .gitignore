@@ -57,6 +57,8 @@ ExportedObj/
 *.opendb
 *.VC.db
 
+.vscode/
+Assets/SpineExamples/
 Library/
 Logs/
 UserSettings/
