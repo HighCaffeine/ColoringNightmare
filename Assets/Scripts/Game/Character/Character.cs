@@ -82,20 +82,26 @@ public class Character : MonoBehaviour
 
     protected virtual void MoveCharacter(AreaData area, Vector2 dir)
     {
-        if (rigid == null)
+        if (dir == Vector2.zero) return;
+
+        Vector2 newPos = (rigid == null)
+            ? (Vector2)transform.position + dir * info.speed * Time.deltaTime
+            : (Vector2)transform.position + dir * info.speed * Time.fixedDeltaTime;
+
+        if (!area.GetBounds().Contains(newPos))
         {
-            Vector2 newPos = transform.position + (Vector3)(dir * info.speed * Time.deltaTime);
-
-            if (!area.GetBounds().Contains(newPos))
-            {
-                return;
-            }
-
-            transform.position = newPos;
+            return;
         }
 
-        rigid.linearVelocity = dir * info.speed;
+        if (rigid == null)
+        {
+            transform.position = newPos;
+        }
+        else
+        {
+            rigid.linearVelocity = dir * info.speed;
+        }
 
-        if (dir.x != 0 && dir != Vector2.zero) Flip(dir.x > 0);
+        if (dir.x != 0) Flip(dir.x > 0);
     }
 }
