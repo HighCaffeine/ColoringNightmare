@@ -124,199 +124,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_0"
+      name: TEST_WeaponEffect_0
       rect:
         serializedVersion: 2
-        x: 256
-        y: 714
-        width: 12
-        height: 31
+        x: 0
+        y: 512
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a0939b285e53bcc10800000000000000
-      internalID: 2074811313191205130
+      spriteID: 0948182a95aaf734aaba2d6b50696d08
+      internalID: -1407807914
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_1"
+      name: TEST_WeaponEffect_1
       rect:
         serializedVersion: 2
-        x: 291
-        y: 705
-        width: 152
-        height: 34
+        x: 512
+        y: 512
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c0c5810930bea99c0800000000000000
-      internalID: -3919562125137650676
+      spriteID: 6e5bc620e1b826b4ab9142b31b40cbac
+      internalID: 1489088883
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_2"
+      name: TEST_WeaponEffect_2
       rect:
         serializedVersion: 2
-        x: 749
-        y: 706
-        width: 194
-        height: 39
+        x: 1024
+        y: 512
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 989acff374c3072d0800000000000000
-      internalID: -3283057851639223927
+      spriteID: 0396f02c0752fe849a26ab57732fb0f9
+      internalID: -699423710
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_3"
+      name: TEST_WeaponEffect_3
       rect:
         serializedVersion: 2
-        x: 1139
-        y: 705
-        width: 327
-        height: 194
+        x: 1536
+        y: 512
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3de63042e01778dc0800000000000000
-      internalID: -3636813868530700589
+      spriteID: 6eb7c8c960e47a34ca7e5285b0efa181
+      internalID: -799152161
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_4"
+      name: TEST_WeaponEffect_4
       rect:
         serializedVersion: 2
-        x: 1649
-        y: 707
-        width: 301
-        height: 230
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0e1d62db64d6d6cf0800000000000000
-      internalID: -257429453101674016
+      spriteID: c4c65cc7eb82feb4c8e15d07c4df25d4
+      internalID: 993668530
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_5"
+      name: TEST_WeaponEffect_5
       rect:
         serializedVersion: 2
-        x: 111
-        y: 210
-        width: 314
-        height: 213
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d68c7be54368bd2b0800000000000000
-      internalID: -5558701755573221267
+      spriteID: e0908354419686d4ba440d3d4021468f
+      internalID: -1571291943
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_6"
+      name: TEST_WeaponEffect_6
       rect:
         serializedVersion: 2
-        x: 640
-        y: 296
-        width: 301
-        height: 127
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3e9feac7e0242df80800000000000000
-      internalID: -8083325751187801629
+      spriteID: 1316f27d2e028de45af95a8197e0d601
+      internalID: -1824543929
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_7"
+      name: TEST_WeaponEffect_7
       rect:
         serializedVersion: 2
-        x: 1253
-        y: 338
-        width: 203
-        height: 83
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 211f800657e3dcf80800000000000000
-      internalID: -8084737082216877806
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "\uC774\uD399\uD2B8_8"
-      rect:
-        serializedVersion: 2
-        x: 1861
-        y: 346
-        width: 99
-        height: 72
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 15b4e048eb723d1d0800000000000000
-      internalID: -3327272000483865775
+      spriteID: 7f71cd0ece0b5b94482bd5a29229c593
+      internalID: -1140803558
       vertices: []
       indices: 
       edges: []
@@ -325,7 +303,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 6e52d12acb96c6743a494669e09287f3
     internalID: 0
     vertices: []
     indices: 
@@ -335,15 +313,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uC774\uD399\uD2B8_0": 2074811313191205130
-      "\uC774\uD399\uD2B8_1": -3919562125137650676
-      "\uC774\uD399\uD2B8_2": -3283057851639223927
-      "\uC774\uD399\uD2B8_3": -3636813868530700589
-      "\uC774\uD399\uD2B8_4": -257429453101674016
-      "\uC774\uD399\uD2B8_5": -5558701755573221267
-      "\uC774\uD399\uD2B8_6": -8083325751187801629
-      "\uC774\uD399\uD2B8_7": -8084737082216877806
-      "\uC774\uD399\uD2B8_8": -3327272000483865775
+      TEST_WeaponEffect_0: -1407807914
+      TEST_WeaponEffect_1: 1489088883
+      TEST_WeaponEffect_2: -699423710
+      TEST_WeaponEffect_3: -799152161
+      TEST_WeaponEffect_4: 993668530
+      TEST_WeaponEffect_5: -1571291943
+      TEST_WeaponEffect_6: -1824543929
+      TEST_WeaponEffect_7: -1140803558
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
