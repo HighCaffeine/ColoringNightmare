@@ -44,7 +44,7 @@ public class PlayerController : Character
                 //Move Callback
                 playerInput.Player1.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player1.Move.performed += callback => Move();
-                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); MoveCharacter(moveArea, Vector2.zero); };
+                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
 
                 moveAction = playerInput.FindAction("Move");
                 break;
@@ -52,10 +52,13 @@ public class PlayerController : Character
                 playerInput.Player2.Enable();
                 Debug.Log("[Player2] : Active");
 
+                //늑대 움직일 때 워크 스테이션에 들어가는지 검사용
+                OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
+
                 //Move Callback
                 playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
-                playerInput.Player2.Move.performed += callback => Move();
-                playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); MoveCharacter(moveArea, Vector2.zero); };
+                playerInput.Player2.Move.performed += callback => { Move(); };
+                playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
 
                 moveAction = playerInput.FindAction("Move");
 
@@ -69,13 +72,24 @@ public class PlayerController : Character
 
 
     private Vector2 input;
+    private Action<Vector2> OnMoveAction;
 
-    protected new void Idle()
+    void FixedUpdate()
     {
-        base.Idle();
+        if (axisX == 0.0f && axisY == 0.0f) return;
+
+        MoveCharacter(moveArea, input, OnMoveAction);
     }
 
-    protected new void Attack()
+    protected override void Idle()
+    {
+        base.Idle();
+
+        axisX = 0.0f;
+        axisY = 0.0f;
+    }
+
+    protected override void Attack()
     {
         base.Attack();
     }
@@ -88,11 +102,9 @@ public class PlayerController : Character
 
         axisX = input.x;
         axisY = input.y;
-
-        MoveCharacter(moveArea, input);
     }
 
-    protected new void Dead()
+    protected override void Dead()
     {
         base.Dead();
     }

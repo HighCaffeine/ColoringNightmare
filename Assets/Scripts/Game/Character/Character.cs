@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum StateType
@@ -56,6 +57,21 @@ public class Character : MonoBehaviour
 
         Debug.Log($"{info.characterName} Change State: {state} -> {newState}");
         state = newState;
+
+        switch (state)
+        {
+            case StateType.Idle:
+                Idle();
+                break;
+            case StateType.Attack:
+                Attack();
+                break;
+            case StateType.Move:
+                break;
+            case StateType.Dead:
+                Dead();
+                break;
+        }
     }
     protected virtual void Flip(bool isRight)
     {
@@ -80,27 +96,34 @@ public class Character : MonoBehaviour
         }
     }
 
-    protected virtual void MoveCharacter(AreaData area, Vector2 dir)
+    protected void StopMove()
+    {
+        rigid.linearVelocity = Vector2.zero;
+    }
+
+    protected virtual void MoveCharacter(AreaData area, Vector2 dir, Action<Vector2> OnMoveAction)
     {
         if (dir == Vector2.zero) return;
 
-        Vector2 newPos = (rigid == null)
-            ? (Vector2)transform.position + dir * info.speed * Time.deltaTime
-            : (Vector2)transform.position + dir * info.speed * Time.fixedDeltaTime;
-
-        if (!area.GetBounds().Contains(newPos))
+        Vector2 spriteHalfSize = Vector2.zero;
+        SpriteRenderer render = GetComponent<SpriteRenderer>();
+        if (render != null)
         {
+            spriteHalfSize = render.bounds.extents;
+        }
+
+        Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
+
+        var areaBounds = area.GetBounds();
+        if (!areaBounds.Contains(newPos + spriteHalfSize) || !areaBounds.Contains(newPos - spriteHalfSize))
+        {
+            rigid.linearVelocity = Vector2.zero;
             return;
         }
 
-        if (rigid == null)
-        {
-            transform.position = newPos;
-        }
-        else
-        {
-            rigid.linearVelocity = dir * info.speed;
-        }
+        rigid.linearVelocity = dir * info.speed;
+
+        OnMoveAction?.Invoke(newPos);
 
         if (dir.x != 0) Flip(dir.x > 0);
     }
