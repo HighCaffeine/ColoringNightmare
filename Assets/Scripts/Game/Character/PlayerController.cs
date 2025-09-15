@@ -14,6 +14,9 @@ public class PlayerController : Character
     [Header("Interactive")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnInteractive;
 
+    [Header("Attack")]
+    [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
+
     [Header("Move Area")]
     [SerializeField]
     private AreaData moveArea;
@@ -48,6 +51,8 @@ public class PlayerController : Character
                 playerInput.Player1.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player1.Move.performed += callback => Move();
                 playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
+
+                playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); };
 
                 moveAction = playerInput.FindAction("Move");
                 break;

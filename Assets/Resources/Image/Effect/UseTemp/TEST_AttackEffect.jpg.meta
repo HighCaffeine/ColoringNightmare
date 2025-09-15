@@ -1,34 +1,10 @@
 fileFormatVersion: 2
-guid: 480e1f5ca42adac43a81bfabb715c819
+guid: c90ade83d5bae4946ae5f9c55ae306a6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2074811313191205130
-    second: "\uC774\uD399\uD2B8_0"
-  - first:
-      213: -3919562125137650676
-    second: "\uC774\uD399\uD2B8_1"
-  - first:
-      213: -3283057851639223927
-    second: "\uC774\uD399\uD2B8_2"
-  - first:
-      213: -3636813868530700589
-    second: "\uC774\uD399\uD2B8_3"
-  - first:
-      213: -257429453101674016
-    second: "\uC774\uD399\uD2B8_4"
-  - first:
-      213: -5558701755573221267
-    second: "\uC774\uD399\uD2B8_5"
-  - first:
-      213: -8083325751187801629
-    second: "\uC774\uD399\uD2B8_6"
-  - first:
-      213: -8084737082216877806
-    second: "\uC774\uD399\uD2B8_7"
-  - first:
-      213: -3327272000483865775
-    second: "\uC774\uD399\uD2B8_8"
+      213: 8607838080369215011
+    second: TEST_AttackEffect_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 512
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -124,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TEST_WeaponEffect_0
+      name: TEST_AttackEffect_0
       rect:
         serializedVersion: 2
         x: 0
@@ -137,16 +113,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 0948182a95aaf734aaba2d6b50696d08
-      internalID: -1407807914
+      spriteID: 326cc78b02f257770800000000000000
+      internalID: 8607838080369215011
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TEST_WeaponEffect_1
+      name: TEST_AttackEffect_1
       rect:
         serializedVersion: 2
         x: 512
@@ -161,14 +137,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6e5bc620e1b826b4ab9142b31b40cbac
-      internalID: 1489088883
+      spriteID: fb9640b4b21879f4d896a1595c673f4d
+      internalID: -1148508556
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TEST_WeaponEffect_2
+      name: TEST_AttackEffect_2
       rect:
         serializedVersion: 2
         x: 1024
@@ -183,14 +159,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0396f02c0752fe849a26ab57732fb0f9
-      internalID: -699423710
+      spriteID: 424060f6c83a7bd4d86927a49217d618
+      internalID: -1345185576
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TEST_WeaponEffect_3
+      name: TEST_AttackEffect_3
       rect:
         serializedVersion: 2
         x: 1536
@@ -205,14 +181,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6eb7c8c960e47a34ca7e5285b0efa181
-      internalID: -799152161
+      spriteID: 077b3a2dc476b484ba9199acc34dbd21
+      internalID: 700238727
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TEST_WeaponEffect_4
+      name: TEST_AttackEffect_4
       rect:
         serializedVersion: 2
         x: 0
@@ -227,14 +203,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c4c65cc7eb82feb4c8e15d07c4df25d4
-      internalID: 993668530
+      spriteID: 5e9fffc161f78d049a701322466e468b
+      internalID: 1146224414
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TEST_WeaponEffect_5
+      name: TEST_AttackEffect_5
       rect:
         serializedVersion: 2
         x: 512
@@ -249,14 +225,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e0908354419686d4ba440d3d4021468f
-      internalID: -1571291943
+      spriteID: efcfca01f3721cc449577f202ee27244
+      internalID: 919016383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TEST_WeaponEffect_6
+      name: TEST_AttackEffect_6
       rect:
         serializedVersion: 2
         x: 1024
@@ -271,14 +247,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1316f27d2e028de45af95a8197e0d601
-      internalID: -1824543929
+      spriteID: 58b8b4ae53e56a1439a1254a69f88a57
+      internalID: -938772707
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TEST_WeaponEffect_7
+      name: TEST_AttackEffect_7
       rect:
         serializedVersion: 2
         x: 1536
@@ -293,8 +269,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7f71cd0ece0b5b94482bd5a29229c593
-      internalID: -1140803558
+      spriteID: e0b4ead9fe0dbe14da2eee50d6e595db
+      internalID: -675168539
       vertices: []
       indices: 
       edges: []
@@ -303,7 +279,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 6e52d12acb96c6743a494669e09287f3
+    spriteID: 8e509761cc9948b499636e3e7f6eec83
     internalID: 0
     vertices: []
     indices: 
@@ -313,14 +289,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TEST_WeaponEffect_0: -1407807914
-      TEST_WeaponEffect_1: 1489088883
-      TEST_WeaponEffect_2: -699423710
-      TEST_WeaponEffect_3: -799152161
-      TEST_WeaponEffect_4: 993668530
-      TEST_WeaponEffect_5: -1571291943
-      TEST_WeaponEffect_6: -1824543929
-      TEST_WeaponEffect_7: -1140803558
+      TEST_AttackEffect_0: 8607838080369215011
+      TEST_AttackEffect_1: -1148508556
+      TEST_AttackEffect_2: -1345185576
+      TEST_AttackEffect_3: 700238727
+      TEST_AttackEffect_4: 1146224414
+      TEST_AttackEffect_5: 919016383
+      TEST_AttackEffect_6: -938772707
+      TEST_AttackEffect_7: -675168539
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

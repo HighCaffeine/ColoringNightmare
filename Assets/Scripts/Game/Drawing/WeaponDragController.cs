@@ -78,6 +78,7 @@ public class WeaponDragController : MonoBehaviour
             {
                 isAllowWeaponControl = false;
                 targetWeaponController.SetupWeapon(weaponObj);
+                OnAreaExit?.Invoke();
             }
         }
         else
