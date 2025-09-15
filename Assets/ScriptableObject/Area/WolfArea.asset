@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: WolfArea
   m_EditorClassIdentifier: 
   pos: {x: 5.64, y: 1.9, z: 0}
-  size: {x: 4.14, y: 2.41, z: 0}
+  size: {x: 4.44, y: 2.56, z: 0}
   offset: {x: 0, y: 0, z: 0}

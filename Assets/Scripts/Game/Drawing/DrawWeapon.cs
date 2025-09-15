@@ -41,6 +41,8 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     private Color lastColor;
     private int lastPointCount = 0;
 
+    private bool isAllowDrawing = false;
+
 
     protected override void Awake()
     {
@@ -69,8 +71,13 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
     }
 
+    public void SetAllowDrawingState(bool value)
+    {
+        isAllowDrawing = value;
+    }
     private bool IsAllowEvents()
     {
+        if (!isAllowDrawing) return false;
         if (!drawArea.GetBounds().Contains(GetMousePos()))
         {
             return false;

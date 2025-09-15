@@ -3,6 +3,12 @@ using UnityEngine;
 [ExecuteAlways]
 public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 {
+    private enum WorkStationType
+    {
+        None,
+        Palette, Sketch, Enhance,
+    }
+
     [Header("Work Station Area")]
     [SerializeField] private AreaData paletteArea;
     [SerializeField] private AreaData sketchArea;
@@ -12,21 +18,31 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
     [Header("Palette Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnPaletteEnter;
     [SerializeField] private UnityEngine.Events.UnityEvent OnPaletteExit;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnPalettePanelOn;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnPalettePanelOff;
 
     [Space(5f)]
     [Header("Sketch Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnSketchEnter;
     [SerializeField] private UnityEngine.Events.UnityEvent OnSketchExit;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnSketchOn;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnSketchOff;
 
     [Space(5f)]
     [Header("Enhance Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnEnhanceEnter;
     [SerializeField] private UnityEngine.Events.UnityEvent OnEnhanceExit;
 
+    [SerializeField] private UnityEngine.Events.UnityEvent OnEnhancePanelOn;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnEnhancePanelOff;
+
     // 영역별 캐릭터 상태
     private bool isInPalette = false;
     private bool isInSketch = false;
     private bool isInEnhance = false;
+
+    private WorkStationType workStationType = WorkStationType.None;
+    private bool isOnInteractive = false;
 
     void OnDrawGizmos()
     {
@@ -47,6 +63,27 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         }
     }
 
+    public void Interactive()
+    {
+        switch (workStationType)
+        {
+            case WorkStationType.None:
+                break;
+            case WorkStationType.Palette:
+                if (isOnInteractive) OnPalettePanelOff?.Invoke();
+                else OnPalettePanelOn?.Invoke();
+                break;
+            case WorkStationType.Sketch:
+                if (isOnInteractive) OnSketchOff?.Invoke();
+                else OnSketchOn?.Invoke();
+                break;
+            case WorkStationType.Enhance:
+                if (isOnInteractive) OnEnhancePanelOff?.Invoke();
+                else OnEnhancePanelOn?.Invoke();
+                break;
+        }
+    }
+
     public void CheckAreaEnter(Vector2 pos)
     {
         // Palette Area
@@ -56,11 +93,13 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
             if (nowIn && !isInPalette)
             {
+                workStationType = WorkStationType.Palette;
                 isInPalette = true;
                 OnPaletteEnter.Invoke();
             }
             else if (!nowIn && isInPalette)
             {
+                workStationType = WorkStationType.Palette;
                 isInPalette = false;
                 OnPaletteExit.Invoke();
             }
@@ -73,11 +112,13 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
             if (nowIn && !isInSketch)
             {
+                workStationType = WorkStationType.Sketch;
                 isInSketch = true;
                 OnSketchEnter.Invoke();
             }
             else if (!nowIn && isInSketch)
             {
+                workStationType = WorkStationType.None;
                 isInSketch = false;
                 OnSketchExit.Invoke();
             }
@@ -90,11 +131,13 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
             if (nowIn && !isInEnhance)
             {
+                workStationType = WorkStationType.Enhance;
                 isInEnhance = true;
                 OnEnhanceEnter.Invoke();
             }
             else if (!nowIn && isInEnhance)
             {
+                workStationType = WorkStationType.None;
                 isInEnhance = false;
                 OnEnhanceExit.Invoke();
             }

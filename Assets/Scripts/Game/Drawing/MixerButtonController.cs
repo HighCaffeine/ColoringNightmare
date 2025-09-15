@@ -34,6 +34,8 @@ public class MixerButtonController : MonoBehaviour
 
     [SerializeField] private List<CursorData> cursors;
 
+    [SerializeField] private CursorData defaultCursor;
+
     private int selectedColors = 0;
 
     private ColorMixer.ColorType c1, c2;
@@ -69,11 +71,29 @@ public class MixerButtonController : MonoBehaviour
 
     public void SelectColor()
     {
-        int i = Devcat.ValueCastTo<int>.From(resultColor);
-        //Cursor.SetCursor(cursors[i].texture, cursors[i].hotspot, cursors[i].cursorMode);
+        cursorIndex = Devcat.ValueCastTo<int>.From(resultColor);
         convertButtonState?.Invoke();
 
         DrawWeapon.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor));
         ColorMixer.Instance.SetFirstColor(ColorMixer.ColorType.White);
+    }
+
+    private int cursorIndex = 0;
+
+    public void SetCursor()
+    {
+        Cursor.SetCursor(cursors[cursorIndex].texture, cursors[cursorIndex].hotspot, cursors[cursorIndex].cursorMode);
+    }
+
+    public void SetDefaultCursor()
+    {
+        if (defaultCursor.texture != null)
+        {
+            Cursor.SetCursor(defaultCursor.texture, defaultCursor.hotspot, defaultCursor.cursorMode);
+        }
+        else
+        {
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
     }
 }

@@ -8,6 +8,7 @@ public enum StateType
     Attack,
     Move,
     Dead,
+    //Interactive,
     Count,
 }
 
@@ -95,6 +96,8 @@ public class Character : MonoBehaviour
             ChangeState(StateType.Dead);
         }
     }
+
+    protected virtual void Interactive() { }
 
     protected void StopMove()
     {

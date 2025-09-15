@@ -11,6 +11,9 @@ public enum PlayerType
 
 public class PlayerController : Character
 {
+    [Header("Interactive")]
+    [SerializeField] private UnityEngine.Events.UnityEvent OnInteractive;
+
     [Header("Move Area")]
     [SerializeField]
     private AreaData moveArea;
@@ -59,6 +62,8 @@ public class PlayerController : Character
                 playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player2.Move.performed += callback => { Move(); };
                 playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
+
+                playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
 
                 moveAction = playerInput.FindAction("Move");
 

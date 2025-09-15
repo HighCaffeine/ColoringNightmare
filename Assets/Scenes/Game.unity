@@ -426,7 +426,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 859474390}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MixerButtonController, Assembly-CSharp
         m_MethodName: SelectColor
         m_Mode: 1
@@ -623,7 +623,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 859474390}
+      objectReference: {fileID: 0}
     - target: {fileID: 2393822892865706244, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: m_Name
       value: White
@@ -1248,7 +1248,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 859474390}
+      objectReference: {fileID: 0}
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ColorButton_Blue
@@ -1469,6 +1469,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1638373635}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &781383685
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 781383686}
+  m_Layer: 0
+  m_Name: WaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &781383686
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781383685}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1525301309}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &825676001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1509,7 +1540,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 859474389}
-  - component: {fileID: 859474390}
   m_Layer: 5
   m_Name: ColorMixButtons
   m_TagString: Untagged
@@ -1542,131 +1572,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.05999756, y: -0.09500122}
   m_SizeDelta: {x: 1.0299988, y: -0.38000488}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &859474390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 859474388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2dca25824a2afc43a6a32fe5fce3d0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  convertButtonState:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 906340640797974644}
-        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
-        m_MethodName: ConvertAbleState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1685394147}
-        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
-        m_MethodName: ConvertAbleState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1042585754}
-        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
-        m_MethodName: ConvertAbleState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 605026862}
-        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
-        m_MethodName: ConvertAbleState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 320679794}
-        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
-        m_MethodName: ConvertAbleState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  colorOrderExplanation: "\uC544\uB798 \uC21C\uC11C\uB85C \uCEE4\uC11C \uB123\uC5B4\uC8FC\uC138\uC694\r\n   
-    Black\r\n    Red\r\n    Yellow\r\n    Blue\r\n    White\r\n    Orange\r\n   
-    Cyan\r\n    Magenta\r\n    Gray\r\n    DarkRed\r\n    LightRed\r\n    DarkYellow\r\n   
-    LightYellow\r\n    DarkBlue\r\n    LightBlue"
-  cursors:
-  - texture: {fileID: 2800000, guid: 71bcc095d2d30014e95323f8aa5d9c37, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: 0708fc52907315e4d997fe38f1946e9d, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: 0a5453c3bba01824880b4269d34cd5f1, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: a9392ec0cb1717e48ab55ffa505c0214, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: 284dbb9f7e3277a4b81bc79f8c3f6951, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: a307243432716774491dda3143b50449, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: 1539a19d45a1d4e4b8dc6f5fab806b07, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: b3e432db2cd24e54f8c62c37f1de0212, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: eff8425e36b96a844a10693e7a42465c, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: cebbfddfc1e323f4782674d489f2456c, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: 79d1bf704287aaa469c6f5762a9c7390, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: 962a70e33584705449c511fd46ddbc24, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: 3e1a47cf2279c9d4082d0614b17fa573, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: caaf5560d66f0d343a6c0691afd8888d, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
-  - texture: {fileID: 2800000, guid: f519423a381fed24cbc0b30534c8d907, type: 3}
-    hotspot: {x: 0, y: 0}
-    cursorMode: 0
 --- !u!1 &879956050
 GameObject:
   m_ObjectHideFlags: 0
@@ -2282,7 +2187,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 859474390}
+      objectReference: {fileID: 0}
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ColorButton_Yellow
@@ -3159,6 +3064,7 @@ Transform:
   - {fileID: 2081776440}
   - {fileID: 500854241}
   - {fileID: 1369437999}
+  - {fileID: 781383686}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1552122473
@@ -3432,6 +3338,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info: {fileID: 11400000, guid: 512a200b25e616d4c8e183bc4fcd5d58, type: 2}
+  OnInteractive:
+    m_PersistentCalls:
+      m_Calls: []
   moveArea: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
   playerType: 0
 --- !u!50 &1590202359
@@ -3753,7 +3662,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 859474390}
+      objectReference: {fileID: 0}
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ColorButton_Red
@@ -3922,6 +3831,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info: {fileID: 11400000, guid: 512a200b25e616d4c8e183bc4fcd5d58, type: 2}
+  OnInteractive:
+    m_PersistentCalls:
+      m_Calls: []
   moveArea: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
   playerType: 0
 --- !u!114 &1711070371
@@ -3952,7 +3864,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skeleton: {fileID: 1711070373}
-  aniName: 2
+  aniName: 1
   currentTrack: 0
 --- !u!114 &1711070373
 MonoBehaviour:
@@ -4174,6 +4086,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info: {fileID: 11400000, guid: 841e10d586dba0640b60b2611a7420d0, type: 2}
+  OnInteractive:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1748574275}
+        m_TargetAssemblyTypeName: WolfWorkStation, Assembly-CSharp
+        m_MethodName: Interactive
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   moveArea: {fileID: 11400000, guid: fdabbc143b6bbbc46a140d8b6fe91852, type: 2}
   playerType: 1
 --- !u!212 &1723600696
@@ -4473,6 +4400,36 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnPalettePanelOn:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 916304454}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  OnPalettePanelOff:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 916304454}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnSketchEnter:
     m_PersistentCalls:
       m_Calls:
@@ -4503,6 +4460,60 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnSketchOn:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1918038615}
+        m_TargetAssemblyTypeName: DrawWeapon, Assembly-CSharp
+        m_MethodName: SetAllowDrawingState
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1918038616}
+        m_TargetAssemblyTypeName: MixerButtonController, Assembly-CSharp
+        m_MethodName: SetCursor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  OnSketchOff:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1918038615}
+        m_TargetAssemblyTypeName: DrawWeapon, Assembly-CSharp
+        m_MethodName: SetAllowDrawingState
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1918038616}
+        m_TargetAssemblyTypeName: MixerButtonController, Assembly-CSharp
+        m_MethodName: SetDefaultCursor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnEnhanceEnter:
     m_PersistentCalls:
       m_Calls:
@@ -4522,6 +4533,36 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1681581635}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnEnhancePanelOn:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1452030047}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  OnEnhancePanelOff:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1452030047}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -4806,6 +4847,7 @@ GameObject:
   - component: {fileID: 1918038613}
   - component: {fileID: 1918038612}
   - component: {fileID: 1918038611}
+  - component: {fileID: 1918038616}
   m_Layer: 0
   m_Name: DrawManager
   m_TagString: Untagged
@@ -4926,6 +4968,135 @@ MonoBehaviour:
   totalTxt: {fileID: 1552122475}
   colorPrefab: {fileID: 8199805135088459995, guid: 81eb52faec96c5b4a9cc561e2a7f949f, type: 3}
   colorPixelsParent: {fileID: 497512436}
+--- !u!114 &1918038616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1918038608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2dca25824a2afc43a6a32fe5fce3d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  convertButtonState:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 906340640797974644}
+        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
+        m_MethodName: ConvertAbleState
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1685394147}
+        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
+        m_MethodName: ConvertAbleState
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1042585754}
+        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
+        m_MethodName: ConvertAbleState
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 605026862}
+        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
+        m_MethodName: ConvertAbleState
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 320679794}
+        m_TargetAssemblyTypeName: ColorButton, Assembly-CSharp
+        m_MethodName: ConvertAbleState
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  colorOrderExplanation: "\uC544\uB798 \uC21C\uC11C\uB85C \uCEE4\uC11C \uB123\uC5B4\uC8FC\uC138\uC694\r\n   
+    Black\r\n    Red\r\n    Yellow\r\n    Blue\r\n    White\r\n    Orange\r\n   
+    Cyan\r\n    Magenta\r\n    Gray\r\n    DarkRed\r\n    LightRed\r\n    DarkYellow\r\n   
+    LightYellow\r\n    DarkBlue\r\n    LightBlue"
+  cursors:
+  - texture: {fileID: 2800000, guid: 71bcc095d2d30014e95323f8aa5d9c37, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: 0708fc52907315e4d997fe38f1946e9d, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: 0a5453c3bba01824880b4269d34cd5f1, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: a9392ec0cb1717e48ab55ffa505c0214, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: 284dbb9f7e3277a4b81bc79f8c3f6951, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: a307243432716774491dda3143b50449, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: 1539a19d45a1d4e4b8dc6f5fab806b07, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: b3e432db2cd24e54f8c62c37f1de0212, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: eff8425e36b96a844a10693e7a42465c, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: cebbfddfc1e323f4782674d489f2456c, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: 79d1bf704287aaa469c6f5762a9c7390, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: 962a70e33584705449c511fd46ddbc24, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: 3e1a47cf2279c9d4082d0614b17fa573, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: caaf5560d66f0d343a6c0691afd8888d, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  - texture: {fileID: 2800000, guid: f519423a381fed24cbc0b30534c8d907, type: 3}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
+  defaultCursor:
+    texture: {fileID: 0}
+    hotspot: {x: 0, y: 0}
+    cursorMode: 0
 --- !u!1 &2018965530
 GameObject:
   m_ObjectHideFlags: 0
@@ -5426,7 +5597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skeleton: {fileID: 2097561437}
-  aniName: 2
+  aniName: 1
   currentTrack: 0
 --- !u!114 &2097561437
 MonoBehaviour:
@@ -5567,6 +5738,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info: {fileID: 11400000, guid: 512a200b25e616d4c8e183bc4fcd5d58, type: 2}
+  OnInteractive:
+    m_PersistentCalls:
+      m_Calls: []
   moveArea: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
   playerType: 0
 --- !u!1 &2104210360
@@ -5671,7 +5845,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 859474390}
+      objectReference: {fileID: 0}
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ColorButton_Black
