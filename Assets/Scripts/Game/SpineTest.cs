@@ -18,6 +18,9 @@ public class SpineTest : MonoBehaviour
 
     private Coroutine spineCoroutine;
 
+    [Header("AttackEffect")]
+    [SerializeField] private UnityEngine.Events.UnityEvent attackEffect;
+
     void Awake()
     {
         if (skeleton == null)
@@ -108,5 +111,6 @@ public class SpineTest : MonoBehaviour
     private void PlayEffect()
     {
         Debug.Log("play effect");
+        attackEffect?.Invoke();
     }
 }

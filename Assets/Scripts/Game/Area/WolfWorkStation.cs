@@ -63,6 +63,11 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         }
     }
 
+    public void TEST_DisableDrawing()
+    {
+        OnSketchOff?.Invoke();
+    }
+
     public void Interactive()
     {
         switch (workStationType)

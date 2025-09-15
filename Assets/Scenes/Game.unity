@@ -219,9 +219,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1918038616}
-        m_TargetAssemblyTypeName: MixerButtonController, Assembly-CSharp
-        m_MethodName: SetDefaultCursor
+      - m_Target: {fileID: 1748574275}
+        m_TargetAssemblyTypeName: WolfWorkStation, Assembly-CSharp
+        m_MethodName: TEST_DisableDrawing
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -438,10 +438,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1918038616}
         m_TargetAssemblyTypeName: MixerButtonController, Assembly-CSharp
         m_MethodName: SelectColor
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 916304454}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -635,6 +647,10 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 1918038616}
+    - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ColorButton_White
       objectReference: {fileID: 0}
     - target: {fileID: 2393822892865706244, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: m_Name
@@ -1260,7 +1276,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1918038616}
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ColorButton_Blue
@@ -1630,7 +1646,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &916304455
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2230,7 +2246,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1918038616}
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ColorButton_Yellow
@@ -3736,7 +3752,7 @@ PrefabInstance:
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1918038616}
     - target: {fileID: 594313669230777494, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ColorButton_Red
@@ -3882,6 +3898,7 @@ GameObject:
   - component: {fileID: 1711070375}
   - component: {fileID: 1711070374}
   - component: {fileID: 1711070373}
+  - component: {fileID: 1711070378}
   - component: {fileID: 1711070372}
   - component: {fileID: 1711070371}
   - component: {fileID: 1711070370}
@@ -3912,18 +3929,6 @@ MonoBehaviour:
   OnAttack:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1711070377}
-        m_TargetAssemblyTypeName: EffectController, Assembly-CSharp
-        m_MethodName: PlayEffect
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1711070372}
         m_TargetAssemblyTypeName: SpineTest, Assembly-CSharp
         m_MethodName: TestPlayAttackSpine
@@ -3968,6 +3973,21 @@ MonoBehaviour:
   skeleton: {fileID: 1711070373}
   spineAniName: 0
   currentTrack: 0
+  attackEffect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1711070377}
+        m_TargetAssemblyTypeName: EffectController, Assembly-CSharp
+        m_MethodName: PlayEffect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1711070373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4095,6 +4115,33 @@ MonoBehaviour:
   effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
   effectPivot: {fileID: 956393162}
   test_data: {fileID: 11400000, guid: 207dc1979a392674ebc685a34455abaa, type: 2}
+--- !u!50 &1711070378
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711070369}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1718752358
 GameObject:
   m_ObjectHideFlags: 0
@@ -4954,6 +5001,9 @@ MonoBehaviour:
   skeleton: {fileID: 0}
   spineAniName: 0
   currentTrack: 0
+  attackEffect:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1918038608
 GameObject:
   m_ObjectHideFlags: 0
@@ -5720,6 +5770,9 @@ MonoBehaviour:
   skeleton: {fileID: 2097561437}
   spineAniName: 0
   currentTrack: 0
+  attackEffect:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2097561437
 MonoBehaviour:
   m_ObjectHideFlags: 0
