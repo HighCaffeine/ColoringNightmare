@@ -17,5 +17,4 @@ MonoBehaviour:
   maxHp: 5
   dmg: 1
   speed: 5
-  def: 0
-  isSpine: 0
+  isSpine: 1

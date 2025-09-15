@@ -21,11 +21,11 @@ public class CharacterData : ScriptableObject
     public int maxHp = 5;
     public int dmg = 1;
     public float speed = 5.0f;
-    public int def = 0;
 
     [Space(5f)]
     [Header("Spine일 때만 체크해주세요")]
     public bool isSpine = false;
+
 }
 
 public class Character : MonoBehaviour
@@ -37,6 +37,8 @@ public class Character : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rigid;
+
+    public Spine.Unity.SkeletonAnimation skeleton;
 
     protected virtual void Awake()
     {
@@ -76,13 +78,15 @@ public class Character : MonoBehaviour
     }
     protected virtual void Flip(bool isRight)
     {
-        if (spriteRenderer != null)
+        if (info != null && info.isSpine && skeleton != null)
+        {
+            float currentScaleX = skeleton.skeleton.ScaleX;
+            float newScaleX = Mathf.Abs(currentScaleX) * (isRight ? -1f : 1f);
+            skeleton.skeleton.ScaleX = newScaleX;
+        }
+        else if (spriteRenderer != null)
         {
             spriteRenderer.flipX = isRight;
-        }
-        else
-        {
-            //spine은 mesh기반
         }
     }
 
