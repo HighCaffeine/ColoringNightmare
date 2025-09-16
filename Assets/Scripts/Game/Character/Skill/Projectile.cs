@@ -2,19 +2,17 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float speed = 10f;
-    public float lifetime = 2f;
+    private float speed;
     private Vector3 direction;
 
-    public void Init(Vector3 dir)
+    public void Init(float lifeTime)
     {
-        direction = dir.normalized;
-        Destroy(gameObject, lifetime); // lifetime 후 자동 삭제
+        Destroy(gameObject, lifeTime); // lifetime 후 자동 삭제
     }
 
     void Update()
     {
-        transform.position += direction * speed * Time.deltaTime;
+        transform.position += direction.normalized * speed * Time.deltaTime;
     }
 
     void OnTriggerEnter2D(Collider2D other)

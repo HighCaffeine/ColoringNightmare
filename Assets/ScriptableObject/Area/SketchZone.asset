@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SketchZone
   m_EditorClassIdentifier: 
   pos: {x: 5.61, y: 0.87, z: 0}
-  size: {x: 1.42, y: 0.57, z: 0}
+  size: {x: 1.42, y: 0.81, z: 0}
   offset: {x: 0, y: 0, z: 0}

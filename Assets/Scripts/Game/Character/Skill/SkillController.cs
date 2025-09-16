@@ -4,6 +4,8 @@ public class SkillController : MonoBehaviour
 {
     public GameObject projectilePrefab;
 
+    public float test_lifeTime = 5f;
+
     public void UseSkill()
     {
         Debug.Log("weapon created");
@@ -26,7 +28,7 @@ public class SkillController : MonoBehaviour
             Vector3 dir = rot * forward;
 
             GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            proj.GetComponent<Projectile>().Init(dir);
+            proj.GetComponent<Projectile>().Init(test_lifeTime);
         }
     }
 

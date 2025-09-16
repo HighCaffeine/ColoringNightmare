@@ -11,12 +11,13 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [SerializeField] private float minPointDis = 0.02f; // 포인트간 최소 거리
     [SerializeField] private Color lineColor = Color.white;
     [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f; //채도
+    [Range(40.0f, 80.0f)][SerializeField] private float similarityLimit = 60.0f;
 
-    [Header("이어 그리기 허용 범위")][SerializeField] private float lineJoinDistance = 0.5f;
+    [Header("Line Min Dis")][SerializeField] private float lineJoinDistance = 0.5f;
 
-    [Header("그릴 레이어")][SerializeField] private LayerMask targetLayer;
+    [Header("Drawing Layer")][SerializeField] private LayerMask targetLayer;
 
-    [Header("스프라이트 데이터")]
+    [Header("Sprite Data")]
     [SerializeField] private int pixelPerUnit = 100;
     [SerializeField] private int paddingPixels = 12;
     [SerializeField] private float drawPlaneZValue = 0.0f; //2d라 기본 0.0f로 설정
@@ -207,7 +208,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         //유사도 
         var (cos, jaccad, dice) = CalculateSimilarity();
 
-        if (dice * 100.0f > 70)
+        if (dice * 100.0f > similarityLimit)
         {
             SpawnDrawObj();
         }
@@ -410,7 +411,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         obj.AddComponent<Weapon>();
         obj.tag = "Weapon";
 
-        spriteRender.sortingOrder = targetLayer;
+        spriteRender.sortingOrder = 0;
         spriteRender.sprite = s;
 
         obj.transform.position = refPivotWorld;

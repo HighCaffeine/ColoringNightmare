@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: TEST_3Projectile
   m_EditorClassIdentifier: 
   sprites:
-  - {fileID: -1407807914, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
-  - {fileID: 1489088883, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
-  - {fileID: -699423710, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
-  - {fileID: -799152161, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
-  - {fileID: 993668530, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
-  - {fileID: -1571291943, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
-  - {fileID: -1824543929, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
-  - {fileID: -1140803558, guid: 480e1f5ca42adac43a81bfabb715c819, type: 3}
+  - {fileID: -4234011872397407801, guid: 09196105196a35347967b1c73e094d08, type: 3}
+  - {fileID: -897276794920469232, guid: 09196105196a35347967b1c73e094d08, type: 3}
+  - {fileID: 290799554661695886, guid: 09196105196a35347967b1c73e094d08, type: 3}
+  - {fileID: -7009964015988617706, guid: 09196105196a35347967b1c73e094d08, type: 3}
+  - {fileID: 4370848314737359592, guid: 09196105196a35347967b1c73e094d08, type: 3}
+  - {fileID: -6362672644779036344, guid: 09196105196a35347967b1c73e094d08, type: 3}
+  - {fileID: 7173996484624164495, guid: 09196105196a35347967b1c73e094d08, type: 3}
+  - {fileID: 3900486432262702067, guid: 09196105196a35347967b1c73e094d08, type: 3}
   colorType: 0
   effectType: 0
   speed: 0.5
