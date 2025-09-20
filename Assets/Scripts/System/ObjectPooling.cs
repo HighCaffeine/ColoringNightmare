@@ -22,6 +22,7 @@ public class ObjectPooling<ManagerType, PoolType> : GenericSingleton<ManagerType
     //내부 변수용
     public void SetPrefab(PoolType newPrefab) => prefab = newPrefab;
     public void SetPoolCount(int count) => poolCount = count;
+    public void SetParent(Transform parent) => storageParent = parent;
 
     public Stack<PoolType> GetPoolStack() => pool; // 풀 상태 확인용
     //

@@ -10,13 +10,17 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         Count,
     }
 
+    [Header("EachParent")]
+    [SerializeField] private Transform generalPoolParent;
+    [SerializeField] private Transform specialPoolParent;
+
     [Header("Prefabs")]
-    public MonsterController generalPrefab;
-    public SpecialMonsterController specialPrefab;
+    [SerializeField] private MonsterController generalPrefab;
+    [SerializeField] private SpecialMonsterController specialPrefab;
 
     [Header("Pool Count")]
-    public int generalPoolCount = 10;
-    public int specialPoolCount = 5;
+    [SerializeField] private int generalPoolCount = 10;
+    [SerializeField] private int specialPoolCount = 5;
 
     private ObjectPooling<MonsterManager, MonsterController> generalPool;
     private ObjectPooling<MonsterManager, SpecialMonsterController> specialPool;
@@ -26,11 +30,13 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     {
         // 일반 몬스터 풀
         generalPool = gameObject.AddComponent<ObjectPooling<MonsterManager, MonsterController>>();
+        generalPool.SetParent(generalPoolParent);
         generalPool.SetPrefab(generalPrefab);
         generalPool.SetPoolCount(generalPoolCount);
 
         // 스페셜 몬스터 풀
         specialPool = gameObject.AddComponent<ObjectPooling<MonsterManager, SpecialMonsterController>>();
+        specialPool.SetParent(specialPoolParent);
         specialPool.SetPrefab(specialPrefab);
         specialPool.SetPoolCount(specialPoolCount);
     }
