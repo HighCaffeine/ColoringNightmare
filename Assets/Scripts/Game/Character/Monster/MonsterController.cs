@@ -16,6 +16,8 @@ public class MonsterController : Character, OnReturnPool<MonsterController>
         info = data;
         currentHP = info.maxHp;
         state = StateType.Idle;
+
+        Flip(true);
     }
 
     void Update()
@@ -34,6 +36,8 @@ public class MonsterController : Character, OnReturnPool<MonsterController>
     public void Init(OnReturnPoolEvent<MonsterController> onReturnPoolEvent)
     {
         OnReturnPoolEvent = onReturnPoolEvent;
+
+        Flip(true);
     }
 
     protected override void Idle()
@@ -50,9 +54,9 @@ public class MonsterController : Character, OnReturnPool<MonsterController>
     protected override void Move()
     {
         base.Move();
+
         Vector2 dir = Vector2.right;
-        MoveCharacter(new AreaData() { pos = Vector2.zero, size = new Vector2(20, 20) }, dir, null);
-        Flip(true);
+        MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
     }
 
     protected override void Attack()

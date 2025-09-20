@@ -88,7 +88,7 @@ public class PlayerController : Character
     {
         if (axisX == 0.0f && axisY == 0.0f) return;
 
-        MoveCharacter(moveArea, input, OnMoveAction);
+        MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
     }
 
     protected override void Idle()

@@ -36,13 +36,15 @@ public class SpecialMonsterController : MonsterController, OnReturnPool<SpecialM
             }
         }
 
-        MoveCharacter(new AreaData() { pos = Vector2.zero, size = new Vector2(20, 20) }, dir, null);
+        MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
         Flip(dir.x > 0);
     }
 
     public void Init(OnReturnPoolEvent<SpecialMonsterController> onReturnPoolEvent)
     {
         OnReturnPoolEvent = onReturnPoolEvent;
+
+        Flip(true);
     }
 
     protected override void Dead()

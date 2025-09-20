@@ -25,6 +25,7 @@ public class ObjectPooling<ManagerType, PoolType> : GenericSingleton<ManagerType
     public void SetParent(Transform parent) => storageParent = parent;
 
     public Stack<PoolType> GetPoolStack() => pool; // 풀 상태 확인용
+    public void Setup() { Awake(); }
     //
 
     protected new void Awake()
@@ -36,8 +37,8 @@ public class ObjectPooling<ManagerType, PoolType> : GenericSingleton<ManagerType
         GenerateStorageParent();
 
         Pooling();
-
     }
+
 
     protected void Start()
     {

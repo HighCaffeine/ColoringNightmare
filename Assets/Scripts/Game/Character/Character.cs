@@ -25,7 +25,7 @@ public class Character : MonoBehaviour
     [Header("현재 상태")]
     public CharacterData info;
     protected StateType state;
-    protected int currentHP;
+    [SerializeField] protected int currentHP;
 
     protected bool isDead => currentHP <= 0;
 
@@ -35,7 +35,7 @@ public class Character : MonoBehaviour
 
     protected virtual void Awake()
     {
-        currentHP = info.maxHp;
+        //currentHP = info.maxHp;
         state = StateType.Idle;
 
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -106,7 +106,7 @@ public class Character : MonoBehaviour
         rigid.linearVelocity = Vector2.zero;
     }
 
-    protected virtual void MoveCharacter(AreaData area, Vector2 dir, Action<Vector2> OnMoveAction)
+    protected virtual void MoveCharacter(Bounds area, Vector2 dir, Action<Vector2> OnMoveAction)
     {
         if (dir == Vector2.zero) return;
 
@@ -115,9 +115,8 @@ public class Character : MonoBehaviour
         if (render != null) spriteHalfSize = render.bounds.extents;
 
         Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-        var areaBounds = area.GetBounds();
 
-        if (!areaBounds.Contains(newPos + spriteHalfSize) || !areaBounds.Contains(newPos - spriteHalfSize))
+        if (!area.Contains(newPos + spriteHalfSize))
         {
             rigid.linearVelocity = Vector2.zero;
             return;

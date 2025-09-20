@@ -10,6 +10,10 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         Count,
     }
 
+    [Header("Monster Obj Parent")]
+    [SerializeField] private Transform monsterObjParent;
+    [SerializeField] private AreaData monsterMoveArea;
+
     [Header("EachParent")]
     [SerializeField] private Transform generalPoolParent;
     [SerializeField] private Transform specialPoolParent;
@@ -25,20 +29,26 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     private ObjectPooling<MonsterManager, MonsterController> generalPool;
     private ObjectPooling<MonsterManager, SpecialMonsterController> specialPool;
 
+    public Bounds GetAreaBound() => monsterMoveArea.GetBounds();
+
 
     protected new void Awake()
     {
         // 일반 몬스터 풀
-        generalPool = gameObject.AddComponent<ObjectPooling<MonsterManager, MonsterController>>();
+        generalPool = new ObjectPooling<MonsterManager, MonsterController>();
         generalPool.SetParent(generalPoolParent);
         generalPool.SetPrefab(generalPrefab);
         generalPool.SetPoolCount(generalPoolCount);
 
+        generalPool.Setup();
+
         // 스페셜 몬스터 풀
-        specialPool = gameObject.AddComponent<ObjectPooling<MonsterManager, SpecialMonsterController>>();
+        specialPool = new ObjectPooling<MonsterManager, SpecialMonsterController>();
         specialPool.SetParent(specialPoolParent);
         specialPool.SetPrefab(specialPrefab);
         specialPool.SetPoolCount(specialPoolCount);
+
+        specialPool.Setup();
     }
 
     // 풀에서 가져오기
@@ -47,6 +57,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         var monster = generalPool.GetPool();
         monster.transform.position = pos;
         monster.gameObject.SetActive(true);
+        monster.transform.SetParent(monsterObjParent);
+
         return monster;
     }
 
@@ -55,6 +67,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         var monster = specialPool.GetPool();
         monster.transform.position = pos;
         monster.gameObject.SetActive(true);
+        monster.transform.SetParent(monsterObjParent);
+
         return monster;
     }
 
