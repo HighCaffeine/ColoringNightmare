@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class SkillController : MonoBehaviour
 {
+    //아래 데이터들 skilldata로 추후 수정
     public GameObject projectilePrefab;
+    [SerializeField] private float skillSpeed = 5f;
 
     public float test_lifeTime = 5f;
 
@@ -28,7 +30,7 @@ public class SkillController : MonoBehaviour
             Vector3 dir = rot * forward;
 
             GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            proj.GetComponent<Projectile>().Init(test_lifeTime);
+            proj.GetComponent<Projectile>().Init(test_lifeTime, skillSpeed, dir);
         }
     }
 

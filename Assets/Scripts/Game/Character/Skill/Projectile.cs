@@ -5,8 +5,10 @@ public class Projectile : MonoBehaviour
     private float speed;
     private Vector3 direction;
 
-    public void Init(float lifeTime)
+    public void Init(float lifeTime, float speed, Vector2 dir)
     {
+        this.speed = speed;
+        this.direction = dir;
         Destroy(gameObject, lifeTime); // lifetime 후 자동 삭제
     }
 

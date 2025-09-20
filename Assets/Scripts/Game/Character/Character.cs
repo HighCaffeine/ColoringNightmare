@@ -1,17 +1,9 @@
 using System;
 using UnityEngine;
 
-public enum StateType
-{
-    None = -1,
-    Idle,
-    Attack,
-    Move,
-    Dead,
-    //Interactive,
-    Count,
-}
+public enum StateType { None = -1, Idle, Attack, Move, Dead, Count }
 
+[Serializable]
 [CreateAssetMenu(menuName = "Character/CharacterInfo")]
 public class CharacterData : ScriptableObject
 {
@@ -21,11 +13,11 @@ public class CharacterData : ScriptableObject
     public int maxHp = 5;
     public int dmg = 1;
     public float speed = 5.0f;
+    public float attackDelay = 1.0f;
 
     [Space(5f)]
     [Header("Spine일 때만 체크해주세요")]
     public bool isSpine = false;
-
 }
 
 public class Character : MonoBehaviour
@@ -35,9 +27,10 @@ public class Character : MonoBehaviour
     protected StateType state;
     protected int currentHP;
 
+    protected bool isDead => currentHP <= 0;
+
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rigid;
-
     public Spine.Unity.SkeletonAnimation skeleton;
 
     protected virtual void Awake()
@@ -49,7 +42,16 @@ public class Character : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    protected virtual void Idle() { Debug.Log($"[State] Idle : {info.name}"); }
+    [Header("Effect Rotate Pivot")]
+    [SerializeField] private Transform effectPivot;
+
+    private void FlipEffectPivot(bool isRight)
+    {
+        Vector3 s = effectPivot.transform.localScale;
+        s.x = isRight ? -1 : 1;
+    }
+
+    protected virtual void Idle() { Debug.Log($"[State] Idle : {info.characterName}"); }
     protected virtual void Attack() { Debug.Log($"[State] Attack : {info.characterName}"); }
     protected virtual void Dead() { Debug.Log($"[State] Dead : {info.characterName}"); }
     protected virtual void Move() { Debug.Log($"[State] Move : {info.characterName}"); }
@@ -58,24 +60,18 @@ public class Character : MonoBehaviour
     {
         if (state == newState) return;
 
-        Debug.Log($"{info.characterName} Change State: {state} -> {newState}");
         state = newState;
 
         switch (state)
         {
-            case StateType.Idle:
-                Idle();
-                break;
-            case StateType.Attack:
-                Attack();
-                break;
-            case StateType.Move:
-                break;
-            case StateType.Dead:
-                Dead();
-                break;
+            case StateType.Idle: Idle(); break;
+            case StateType.Move: Move(); break;
+            case StateType.Attack: Attack(); break;
+            case StateType.Dead: Dead(); break;
         }
     }
+
+
     protected virtual void Flip(bool isRight)
     {
         if (info != null && info.isSpine && skeleton != null)
@@ -83,6 +79,8 @@ public class Character : MonoBehaviour
             float currentScaleX = skeleton.skeleton.ScaleX;
             float newScaleX = Mathf.Abs(currentScaleX) * (isRight ? -1f : 1f);
             skeleton.skeleton.ScaleX = newScaleX;
+
+            FlipEffectPivot(isRight);
         }
         else if (spriteRenderer != null)
         {
@@ -114,14 +112,11 @@ public class Character : MonoBehaviour
 
         Vector2 spriteHalfSize = Vector2.zero;
         SpriteRenderer render = GetComponent<SpriteRenderer>();
-        if (render != null)
-        {
-            spriteHalfSize = render.bounds.extents;
-        }
+        if (render != null) spriteHalfSize = render.bounds.extents;
 
         Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-
         var areaBounds = area.GetBounds();
+
         if (!areaBounds.Contains(newPos + spriteHalfSize) || !areaBounds.Contains(newPos - spriteHalfSize))
         {
             rigid.linearVelocity = Vector2.zero;
@@ -129,7 +124,6 @@ public class Character : MonoBehaviour
         }
 
         rigid.linearVelocity = dir * info.speed;
-
         OnMoveAction?.Invoke(newPos);
 
         if (dir.x != 0) Flip(dir.x > 0);
