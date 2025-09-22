@@ -106,7 +106,7 @@ public class PlayerController : Character
 
     protected new void Move(Vector2 dir)
     {
-        //base.Move(dir);
+        base.Move(dir);
 
         input = moveAction.ReadValue<Vector2>();
 
