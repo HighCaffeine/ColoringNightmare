@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e0480d43558b764792d3f6b8a7a8949, type: 3}
   m_Name: WolfArea
   m_EditorClassIdentifier: 
-  pos: {x: 5.64, y: 1.9, z: 0}
-  size: {x: 4.44, y: 2.56, z: 0}
+  pos: {x: 5.64, y: 1.82, z: 0}
+  size: {x: 4.03, y: 2.41, z: 0}
   offset: {x: 0, y: 0, z: 0}

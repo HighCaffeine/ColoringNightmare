@@ -467,7 +467,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         var edge = obj.AddComponent<EdgeCollider2D>();
         edge.points = localPoints.ToArray();
-
+        edge.isTrigger = true;
         edge.edgeRadius = lineWidth * 0.5f;
     }
 

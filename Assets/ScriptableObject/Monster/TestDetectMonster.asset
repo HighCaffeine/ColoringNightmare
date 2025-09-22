@@ -20,6 +20,6 @@ MonoBehaviour:
   attackDelay: 1
   isSpine: 0
   colorType: 0
-  type: 0
-  attackRange: 1.5
-  dashSpeed: 1
+  type: 1
+  attackRange: 2.5
+  dashSpeed: 5

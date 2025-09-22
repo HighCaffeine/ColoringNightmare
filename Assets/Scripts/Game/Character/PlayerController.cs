@@ -11,6 +11,11 @@ public enum PlayerType
 
 public class PlayerController : Character
 {
+
+    [Header("TEST Event")]
+    [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerDead;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerRespawn;
+
     [Header("Interactive")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnInteractive;
 
@@ -97,6 +102,60 @@ public class PlayerController : Character
 
         axisX = 0.0f;
         axisY = 0.0f;
+    }
+
+    public new void TakeDamage(int amount)
+    {
+        base.TakeDamage(amount);
+
+        if (isDead)
+        {
+            OnPlayerDead?.Invoke();
+            LockMovement();
+            StartCoroutine(RespawnCoroutine(5f)); // 5초 후 부활
+        }
+    }
+
+    public void OnGameOver()
+    {
+        //OnPlayerDead?.Invoke();
+        LockMovement();
+    }
+
+    private void UnlockMovement()
+    {
+        switch (playerType)
+        {
+            case PlayerType.Player1:
+                playerInput.Player1.Enable();
+                break;
+            case PlayerType.Player2: //2번은 죽지 않음
+                playerInput.Player2.Enable();
+                break;
+        }
+    }
+
+    private System.Collections.IEnumerator RespawnCoroutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        OnPlayerRespawn?.Invoke();
+        currentHP = info.maxHp;
+        ChangeState(StateType.Idle);
+        UnlockMovement();
+    }
+
+    private void LockMovement()
+    {
+        switch (playerType)
+        {
+            case PlayerType.Player1:
+                playerInput.Player1.Disable();
+                break;
+            case PlayerType.Player2:
+                playerInput.Player2.Disable();
+                break;
+        }
     }
 
     protected override void Attack()

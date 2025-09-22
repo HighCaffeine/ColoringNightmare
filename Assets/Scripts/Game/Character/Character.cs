@@ -90,7 +90,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    protected virtual void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         currentHP -= amount;
 
@@ -110,21 +110,31 @@ public class Character : MonoBehaviour
 
     protected virtual void MoveCharacter(Bounds area, Vector2 dir, Action<Vector2> OnMoveAction)
     {
-        if (dir == Vector2.zero) return;
-
-        Vector2 spriteHalfSize = Vector2.zero;
-        SpriteRenderer render = GetComponent<SpriteRenderer>();
-        if (render != null) spriteHalfSize = render.bounds.extents;
-
-        Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-
-        if (!area.Contains(newPos + spriteHalfSize))
+        if (dir == Vector2.zero)
         {
             rigid.linearVelocity = Vector2.zero;
             return;
         }
 
-        rigid.linearVelocity = dir * info.speed;
+        Vector2 spriteHalfSize = Vector2.zero;
+        SpriteRenderer render = GetComponent<SpriteRenderer>();
+        if (render != null)
+        {
+            spriteHalfSize = render.bounds.extents;
+        }
+
+        Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
+
+        Vector2 minPos = newPos - spriteHalfSize;
+        Vector2 maxPos = newPos + spriteHalfSize;
+
+        if (!area.Contains(maxPos))
+        {
+            rigid.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        rigid.MovePosition(newPos);
         OnMoveAction?.Invoke(newPos);
 
         if (dir.x != 0) Flip(dir.x > 0);

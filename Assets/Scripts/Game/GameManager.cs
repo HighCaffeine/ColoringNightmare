@@ -10,4 +10,9 @@ public class GameManager : GenericSingleton<GameManager>
 
         Application.targetFrameRate = targetFrameRate;
     }
+
+    public void GameOver()
+    {
+        Time.timeScale = 0.0f;
+    }
 }

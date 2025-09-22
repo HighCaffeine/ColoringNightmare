@@ -23,8 +23,11 @@ public class Projectile : MonoBehaviour
         // 몬스터 태그
         if (other.CompareTag("Monster"))
         {
-            // 몬스터에 데미지 주기
-            Debug.Log($"Hit Monster: {other.name}");
+            Character monster = other.GetComponent<Character>();
+            if (monster != null)
+            {
+                monster.TakeDamage(1);  //테스트 1데미지
+            }
             Destroy(gameObject);
         }
     }

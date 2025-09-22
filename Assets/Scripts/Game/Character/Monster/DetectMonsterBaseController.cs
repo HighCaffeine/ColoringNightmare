@@ -100,9 +100,25 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         float dashTime = 0.2f;
         float elapsed = 0f;
 
+        Flip(dir.x < 0);
+
         while (elapsed <= dashTime)
         {
             transform.position += (Vector3)dir * monsterData.DashSpeed * Time.deltaTime;
+
+            // 플레이어 충돌 감지
+            Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.3f);
+            if (hit != null && hit.CompareTag("Player1"))
+            {
+                PlayerController player = hit.GetComponent<PlayerController>();
+                if (player != null)
+                {
+                    player.TakeDamage(monsterData.dmg); // 몬스터 대미지 적용
+                    isDashing = false;
+                    ChangeState(StateType.Move);
+                    yield break; // 대미지 주면 dash 종료
+                }
+            }
 
             // 맵 경계 체크
             var bounds = MonsterManager.Instance.GetAreaBound();

@@ -24,5 +24,7 @@ public class WeaponController : MonoBehaviour
         boneFollower.followBoneRotation = true;
         boneFollower.followLocalScale = true;
         boneFollower.followSkeletonFlip = true;
+
+        boneFollower.followLocalScale = false;
     }
 }

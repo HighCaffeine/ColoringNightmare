@@ -10,6 +10,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         Count,
     }
 
+    [SerializeField] private UnityEngine.Events.UnityEvent OnSubWorldHP;
+
     [Header("Monster Obj Parent")]
     [SerializeField] private Transform monsterObjParent;
     [SerializeField] private AreaData monsterMoveArea;
@@ -117,5 +119,10 @@ public class MonsterManager : GenericSingleton<MonsterManager>
 
                 break;
         }
+    }
+
+    public void SubWorldHpEvent()
+    {
+        OnSubWorldHP?.Invoke();
     }
 }

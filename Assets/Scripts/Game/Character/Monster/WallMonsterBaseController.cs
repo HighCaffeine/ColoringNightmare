@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterBaseController<T>>
     where T : MonsterData
@@ -68,16 +69,32 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     protected new virtual void Move(Vector2 dir)
     {
-        // 이동
         MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
         Flip(dir.x > 0);
 
-        // 오른쪽 bound 끝 체크
+        Vector2 spriteHalfSize = Vector2.zero;
+        SpriteRenderer render = GetComponent<SpriteRenderer>();
+        if (render != null) spriteHalfSize = render.bounds.extents;
+
+        Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
+
         var bounds = MonsterManager.Instance.GetAreaBound();
-        if (transform.position.x >= bounds.max.x)
+        if (newPos.x + spriteHalfSize.x >= bounds.max.x)
         {
-            ChangeState(StateType.Attack);
+            StartCoroutine(SelfDestructCoroutine(2f)); // 2초 후 폭발
         }
+    }
+
+    private IEnumerator SelfDestructCoroutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        //폭발 이펙트 추가 필요
+        if (ani != null) ani.SetTrigger("Explode");
+
+        MonsterManager.Instance.SubWorldHpEvent();
+
+        ChangeState(StateType.Dead);
     }
 
     protected override void Attack()
