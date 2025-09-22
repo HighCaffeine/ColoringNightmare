@@ -21,8 +21,8 @@ public class EffectController : MonoBehaviour
         GameObject effectInstance = Instantiate(effectPrefab, transform.position, Quaternion.identity);
 
         effectInstance.transform.position = effectPivot.position;
-
-        effectInstance.GetComponent<EffectPlayer>().Play(test_data);
+        bool isRight = effectPivot.parent.transform.localScale.x < 0;
+        effectInstance.GetComponent<EffectPlayer>().Play(isRight, test_data);
     }
 }
 

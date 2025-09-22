@@ -5847,6 +5847,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 5336017889468166996, guid: d297aaa892fc4d94e84814af7498e635, type: 3}
   skillSpeed: 5
+  effectPivot: {fileID: 400480535}
   test_lifeTime: 5
 --- !u!61 &1711070380
 BoxCollider2D:

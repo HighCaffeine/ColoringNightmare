@@ -106,12 +106,17 @@ public class PlayerController : Character
 
     protected new void Move(Vector2 dir)
     {
-        base.Move(dir);
+        //base.Move(dir);
 
         input = moveAction.ReadValue<Vector2>();
 
         axisX = input.x;
         axisY = input.y;
+
+        if (axisX != 0.0f)
+        {
+            Flip(axisX > 0);
+        }
     }
 
     protected override void Dead()

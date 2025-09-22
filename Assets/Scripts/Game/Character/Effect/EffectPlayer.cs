@@ -10,8 +10,9 @@ public class EffectPlayer : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Play(EffectData data)
+    public void Play(bool isRight, EffectData data)
     {
+        transform.localScale = new Vector3(isRight ? -1 : 1, 1, 1);
         StartCoroutine(PlayAnimation(data));
     }
 

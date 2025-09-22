@@ -22,6 +22,8 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     protected override void Move(Vector2 dir)
     {
+        if (isDashing) return;
+
         // 탐지 주기 타이머
         detectTimer += Time.deltaTime;
         if (detectTimer >= detectInterval)
@@ -37,7 +39,9 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
             // 탐지 범위 벗어나면 초기화
             if (distance > detectionRange)
+            {
                 targetPlayer = null;
+            }
             else
             {
                 dir = (targetPlayer.position - transform.position).normalized;

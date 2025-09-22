@@ -49,6 +49,8 @@ public class Character : MonoBehaviour
     {
         Vector3 s = effectPivot.transform.localScale;
         s.x = isRight ? -1 : 1;
+
+        effectPivot.transform.localScale = s;
     }
 
     protected virtual void Idle() { Debug.Log($"[State] Idle : {info.characterName}"); }
