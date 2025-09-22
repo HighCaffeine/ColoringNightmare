@@ -2010,7 +2010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 721190145}
   m_Layer: 0
-  m_Name: SpecialPoolParent
+  m_Name: WallPoolParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2110,6 +2110,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1590202356}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 98.585}
+--- !u!1 &843801322
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 843801323}
+  m_Layer: 0
+  m_Name: BossPoolParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &843801323
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843801322}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1605676712}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &859474388
 GameObject:
   m_ObjectHideFlags: 0
@@ -2330,7 +2361,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &916304455
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3888,7 +3919,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1496682692}
   m_Layer: 0
-  m_Name: GeneralPoolParent
+  m_Name: DetectPoolParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4331,6 +4362,7 @@ Transform:
   m_Children:
   - {fileID: 1496682692}
   - {fileID: 721190145}
+  - {fileID: 843801323}
   - {fileID: 127427731}
   m_Father: {fileID: 1525301309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4348,12 +4380,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterObjParent: {fileID: 127427731}
   monsterMoveArea: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
-  generalPoolParent: {fileID: 1496682692}
-  specialPoolParent: {fileID: 721190145}
-  generalPrefab: {fileID: 7041716555983357352, guid: da17be82e9d3264448297e72f97a80ba, type: 3}
-  specialPrefab: {fileID: 7989198209222142309, guid: b3fd68a59abc4284ba84d6cd11d4a9fd, type: 3}
-  generalPoolCount: 10
-  specialPoolCount: 5
+  detectPoolParent: {fileID: 1496682692}
+  wallPoolParent: {fileID: 721190145}
+  bossPoolParent: {fileID: 843801323}
+  detectPrefab: {fileID: 8812368558127021436, guid: da17be82e9d3264448297e72f97a80ba, type: 3}
+  wallPrefab: {fileID: 1784528325475878177, guid: b3fd68a59abc4284ba84d6cd11d4a9fd, type: 3}
+  bossPrefab: {fileID: -5899581110599946469, guid: 44a6efeafa8141c439fe856a0fe49659, type: 3}
+  detectPoolCount: 10
+  wallPoolCount: 5
+  bossPoolCount: 1
 --- !u!1 &1638373634
 GameObject:
   m_ObjectHideFlags: 0
@@ -4777,6 +4812,7 @@ GameObject:
   - component: {fileID: 1711070375}
   - component: {fileID: 1711070374}
   - component: {fileID: 1711070373}
+  - component: {fileID: 1711070380}
   - component: {fileID: 1711070378}
   - component: {fileID: 1711070372}
   - component: {fileID: 1711070371}
@@ -5052,6 +5088,52 @@ MonoBehaviour:
   projectilePrefab: {fileID: 5336017889468166996, guid: d297aaa892fc4d94e84814af7498e635, type: 3}
   skillSpeed: 5
   test_lifeTime: 5
+--- !u!61 &1711070380
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711070369}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.060087204, y: 2.9134724}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 4.5602255, y: 5.7953978}
+  m_EdgeRadius: 0
 --- !u!1 &1718752358
 GameObject:
   m_ObjectHideFlags: 0
@@ -7096,7 +7178,7 @@ PrefabInstance:
     - target: {fileID: 6350002001767410727, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 2063826154672905881, guid: 5a59fe4c6c9d156439c7792fde170af7, type: 3}
+      objectReference: {fileID: 21300000, guid: 5a59fe4c6c9d156439c7792fde170af7, type: 3}
     - target: {fileID: 6350002001767410727, guid: 74a85bda22099c742bd44688474fed2c, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -7277,6 +7359,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3929275075383708562, guid: b3fd68a59abc4284ba84d6cd11d4a9fd, type: 3}
+      propertyPath: spriteRender
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784528325475878177, guid: b3fd68a59abc4284ba84d6cd11d4a9fd, type: 3}
+      propertyPath: spriteRender
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3748581799248991654, guid: b3fd68a59abc4284ba84d6cd11d4a9fd, type: 3}
       propertyPath: m_Name
       value: Monster
@@ -7320,10 +7410,6 @@ PrefabInstance:
     - target: {fileID: 7865639996380949444, guid: b3fd68a59abc4284ba84d6cd11d4a9fd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7989198209222142309, guid: b3fd68a59abc4284ba84d6cd11d4a9fd, type: 3}
-      propertyPath: spriteRender
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

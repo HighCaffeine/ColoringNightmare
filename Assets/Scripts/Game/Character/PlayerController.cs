@@ -49,7 +49,7 @@ public class PlayerController : Character
 
                 //Move Callback
                 playerInput.Player1.Move.started += callback => { ChangeState(StateType.Move); };
-                playerInput.Player1.Move.performed += callback => Move();
+                playerInput.Player1.Move.performed += callback => Move(Vector2.zero);
                 playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
 
                 playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); };
@@ -65,7 +65,7 @@ public class PlayerController : Character
 
                 //Move Callback
                 playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
-                playerInput.Player2.Move.performed += callback => { Move(); };
+                playerInput.Player2.Move.performed += callback => { Move(Vector2.zero); };
                 playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
 
                 playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
@@ -104,9 +104,9 @@ public class PlayerController : Character
         base.Attack();
     }
 
-    protected new void Move()
+    protected new void Move(Vector2 dir)
     {
-        base.Move();
+        //base.Move(dir);
 
         input = moveAction.ReadValue<Vector2>();
 

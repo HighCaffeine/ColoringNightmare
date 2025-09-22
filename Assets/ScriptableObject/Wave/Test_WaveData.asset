@@ -17,5 +17,6 @@ MonoBehaviour:
   waveType: 1
   typeValue: 10
   monsterDatas:
-  - {fileID: 11400000, guid: f586624e85d60e8499ecb56b2635fc7a, type: 2}
+  - {fileID: 11400000, guid: 6d2d028bb7a8f8f41b42ffba4857a471, type: 2}
   - {fileID: 11400000, guid: 5c3ff5f27759fd44dbb7dda9e0f72701, type: 2}
+  - {fileID: 11400000, guid: d96022da81748844d9b0c6fa8e0035db, type: 2}

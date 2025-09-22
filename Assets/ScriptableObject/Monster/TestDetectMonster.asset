@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c55ad8201244c744d91d3b108bf4b9fe, type: 3}
-  m_Name: TestGeneralMonster
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  sprite: {fileID: 21300000, guid: 2d337cb7cf1e1c04a82c8616b149acf6, type: 3}
-  characterName: Test_Monster1
+  m_Script: {fileID: 0}
+  m_Name: TestDetectMonster
+  m_EditorClassIdentifier: Assembly-CSharp::DetectMonsterData
+  sprite: {fileID: 21300000, guid: f0f8cc1b46c1fb544b298b870ebddb22, type: 3}
+  characterName: Test_DetectMonster
   maxHp: 7
   dmg: 1
   speed: 0.5
@@ -22,3 +22,4 @@ MonoBehaviour:
   colorType: 0
   type: 0
   attackRange: 1.5
+  dashSpeed: 1

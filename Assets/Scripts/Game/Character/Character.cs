@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public enum StateType { None = -1, Idle, Attack, Move, Dead, Count }
+public enum StateType { None = -1, Idle, Attack, Move, Dead, Skill, Count }
 
 [Serializable]
 [CreateAssetMenu(menuName = "Character/CharacterInfo")]
@@ -54,7 +54,7 @@ public class Character : MonoBehaviour
     protected virtual void Idle() { Debug.Log($"[State] Idle : {info.characterName}"); }
     protected virtual void Attack() { Debug.Log($"[State] Attack : {info.characterName}"); }
     protected virtual void Dead() { Debug.Log($"[State] Dead : {info.characterName}"); }
-    protected virtual void Move() { Debug.Log($"[State] Move : {info.characterName}"); }
+    protected virtual void Move(Vector2 dir) { Debug.Log($"[State] Move : {info.characterName}"); }
 
     protected void ChangeState(StateType newState)
     {
@@ -65,7 +65,7 @@ public class Character : MonoBehaviour
         switch (state)
         {
             case StateType.Idle: Idle(); break;
-            case StateType.Move: Move(); break;
+            case StateType.Move: Move(Vector2.right); break;
             case StateType.Attack: Attack(); break;
             case StateType.Dead: Dead(); break;
         }
