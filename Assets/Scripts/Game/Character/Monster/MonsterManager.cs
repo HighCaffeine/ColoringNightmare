@@ -95,6 +95,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     // 몬스터 스폰
     public void SpawnMonster(MonsterData data, Vector2 pos)
     {
+        if (data == null) Debug.LogError("[SpawnMonster] data is null");
+
         switch (data.Type)
         {
             case MonsterType.Wall:
@@ -111,7 +113,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
                 break;
 
             case MonsterType.Boss:
-                var bossData = data as BossData;
+                var bossData = data as BossMonsterData;
                 if (bossData == null) return;
 
                 var boss = GetBoss(pos);

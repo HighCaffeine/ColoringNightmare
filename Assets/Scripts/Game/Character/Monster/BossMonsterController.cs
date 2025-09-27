@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BossMonsterController : Character, OnReturnPool<BossMonsterController>
 {
-    [SerializeField] private BossData bossData;
+    [SerializeField] private BossMonsterData bossData;
     private Transform targetPlayer;
     [SerializeField] private SpriteRenderer spriteRender;
     [SerializeField] private BoxCollider2D boxCollider;
@@ -14,7 +14,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
     private float skillTimer = 0f;
 
-    public void Setup(BossData data)
+    public void Setup(BossMonsterData data)
     {
         bossData = data;
         info = data;

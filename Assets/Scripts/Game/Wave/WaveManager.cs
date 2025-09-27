@@ -96,8 +96,18 @@ public class WaveManager : GenericSingleton<WaveManager>
 
     private void SetupMonster(int waveIndex, Vector2 pos)
     {
-        MonsterData data = waves[waveIndex].monsterDatas[Random.Range(0, waves[waveIndex].monsterDatas.Count)];
-        MonsterManager.Instance.SpawnMonster(data, pos);
+        MonsterDataName dataName = waves[waveIndex].monsterDatas[Random.Range(0, waves[waveIndex].monsterDatas.Count)];
+        MonsterData data = null;
+
+        SODataLoader.Instance.LoadSO(dataName.ToString(), typeof(MonsterData), so =>
+        {
+            data = so as MonsterData;
+
+            if (data != null)
+            {
+                MonsterManager.Instance.SpawnMonster(data, pos);
+            }
+        });
     }
 
     public void ClearCurrentWave()

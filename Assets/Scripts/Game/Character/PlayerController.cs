@@ -26,6 +26,9 @@ public class PlayerController : Character
     [SerializeField]
     private AreaData moveArea;
 
+    [Header("Info Data Name")]
+    [SerializeField] protected PlayerDataName addressableName;
+
     private PlayerInputActions playerInput;
     private InputAction moveAction;
 
@@ -39,10 +42,13 @@ public class PlayerController : Character
     {
         base.Awake();
 
+        SODataLoader.Instance.LoadCharacterSOData(addressableName.ToString(), OnCharacterDataLoaded);
+
         playerInput = new PlayerInputActions();
         mouseHandler = GetComponent<PlayerMouseHandler>();
         ActivePlayerInput();
     }
+
 
     private void ActivePlayerInput()
     {

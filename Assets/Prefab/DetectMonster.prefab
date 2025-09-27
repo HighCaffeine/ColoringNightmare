@@ -51,6 +51,7 @@ MonoBehaviour:
   info: {fileID: 0}
   currentHP: 0
   skeleton: {fileID: 0}
+  addressableName: 3
   effectPivot: {fileID: 0}
   spriteRender: {fileID: -6327373218514567981}
   boxCollider: {fileID: 4599698694627025172}

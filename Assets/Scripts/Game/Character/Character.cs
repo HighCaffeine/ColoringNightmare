@@ -53,6 +53,13 @@ public class Character : MonoBehaviour
         effectPivot.transform.localScale = s;
     }
 
+    protected void OnCharacterDataLoaded(CharacterData data)
+    {
+        info = data;
+        currentHP = info.maxHp;
+        Debug.Log($"[Character] Loaded {info.characterName}");
+    }
+
     protected virtual void Idle() { Debug.Log($"[State] Idle : {info.characterName}"); }
     protected virtual void Attack() { Debug.Log($"[State] Attack : {info.characterName}"); }
     protected virtual void Dead() { Debug.Log($"[State] Dead : {info.characterName}"); }
@@ -124,7 +131,6 @@ public class Character : MonoBehaviour
         }
 
         Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-
         Vector2 minPos = newPos - spriteHalfSize;
         Vector2 maxPos = newPos + spriteHalfSize;
 

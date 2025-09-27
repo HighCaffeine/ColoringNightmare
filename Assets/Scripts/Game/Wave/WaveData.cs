@@ -8,7 +8,9 @@ public class WaveData : ScriptableObject
     public AreaData spawnArea;
     public WaveManager.WaveType waveType;
     public int typeValue;   // 웨이브 타입 값 (TimeLimit 시간초, Elimination 처치수, Boss 보스처치)
-    public List<MonsterData> monsterDatas;
+
+    [Header("Monster SO Name")]
+    public List<MonsterDataName> monsterDatas;
 
     //Random Spawn 위치 가져오기
     public Vector2 GetRandomAreaPoint()
