@@ -22,6 +22,15 @@ public class PlayerController : Character
     [Header("Attack")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
 
+    [Header("Weapon")]
+    [SerializeField] private Weapon currentWeapon; // 현재 장착 중인 무기
+
+    [Header("Groggy")]
+    [SerializeField] private float groggyDuration = 5f;
+    [SerializeField] private float invincibilityDuration = 2f;
+    private bool isGroggy = false;
+    private BoxCollider2D playerCollider;
+
     [Header("Move Area")]
     [SerializeField]
     private AreaData moveArea;
@@ -38,11 +47,23 @@ public class PlayerController : Character
     public float axisX { private set; get; }
     public float axisY { private set; get; }
 
+
+    private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
+
     protected new void Awake()
     {
         base.Awake();
+        playerCollider = GetComponent<BoxCollider2D>();
 
-        SODataLoader.Instance.LoadCharacterSOData(addressableName.ToString(), OnCharacterDataLoaded);
+        SODataLoader.Instance.LoadSO<CharacterData>(addressableName.ToString(), so =>
+        {
+            CharacterData data = so;
+
+            if (data != null)
+            {
+                OnCharacterDataLoaded(data);
+            }
+        });
 
         playerInput = new PlayerInputActions();
         mouseHandler = GetComponent<PlayerMouseHandler>();
@@ -66,6 +87,8 @@ public class PlayerController : Character
                 playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); };
 
                 moveAction = playerInput.FindAction("Move");
+
+                onPlayerStateUpdate += MonsterManager.Instance.PlayerStateUpdate;
                 break;
             case PlayerType.Player2:
                 playerInput.Player2.Enable();
@@ -112,15 +135,28 @@ public class PlayerController : Character
 
     public new void TakeDamage(int amount)
     {
+        if (isGroggy) return;
+
         base.TakeDamage(amount);
 
         if (isDead)
         {
+            // 그로기 상태 진입
+            isGroggy = true;
+            onPlayerStateUpdate?.Invoke(true);
             OnPlayerDead?.Invoke();
             LockMovement();
-            StartCoroutine(RespawnCoroutine(5f)); // 5초 후 부활
+
+            // 충돌 판정 비활성화
+            if (playerCollider != null)
+            {
+                playerCollider.enabled = false;
+            }
+
+            StartCoroutine(RespawnCoroutine(groggyDuration));
         }
     }
+    public bool IsGroggy() => isGroggy;
 
     public void OnGameOver()
     {
@@ -145,10 +181,26 @@ public class PlayerController : Character
     {
         yield return new WaitForSeconds(delay);
 
+        isGroggy = false;
         OnPlayerRespawn?.Invoke();
         currentHP = info.maxHp;
         ChangeState(StateType.Idle);
         UnlockMovement();
+
+        onPlayerStateUpdate?.Invoke(false);
+
+        StartCoroutine(GroggyCoroutine(invincibilityDuration));
+    }
+
+    private System.Collections.IEnumerator GroggyCoroutine(float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            //그로기 상태 출력
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.1f;
+        }
     }
 
     private void LockMovement()
@@ -164,8 +216,28 @@ public class PlayerController : Character
         }
     }
 
+    public void EquipWeapon(Weapon weapon)
+    {
+        if (currentWeapon != null)
+        {
+            Destroy(currentWeapon.gameObject);
+        }
+
+        currentWeapon = weapon;
+    }
+
     protected override void Attack()
     {
+        if (currentWeapon != null)
+        {
+            currentWeapon.DecreaseDurability();
+
+            if (currentWeapon.CurrentDurability <= 0)
+            {
+                currentWeapon = null;
+            }
+        }
+
         base.Attack();
     }
 
