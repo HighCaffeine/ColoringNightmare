@@ -3,7 +3,7 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [SerializeField] private WeaponInkData inkData;
-    private int currentDurability;
+    [SerializeField] private int currentDurability;
     private int damage;
 
     public UnityEngine.Events.UnityEvent OnWeaponBroken;

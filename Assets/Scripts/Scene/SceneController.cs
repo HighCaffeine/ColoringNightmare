@@ -31,17 +31,59 @@ public class SceneController : GenericSingleton<SceneController>
         StartCoroutine(StartLoad(sceneName));
     }
 
+    //TEST
+    public void ReloadGameScene()
+    {
+        isLoadGameScene = false; // 초기화
+        StartCoroutine(StartLoadTEST(SceneName.Game.ToString()));
+    }
+
+    IEnumerator StartLoadTEST(string sceneName)
+    {
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PauseBGM();
+
+        AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
+        async.allowSceneActivation = false;
+        WaitForFixedUpdate wait = new WaitForFixedUpdate();
+
+        while (!async.isDone)
+        {
+            loadingBarProgress?.Invoke(async.progress);
+
+            if (async.progress >= 0.9f)
+            {
+                loadingBarProgress?.Invoke(1f);
+                yield return new WaitForSeconds(1f);
+
+                // Game 씬일 때만 플래그 true
+                isLoadGameScene = (sceneName == SceneName.Game.ToString());
+
+                async.allowSceneActivation = true;
+
+                if (isLoadGameScene && SoundManager.Instance != null)
+                    SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), true);
+
+                break;
+            }
+
+            yield return wait;
+        }
+    }
+    //TEST
+
     public delegate void LoadingBarProgress(float progress);
     public LoadingBarProgress loadingBarProgress;
 
     IEnumerator StartLoad(string sceneName)
     {
-        SoundManager.Instance.PauseBGM();
+        if (SoundManager.Instance != null) SoundManager.Instance.PauseBGM();
 
-        SceneManager.LoadSceneAsync("Loading");
+        //SceneManager.LoadSceneAsync("Loading");
 
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
         async.allowSceneActivation = false;
+        WaitForFixedUpdate wait = new WaitForFixedUpdate();
 
         while (!async.isDone)
         {
@@ -57,14 +99,12 @@ public class SceneController : GenericSingleton<SceneController>
 
                 isLoadGameScene = true;
 
-                //해당 부분 추후 맵 관련하여 결정될 경우
-                //현재 계절 / 맵 단계에 따른 BGM 변경
-                SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), true);
+                if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), true);
 
                 break;
             }
 
-            yield return new WaitForFixedUpdate();
+            yield return wait;
         }
 
         yield return null;

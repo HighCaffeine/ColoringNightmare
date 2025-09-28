@@ -85,6 +85,26 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
         }
     }
 
+    protected void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player1"))
+        {
+            PlayerController player = other.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.TakeDamage(monsterData.dmg);
+
+                Vector2 pushDirection = (other.transform.position - transform.position).normalized;
+
+                Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
+                if (playerRb != null)
+                {
+                    playerRb.AddForce(pushDirection * monsterData.PushForce, ForceMode2D.Force);
+                }
+            }
+        }
+    }
+
     private IEnumerator SelfDestructCoroutine(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -99,7 +119,9 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     protected override void Attack()
     {
-        if (isAttacking) return;
+        base.Attack();
+
+        if (isAttacking || !CanAttack()) return;
 
         StartCoroutine(WallAttackCoroutine());
     }

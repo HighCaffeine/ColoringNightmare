@@ -16,6 +16,9 @@ public class Character : MonoBehaviour
     private Rigidbody2D rigid;
     public Spine.Unity.SkeletonAnimation skeleton;
 
+    private bool canAttack = true;
+    private float attackTimer = 0f;
+
     protected virtual void Awake()
     {
         //currentHP = info.maxHp;
@@ -44,9 +47,17 @@ public class Character : MonoBehaviour
     }
 
     protected virtual void Idle() { Debug.Log($"[State] Idle : {info.characterName}"); }
-    protected virtual void Attack() { Debug.Log($"[State] Attack : {info.characterName}"); }
     protected virtual void Dead() { Debug.Log($"[State] Dead : {info.characterName}"); }
     protected virtual void Move(Vector2 dir) { Debug.Log($"[State] Move : {info.characterName}"); }
+    protected virtual void Attack()
+    {
+        if (!canAttack) return;
+
+        Invoke(nameof(InitCanAttack), info.attackDelay);
+    }
+    private void InitCanAttack() { canAttack = true; }
+    protected bool CanAttack() { return canAttack; }
+    protected bool IsAllowAttack() { return canAttack; }
 
     protected void ChangeState(StateType newState)
     {

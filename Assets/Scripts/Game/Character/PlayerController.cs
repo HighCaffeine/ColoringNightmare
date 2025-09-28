@@ -24,6 +24,7 @@ public class PlayerController : Character
 
     [Header("Weapon")]
     [SerializeField] private Weapon currentWeapon; // 현재 장착 중인 무기
+    [SerializeField] private WeaponController weaponController;
 
     [Header("Groggy")]
     [SerializeField] private float groggyDuration = 5f;
@@ -84,7 +85,7 @@ public class PlayerController : Character
                 playerInput.Player1.Move.performed += callback => Move(Vector2.zero);
                 playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
 
-                playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); };
+                playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); ChangeState(StateType.Attack); };
 
                 moveAction = playerInput.FindAction("Move");
 
@@ -133,7 +134,7 @@ public class PlayerController : Character
         axisY = 0.0f;
     }
 
-    public new void TakeDamage(int amount)
+    public override void TakeDamage(int amount)
     {
         if (isGroggy) return;
 
@@ -253,6 +254,7 @@ public class PlayerController : Character
         if (axisX != 0.0f)
         {
             Flip(axisX > 0);
+            weaponController.Flip(axisX > 0);
         }
     }
 

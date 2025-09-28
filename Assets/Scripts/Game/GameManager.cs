@@ -9,10 +9,17 @@ public class GameManager : GenericSingleton<GameManager>
         base.Awake();
 
         Application.targetFrameRate = targetFrameRate;
+
+        DontDestroyOnLoad(this);
     }
 
     public void GameOver()
     {
         Time.timeScale = 0.0f;
+    }
+
+    public void ResetTimeScale()
+    {
+        Time.timeScale = 1.0f;
     }
 }

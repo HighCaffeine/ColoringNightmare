@@ -32,8 +32,18 @@ public class WeaponController : MonoBehaviour
         boneFollower.boneName = "sword";
         boneFollower.followBoneRotation = true;
         boneFollower.followLocalScale = true;
-        boneFollower.followSkeletonFlip = true;
+        boneFollower.followSkeletonFlip = false;
 
         boneFollower.followLocalScale = false;
+    }
+
+    public void Flip(bool isRight)
+    {
+        if (weapon == null) return;
+
+        Vector3 weaponScale = weapon.transform.localScale;
+        weaponScale.x = isRight ? Mathf.Abs(weaponScale.x) : -Mathf.Abs(weaponScale.x);
+        weaponScale.y = isRight ? Mathf.Abs(weaponScale.y) : -Mathf.Abs(weaponScale.y);
+        weapon.transform.localScale = weaponScale;
     }
 }

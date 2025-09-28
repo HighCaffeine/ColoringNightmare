@@ -11,8 +11,6 @@ public class SkillController : MonoBehaviour
 
     public void UseSkill()
     {
-        Debug.Log("weapon created");
-
         if (projectilePrefab == null)
         {
             Debug.LogWarning("Projectile Prefab is missing");
