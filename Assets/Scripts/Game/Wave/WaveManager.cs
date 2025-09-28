@@ -99,7 +99,7 @@ public class WaveManager : GenericSingleton<WaveManager>
         MonsterDataName dataName = waves[waveIndex].monsterDatas[Random.Range(0, waves[waveIndex].monsterDatas.Count)];
         MonsterData data = null;
 
-        SODataLoader.Instance.LoadSO(dataName.ToString(), typeof(MonsterData), so =>
+        SODataLoader.Instance.LoadSO<MonsterData>(dataName.ToString(), so =>
         {
             data = so as MonsterData;
 
