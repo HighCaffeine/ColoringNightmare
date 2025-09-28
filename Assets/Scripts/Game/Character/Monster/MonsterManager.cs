@@ -123,6 +123,18 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         }
     }
 
+    private bool isPlayerDead = false;
+    public bool IsPlayerDead() { return isPlayerDead; }
+    public delegate bool OnPlayerIsDead();
+
+    //플레이어에게 줄 이벤트 함수
+    public delegate void OnPlayerStateUpdate(bool isDead);
+
+    public void PlayerStateUpdate(bool isDead)
+    {
+        isPlayerDead = isDead;
+    }
+
     public void SubWorldHpEvent()
     {
         OnSubWorldHP?.Invoke();
