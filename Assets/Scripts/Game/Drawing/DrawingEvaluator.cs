@@ -1,13 +1,23 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class DrawingEvaluator : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer refSprite;
     [SerializeField] private TMPro.TextMeshProUGUI similarityText;
+    [Range(0.0f, 1.0f)][SerializeField] private float similarityLimit = 0.7f;
+
+    public bool IsDrawingValid()
+    {
+        var (cosine, jaccard, dice) = CalculateSimilarity();
+
+        return dice > similarityLimit;
+    }
 
     public (float cosine, float jaccard, float dice) CalculateSimilarity()
     {
         var drawingManager = DrawingManager.Instance;
+        List<GameObject> lineRenderers = drawingManager.GetLineRenderers();
 
         Sprite referenceSprite = refSprite.sprite;
         Bounds refBounds = refSprite.bounds;
@@ -15,7 +25,7 @@ public class DrawingEvaluator : MonoBehaviour
         int textureH = referenceSprite.texture.height;
 
         Texture2D referenceTexture = referenceSprite.texture;
-        Texture2D userDrawingTexture = RenderDrawingToTexture(drawingManager.GetLineRenderers(), refBounds, textureW, textureH);
+        Texture2D userDrawingTexture = RenderDrawingToTexture(lineRenderers, refBounds, textureW, textureH);
 
         float[] userVector = GetAlphaBinaryVector(userDrawingTexture);
         float[] refVector = GetAlphaBinaryVector(referenceTexture);
@@ -52,7 +62,7 @@ public class DrawingEvaluator : MonoBehaviour
         return (cosine, jaccard, dice);
     }
 
-    private Texture2D RenderDrawingToTexture(System.Collections.Generic.List<GameObject> lines, Bounds bounds, int width, int height)
+    private Texture2D RenderDrawingToTexture(List<GameObject> lines, Bounds bounds, int width, int height)
     {
         var targetCamera = DrawingManager.Instance.GetTargetCamera();
         var render = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
@@ -79,8 +89,12 @@ public class DrawingEvaluator : MonoBehaviour
     {
         Color[] pixels = texture.GetPixels();
         float[] binaryVector = new float[pixels.Length];
+
         for (int i = 0; i < pixels.Length; i++)
+        {
             binaryVector[i] = (pixels[i].a > 0) ? 1.0f : 0.0f;
+        }
+
         return binaryVector;
     }
 }

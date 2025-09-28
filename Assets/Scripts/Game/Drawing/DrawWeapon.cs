@@ -25,6 +25,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [Header("Weapon Size")]
     [Range(0.0f, 1.0f)][SerializeField] private float ratioFromSketchBook;
 
+    [Space(5f)]
+    [Header("Weapon Data")]
+    [SerializeField] private List<WeaponInkData> weaponInkDataList;
+
 
     private Camera targetCamera; //오브젝트 만들기 위해 가상 레이어 카메라 캐싱
     private Camera mainCamera;
@@ -40,6 +44,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     private bool isCreated;
     private Color lastColor;
+    private ColorMixer.ColorType colorType;
     private int lastPointCount = 0;
 
     private bool isAllowDrawing = false;
@@ -140,9 +145,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         line = null;
     }
 
-    public void SetLineColor(Color c)
+    public void SetLineColor(Color c, ColorMixer.ColorType colorType)
     {
         lineColor = c;
+        this.colorType = colorType;
     }
 
     private void CreateNewLine(Vector3 startPos)
@@ -408,7 +414,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         //오브젝트화
         var obj = new GameObject("DrawedObject");
         var spriteRender = obj.AddComponent<SpriteRenderer>();
-        obj.AddComponent<Weapon>();
+        var weapon = obj.AddComponent<Weapon>();
         obj.tag = "Weapon";
 
         spriteRender.sortingOrder = 0;
@@ -424,6 +430,20 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         AddEdgeCollider(obj, points);
 
         obj.transform.localScale = Vector3.one * ratioFromSketchBook;
+
+        //잉크 데이터 셋업
+        WeaponInkData weaponData = null;
+
+        foreach (var data in weaponInkDataList)
+        {
+            if (data.inkData.color == colorType)
+            {
+                weaponData = data;
+                break;
+            }
+        }
+
+        weapon.SetupInkData(weaponData);
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)

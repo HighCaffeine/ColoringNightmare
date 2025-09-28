@@ -10,26 +10,30 @@ public class DrawingManager : GenericSingleton<DrawingManager>
     [SerializeField] private Color lineColor = Color.white;
     [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f;
 
-    [Header("이어 그리기 허용 범위")][SerializeField] private float lineJoinDistance = 0.5f;
-    [Header("그릴 레이어")][SerializeField] private LayerMask targetLayer;
-    [Header("스프라이트 데이터")]
+    [Header("Sprite Data")]
     [SerializeField] private int pixelPerUnit = 100;
     [SerializeField] private int paddingPixels = 12;
     [SerializeField] private float drawPlaneZValue = 0.0f;
+
+    [Header("Weapon Size")]
+    [Range(0.0f, 1.0f)][SerializeField] private float ratioFromSketchBook;
+
+    [Header("그릴 레이어")]
+    [SerializeField] private LayerMask targetLayer;
+    [Header("그리기 영역")]
+    [SerializeField] private LineDrawArea drawArea;
 
     private Camera targetCamera;
     private Camera mainCamera;
     private LineRenderer line;
 
     private readonly List<Vector3> points = new List<Vector3>();
-    private List<GameObject> lineRenderers = new List<GameObject>();
-    private int beforeLayer = 1000;
-
-    private bool isCreated;
+    private List<GameObject> activeLines = new List<GameObject>();
+    private bool isAllowDrawing = false;
     private Color lastColor;
+    private ColorMixer.ColorType colorType;
     private int lastPointCount = 0;
 
-    [SerializeField] private LineDrawArea drawArea;
 
     protected override void Awake()
     {
@@ -41,55 +45,68 @@ public class DrawingManager : GenericSingleton<DrawingManager>
         targetCamera.orthographic = true;
         targetCamera.enabled = false;
         targetCamera.clearFlags = CameraClearFlags.SolidColor;
-        targetCamera.backgroundColor = new Color(0, 0, 0, 0);
+        targetCamera.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         targetCamera.cullingMask = targetLayer;
         cameraObj.hideFlags = HideFlags.HideInHierarchy;
-
-        isCreated = true;
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
-        if (targetCamera) Destroy(targetCamera.gameObject);
-    }
-
-    private void Update()
-    {
-        if (UnityEngine.EventSystems.EventSystem.current != null &&
-            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-            return;
-
-        if (Input.GetMouseButtonDown(0)) BeginDraw();
-        if (Input.GetMouseButton(0)) ContinueDraw();
-        if (Input.GetMouseButtonUp(0)) EndDraw();
-    }
-
-    private void BeginDraw()
-    {
-        if (isCreated)
+        if (targetCamera)
         {
-            points.Clear();
-            isCreated = false;
+            Destroy(targetCamera.gameObject);
         }
+    }
+
+    public void SetAllowDrawingState(bool value)
+    {
+        isAllowDrawing = value;
+    }
+    private bool IsAllowEvents()
+    {
+        if (!isAllowDrawing) return false;
+
+        if (drawArea != null && !drawArea.GetBounds().Contains(GetMousePos()))
+        {
+            return false;
+        }
+
+        if (UnityEngine.EventSystems.EventSystem.current != null
+            && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void BeginDraw()
+    {
+        if (!IsAllowEvents()) return;
+
+        points.Clear();
         Vector3 mousePos = GetMousePos();
         CreateNewLine(mousePos);
     }
 
-    private void ContinueDraw()
+    public void ContinueDraw()
     {
+        if (!IsAllowEvents()) return;
         if (line == null) return;
+
         Vector3 pos = GetMousePos();
         pos.z = drawPlaneZValue;
         AppendPoint(pos);
     }
 
-    private void EndDraw()
+    public void EndDraw()
     {
+        if (!IsAllowEvents()) return;
         if (line == null) return;
 
         if (points.Count == 1)
         {
-            lineRenderers.Remove(line.gameObject);
+            activeLines.Remove(line.gameObject);
             Destroy(line.gameObject);
             line = null;
             return;
@@ -100,7 +117,11 @@ public class DrawingManager : GenericSingleton<DrawingManager>
         line = null;
     }
 
-    public void SetLineColor(Color c) => lineColor = c;
+    public void SetLineColor(Color c, ColorMixer.ColorType colorType)
+    {
+        lineColor = c;
+        this.colorType = colorType;
+    }
 
     private void CreateNewLine(Vector3 startPos)
     {
@@ -114,17 +135,18 @@ public class DrawingManager : GenericSingleton<DrawingManager>
         line.useWorldSpace = true;
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         line.receiveShadows = false;
-        line.sortingOrder = ++beforeLayer;
-        beforeLayer = line.sortingOrder;
+        line.sortingOrder = 1000;
         line.textureMode = LineTextureMode.Tile;
         line.numCornerVertices = 0;
         line.numCapVertices = 4;
 
         var mat = lineMaterial != null ? new Material(lineMaterial) : new Material(Shader.Find("Sprites/Default"));
-        mat.SetColor("_Color", AdjustSaturationHSV(lineColor, saturation));
+        Color.RGBToHSV(lineColor, out float h, out float s, out float v);
+        s = Mathf.Clamp01(s * saturation);
+        mat.SetColor("_Color", Color.HSVToRGB(h, s, v));
         line.material = mat;
 
-        lineRenderers.Add(obj);
+        activeLines.Add(obj);
         AppendPoint(startPos);
     }
 
@@ -146,33 +168,30 @@ public class DrawingManager : GenericSingleton<DrawingManager>
         }
     }
 
-    private Vector3 GetMousePos()
+    public Vector3 GetMousePos()
     {
         Vector3 screenPos = Input.mousePosition;
-        return mainCamera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y,
-            Mathf.Abs(mainCamera.transform.position.z - drawPlaneZValue)));
+        return mainCamera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, Mathf.Abs(mainCamera.transform.position.z - drawPlaneZValue)));
     }
-
-    Color AdjustSaturationHSV(Color color, float saturation)
+    public void ClearLines()
     {
-        Color.RGBToHSV(color, out float h, out float s, out float v);
-        s = Mathf.Clamp01(s * saturation);
-        return Color.HSVToRGB(h, s, v);
+        foreach (var l in activeLines)
+        {
+            if (l) Destroy(l);
+        }
+
+        activeLines.Clear();
+        points.Clear();
+        line = null;
     }
 
     public List<Vector3> GetPoints() => points;
-    public List<GameObject> GetLineRenderers() => lineRenderers;
+    public List<GameObject> GetLineRenderers() => activeLines;
     public Camera GetTargetCamera() => targetCamera;
     public float GetLineWidth() => lineWidth;
     public int GetPixelPerUnit() => pixelPerUnit;
     public int GetPaddingPixels() => paddingPixels;
-    public float GetDrawPlaneZValue() => drawPlaneZValue;
-
-    public void ClearLines()
-    {
-        foreach (var l in lineRenderers)
-            if (l) Destroy(l);
-        lineRenderers.Clear();
-        line = null;
-    }
+    public float GetRatioFromSketchBook() => ratioFromSketchBook;
+    public Color GetLastColor() => lastColor;
+    public ColorMixer.ColorType GetColorType() => colorType;
 }
