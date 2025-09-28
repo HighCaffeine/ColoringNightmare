@@ -15,13 +15,93 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 3d45d388fffbca14ca32ef506c828c3d
   m_SerializeEntries:
+  - m_GUID: 026208c57ce84bb47a66f8c0d21676fc
+    m_Address: Assets/ScriptableObject/Ink/6.Cyan.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0428edeacd1097847be68fa10214030d
+    m_Address: Assets/ScriptableObject/Ink/4.White.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1383695343365d54998f757782b4ec96
+    m_Address: Assets/ScriptableObject/Ink/7.Magenta.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 168237ae1a0319a40b01405d298e950a
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/12.LightYellow_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 207dc1979a392674ebc685a34455abaa
+    m_Address: TEST_3Projectile
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 253d1b50dfce94d4e982aa2c6b6da361
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/3.Blue_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 256b52caccac22c44942f4e601aad86f
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/11.DarkYellow_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e1caaed2ab5e874daec664ecc6e6e94
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/1.Red_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c4d2c41be4af094eaa3b73bf7d215ed
     m_Address: Test_WaveData
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 512a200b25e616d4c8e183bc4fcd5d58
-    m_Address: Player1
+  - m_GUID: 3cb32c9d92818d14098392e637a68ca3
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/14.LightBlue_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d757bdba8ba3d44fa9f472048bf64b2
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/13.DarkBlue_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d8a193876ca73644924d8b8a4c4d7e8
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/4.White_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 430ebc0fff5a8a84682e7e4959089199
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/11.DarkYellow_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44eb956382b5d344cb6eac9cb1f977f1
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/4.White_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4927b0154f191804985dd8e78c05941a
+    m_Address: Assets/ScriptableObject/Ink/9.DarkRed.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 493ae6b8048d9ff4e8e818b5d134fb46
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/14.LightBlue_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b9f87c24310efc49b8be7559e2f4da8
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/10.LightRed_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53f2b8a3a8ab82d4b82a295bf08aa9b7
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/0.Black_Weapon.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -30,8 +110,48 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 841e10d586dba0640b60b2611a7420d0
+  - m_GUID: 5d8c4a8b22d8fdf44aea2bb32d85b785
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/5.Orange_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 678e7b52e7e639c40818400e68e87cce
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/0.Black_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6b9c0cfdb916c4c4fa75c0a7059200d5
+    m_Address: Assets/ScriptableObject/Ink/5.Orange.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e653342ff7be3a409a730f3aaf51e93
     m_Address: Player2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f3d8346e8f89d04485f396963772ccb
+    m_Address: Assets/ScriptableObject/Ink/1.Red.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f45c464a6547d2478d4e05c4cda685d
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/6.Cyan_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fd52b45ca82a064fac271c79e473721
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/12.LightYellow_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78e5436945c142840ada7a41be63b671
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/7.Magenta_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f7df5203f1c6524faf7c81bd95057bb
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/1.Red_PassiveEffectData.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -40,8 +160,118 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8bb6a6befbeb6b243974ea08a04098eb
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/3.Blue_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8dfb0cd4edfe1f343801033b82a2a039
+    m_Address: Assets/ScriptableObject/Ink/3.Blue.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9263d7ee0b93b974c854e68ce6294c50
+    m_Address: Assets/ScriptableObject/Ink/10.LightRed.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97cf70a31b83c064cb87ada167aa9236
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/2.Yellow_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f0bd24f6e7a8e94cb6e994cddfa7ae9
+    m_Address: Assets/ScriptableObject/Ink/14.LightBlue.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9fc8db38982b27443b2883e517b7d71a
+    m_Address: Assets/ScriptableObject/Ink/2.Yellow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b2ef2307536e46c4ca2e488cf20c1593
+    m_Address: Assets/ScriptableObject/Ink/12.LightYellow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb5ba569310b6834eaa09c52aa744217
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/9.DarkRed_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bfbf3643c4014f84e854a9f84e46b779
+    m_Address: Assets/ScriptableObject/Ink/0.Black.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c38437e7b6fda4846b04bb9296de86be
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/8.Gray_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5407c7b3ea401941a1a69b6284eff5e
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/2.Yellow_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cbe2d3d20345ea94885cafbfce9d75ac
+    m_Address: Player1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf769c048aaef0f42b4597752cc5b182
+    m_Address: Assets/ScriptableObject/Ink/11.DarkYellow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3630b6b94b851245a60f3c32750d86e
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/6.Cyan_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6aa5545e26c57f46b07b9606dbba753
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/13.DarkBlue_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d96022da81748844d9b0c6fa8e0035db
     m_Address: TestBossData
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da1afb40334d9ab42a0ef6759bafeb65
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/10.LightRed_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea10cbc8837839f41928ec6e4afe3991
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/9.DarkRed_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: edd4bfe58bc82df4f94002523594ac8a
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/7.Magenta_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee0eb847e5168464b85b3fef59deab4f
+    m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/5.Orange_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f382a836731cb664f8f6c31742e6a1a4
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/8.Gray_PassiveEffectData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f6b20a895aa54ac41baafb86108de1c7
+    m_Address: Assets/ScriptableObject/Ink/8.Gray.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb0c0efd35b2a8f44a9796d720ec63e9
+    m_Address: Assets/ScriptableObject/Ink/13.DarkBlue.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

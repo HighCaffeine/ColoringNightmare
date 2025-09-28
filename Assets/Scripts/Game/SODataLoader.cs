@@ -131,20 +131,18 @@ public class SODataLoader : GenericSingleton<SODataLoader>
         return data;
     }
 
-    public void LoadSO(string address, Type type, Action<ScriptableObject> callback)
+    public void LoadSO<T>(string key, Action<T> onLoaded) where T : ScriptableObject
     {
-        Addressables.LoadAssetAsync<ScriptableObject>(address).Completed += handle =>
+        var handle = Addressables.LoadAssetAsync<T>(key);
+
+        handle.Completed += h =>
         {
-            if (handle.Status == AsyncOperationStatus.Succeeded)
+            if (h.Status == AsyncOperationStatus.Succeeded)
+                onLoaded?.Invoke(h.Result);
+            else
             {
-                if (handle.Result.GetType() == type || handle.Result.GetType().IsSubclassOf(type))
-                {
-                    callback?.Invoke(handle.Result);
-                }
-                else
-                {
-                    Debug.LogWarning($"Loaded asset type mismatch: expected {type}, got {handle.Result.GetType()}");
-                }
+                Debug.LogError($"Failed to load SO: {key}");
+                onLoaded?.Invoke(null);
             }
         };
     }
