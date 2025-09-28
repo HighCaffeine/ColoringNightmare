@@ -9,8 +9,17 @@ public class WeaponController : MonoBehaviour
     [Header("Spine Skeleton Target")]
     [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
 
+    private PlayerController playerController;
+
+    void Awake()
+    {
+        playerController = GetComponent<PlayerController>();
+    }
+
     public void SetupWeapon(Weapon weapon)
     {
+        playerController.EquipWeapon(weapon);
+
         this.weapon = weapon;
 
         this.weapon.transform.SetParent(weaponPivot);

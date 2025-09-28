@@ -11,26 +11,29 @@ public class PlayerMouseHandler : MonoBehaviour
 
     private InputAction mouseAction;
     private bool isDrawing = false;
+    private PlayerController playerController;
     public void SetupMouse(PlayerController controller)
     {
+        playerController = controller;
+
         mouseAction = controller.GetPlayerInput().Player2.Mouse;
-        mouseAction.started += callback => { isDrawing = true; OnMouseStarted?.Invoke(); };
-        mouseAction.performed += callback => { OnMousePerformed?.Invoke(); };
-        mouseAction.canceled += callback => { isDrawing = false; OnMouseCanceled?.Invoke(); };
+        mouseAction.started += callback => { if (playerController.IsGroggy()) return; isDrawing = true; OnMouseStarted?.Invoke(); };
+        mouseAction.performed += callback => { if (playerController.IsGroggy()) return; OnMousePerformed?.Invoke(); };
+        mouseAction.canceled += callback => { if (playerController.IsGroggy()) return; isDrawing = false; OnMouseCanceled?.Invoke(); };
         mouseAction.Enable();
     }
 
     private void OnDisable()
     {
-        mouseAction.started -= callback => { isDrawing = true; OnMouseStarted?.Invoke(); };
-        mouseAction.performed -= callback => { OnMousePerformed?.Invoke(); };
-        mouseAction.canceled -= callback => { isDrawing = false; OnMouseCanceled?.Invoke(); };
+        mouseAction.started -= callback => { if (playerController.IsGroggy()) return; isDrawing = true; OnMouseStarted?.Invoke(); };
+        mouseAction.performed -= callback => { if (playerController.IsGroggy()) return; OnMousePerformed?.Invoke(); };
+        mouseAction.canceled -= callback => { if (playerController.IsGroggy()) return; isDrawing = false; OnMouseCanceled?.Invoke(); };
         mouseAction.Disable();
     }
 
     private void Update()
     {
-        if (isDrawing)
+        if (isDrawing && !playerController.IsGroggy())
         {
             OnMousePerformed?.Invoke();
         }
