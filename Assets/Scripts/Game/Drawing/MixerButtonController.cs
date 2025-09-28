@@ -74,7 +74,7 @@ public class MixerButtonController : MonoBehaviour
         cursorIndex = Devcat.ValueCastTo<int>.From(resultColor);
         convertButtonState?.Invoke();
 
-        DrawWeapon.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor));
+        DrawWeapon.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor), resultColor);
         ColorMixer.Instance.SetFirstColor(ColorMixer.ColorType.White);
     }
 

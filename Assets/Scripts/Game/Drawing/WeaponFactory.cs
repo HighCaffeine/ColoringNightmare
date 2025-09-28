@@ -3,32 +3,38 @@ using UnityEngine;
 
 public class WeaponFactory : MonoBehaviour
 {
+    [Header("Dependencies")]
+    [SerializeField] private DrawingManager drawingManager;
     [SerializeField] private DrawingEvaluator evaluator;
     [SerializeField] private SpriteRenderer refSprite;
+    [SerializeField] private List<WeaponInkData> weaponInkDataList;
 
     public void CreateDrawObj()
     {
-        var (cos, jaccad, dice) = evaluator.CalculateSimilarity();
-
-        if (dice * 100.0f > 70)
+        if (evaluator.IsDrawingValid())
+        {
             SpawnDrawObj();
+        }
         else
+        {
             Debug.Log("유사도가 낮아 무기를 생성하지 않습니다.");
-
-        DrawingManager.Instance.ClearLines();
+        }
+        drawingManager.ClearLines();
     }
 
     private void SpawnDrawObj()
     {
-        var drawingManager = DrawingManager.Instance;
         List<Vector3> points = drawingManager.GetPoints();
+        float lineWidth = drawingManager.GetLineWidth();
 
-        Bounds b = CalculateBound(points, drawingManager.GetLineWidth());
+        Bounds b = CalculateBound(points, lineWidth);
+
         float padUnits = drawingManager.GetPaddingPixels() / (float)drawingManager.GetPixelPerUnit();
         b.Expand(new Vector3(padUnits * 2.0f, padUnits * 2.0f, 0.0f));
 
-        int textureW = Mathf.Clamp(Mathf.CeilToInt(b.size.x * drawingManager.GetPixelPerUnit()), 2, 4096);
-        int textureH = Mathf.Clamp(Mathf.CeilToInt(b.size.y * drawingManager.GetPixelPerUnit()), 2, 4096);
+        int pixelPerUnit = drawingManager.GetPixelPerUnit();
+        int textureW = Mathf.Clamp(Mathf.CeilToInt(b.size.x * pixelPerUnit), 2, 4096);
+        int textureH = Mathf.Clamp(Mathf.CeilToInt(b.size.y * pixelPerUnit), 2, 4096);
 
         var render = new RenderTexture(textureW, textureH, 0, RenderTextureFormat.ARGB32);
         render.wrapMode = TextureWrapMode.Clamp;
@@ -55,8 +61,8 @@ public class WeaponFactory : MonoBehaviour
         Destroy(render);
 
         Rect r = new Rect(0, 0, textureW, textureH);
-        float worldToPixelX = (b.size.x > 0.0001f) ? (textureW / b.size.x) : drawingManager.GetPixelPerUnit();
-        float worldToPixelY = (b.size.y > 0.0001f) ? (textureH / b.size.y) : drawingManager.GetPixelPerUnit();
+        float worldToPixelX = (b.size.x > 0.0001f) ? (textureW / b.size.x) : pixelPerUnit;
+        float worldToPixelY = (b.size.y > 0.0001f) ? (textureH / b.size.y) : pixelPerUnit;
 
         Vector3 refPivotWorld = refSprite.transform.position;
         Vector2 textureWorldMin = new Vector2(b.center.x - b.size.x * 0.5f, b.center.y - b.size.y * 0.5f);
@@ -66,7 +72,7 @@ public class WeaponFactory : MonoBehaviour
 
         Vector2 normalizedPivot = new Vector2(Mathf.Clamp01(pivotPixelX / (float)textureW), Mathf.Clamp01(pivotPixelY / (float)textureH));
 
-        var s = Sprite.Create(texture, r, normalizedPivot, drawingManager.GetPixelPerUnit(), 0, SpriteMeshType.Tight);
+        var s = Sprite.Create(texture, r, normalizedPivot, pixelPerUnit, 0, SpriteMeshType.Tight);
 
         var obj = new GameObject("DrawedObject");
         var spriteRender = obj.AddComponent<SpriteRenderer>();
@@ -76,13 +82,31 @@ public class WeaponFactory : MonoBehaviour
         var rigid = obj.AddComponent<Rigidbody2D>();
         rigid.gravityScale = 0.0f;
 
-        AddEdgeCollider(obj, points, drawingManager.GetLineWidth());
+        AddEdgeCollider(obj, points, lineWidth);
+
+        obj.transform.localScale = Vector3.one * drawingManager.GetRatioFromSketchBook();
+
+        // Weapon 컴포넌트 추가 및 데이터 설정
+        var weapon = obj.AddComponent<Weapon>();
+        obj.tag = "Weapon";
+        WeaponInkData weaponData = null;
+
+        foreach (var data in weaponInkDataList)
+        {
+            if (data.inkData.color == DrawingManager.Instance.GetColorType())
+            {
+                weaponData = data;
+
+                break;
+            }
+        }
+
+        weapon.SetupInkData(weaponData);
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)
     {
         if (points.Count == 0) return new Bounds(Vector3.zero, Vector3.zero);
-
         float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
         foreach (var point in points)
         {
@@ -91,7 +115,6 @@ public class WeaponFactory : MonoBehaviour
             maxX = Mathf.Max(maxX, point.x);
             maxY = Mathf.Max(maxY, point.y);
         }
-
         float expansion = width * 0.5f;
         return new Bounds
         {
