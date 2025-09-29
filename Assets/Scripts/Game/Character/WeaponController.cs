@@ -20,6 +20,7 @@ public class WeaponController : MonoBehaviour
 
     public void SetupWeapon(Weapon weapon)
     {
+        if (weapon) weapon.DestroyWeapon();
         this.weapon = weapon;
 
         this.weapon.transform.SetParent(weaponPivot);

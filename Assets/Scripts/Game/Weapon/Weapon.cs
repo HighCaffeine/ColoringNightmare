@@ -23,15 +23,27 @@ public class Weapon : MonoBehaviour
         if (currentDurability <= 0)
         {
             OnWeaponBroken?.Invoke();
-            StartCoroutine(DestroyWeapon());
 
+            DestroyWeapon();
             return 0;
         }
 
         return currentDurability;
     }
 
-    private IEnumerator DestroyWeapon()
+    private Coroutine destroyCoroutine;
+
+    public void DestroyWeapon()
+    {
+        if (destroyCoroutine != null)
+        {
+            return;
+        }
+
+        destroyCoroutine = StartCoroutine(DestroyWeaponCoroutine());
+    }
+
+    private IEnumerator DestroyWeaponCoroutine()
     {
         float time = 0.0f;
         float duration = 2.0f;
