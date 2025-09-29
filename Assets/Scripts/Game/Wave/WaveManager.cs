@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 
-//Pooling으로 변경
 public class WaveManager : GenericSingleton<WaveManager>
 {
     public enum WaveType
@@ -12,17 +11,16 @@ public class WaveManager : GenericSingleton<WaveManager>
     }
 
     [SerializeField] private List<WaveData> waves;
-    [SerializeField] private float spawnDelay = 2f;
+
+    [Header("Spawn Areas")]
+    [SerializeField] private List<AreaData> spawnAreas;
 
     [Space(5f)]
     [Header("TEST_CurrentWave")]
     [SerializeField] private int currentWaveIndex = 1;
 
-    private int currentWave;
-    private bool waveClear;
     private Coroutine spawnCoroutine;
 
-    ///////////////Wave Value////////////////
     public delegate void OnAddEliminateCount();
     public OnAddEliminateCount onAddEliminateCount;
     private int eliminateCount;
@@ -30,108 +28,89 @@ public class WaveManager : GenericSingleton<WaveManager>
 
     public void AddEliminateCount() { eliminateCount++; onAddEliminateCount?.Invoke(); }
 
-    ///////////////Wave Value////////////////
-
-    private new void Awake()
-    {
-        base.Awake();
-    }
-
-    private void InitWaveValue()
-    {
-        waveClear = false;
-        eliminateCount = 0;
-        time = 0.0f;
-    }
-
     public void TEST_WaveStart()
     {
         WaveStart(currentWaveIndex);
     }
 
-    //GameManager 이벤트 등록
     public void WaveStart(int waveIndex)
     {
         if (spawnCoroutine != null) StopCoroutine(spawnCoroutine);
-
         InitWaveValue();
-        spawnCoroutine = StartCoroutine(SpawnMonsterCoroutine(waveIndex));
+        spawnCoroutine = StartCoroutine(SpawnWaveCoroutine(waveIndex));
     }
 
-    private IEnumerator SpawnMonsterCoroutine(int waveIndex)
+    private void InitWaveValue()
     {
-        WaveData wave = waves[waveIndex];
-        WaitForSeconds wait = new WaitForSeconds(spawnDelay);
+        eliminateCount = 0;
+        time = 0.0f;
+    }
 
-        float waveTimer = 0f;
-        int eliminateCounter = 0;
-
-        while (true)
+    private IEnumerator SpawnWaveCoroutine(int waveIndex)
+    {
+        if (waveIndex < 0 || waveIndex >= waves.Count)
         {
-            // 종료 조건 체크
-            switch (wave.waveType)
-            {
-                case WaveType.Elimination:
-                    if (eliminateCounter >= wave.typeValue) yield break;
-                    break;
-                case WaveType.TimeLimit:
-                    waveTimer += spawnDelay;
-                    if (waveTimer >= wave.typeValue) yield break;
-                    break;
-                case WaveType.Boss:
-                    //boss 체력 체크 필요
-                    break;
-            }
-
-            // 몬스터 스폰
-            Vector2 newPos = wave.GetRandomAreaPoint();
-            SetupMonster(waveIndex, newPos);
-
-            yield return wait;
+            yield break;
         }
 
-        currentWaveIndex++;
-    }
+        WaveData wave = waves[waveIndex];
 
-
-    private void SetupMonster(int waveIndex, Vector2 pos)
-    {
-        MonsterDataName dataName = waves[waveIndex].monsterDatas[Random.Range(0, waves[waveIndex].monsterDatas.Count)];
-        MonsterData data = null;
-
-        SODataLoader.Instance.LoadSO<MonsterData>(dataName.ToString(), so =>
+        foreach (var group in wave.monsterGroups)
         {
-            data = so as MonsterData;
+            yield return new WaitForSeconds(group.delayAfterGroup);
 
-            if (data != null)
+            for (int i = 0; i < group.spawnCount; i++)
             {
-                MonsterManager.Instance.SpawnMonster(data, pos);
-            }
-        });
-    }
+                Vector2 spawnPos;
+                if (spawnAreas.Count == 0)
+                {
+                    yield break;
+                }
 
-    public void ClearCurrentWave()
-    {
-        waveClear = true;
+                AreaData selectedArea;
+                if (group.spawnPointIndex == -1)
+                {
+                    selectedArea = spawnAreas[Random.Range(0, spawnAreas.Count)];
+                }
+                else
+                {
+                    if (group.spawnPointIndex < 0 || group.spawnPointIndex >= spawnAreas.Count)
+                    {
+                        selectedArea = spawnAreas[Random.Range(0, spawnAreas.Count)];
+                    }
+                    else
+                    {
+                        selectedArea = spawnAreas[group.spawnPointIndex];
+                    }
+                }
+
+                float halfX = selectedArea.size.x * 0.5f;
+                float halfY = selectedArea.size.y * 0.5f;
+                Vector2 pivot = selectedArea.pos;
+                spawnPos = new Vector2(Random.Range(pivot.x - halfX, pivot.x + halfX), Random.Range(pivot.y - halfY, pivot.y + halfY));
+
+                MonsterDataName monsterName = (MonsterDataName)group.monsterCode;
+
+                SODataLoader.Instance.LoadSO<MonsterData>(monsterName.ToString(), so =>
+                {
+                    MonsterManager.Instance.SpawnMonster(so, spawnPos);
+                });
+
+                // Wait for the interval between individual monsters
+                yield return new WaitForSeconds(group.spawnInterval);
+            }
+        }
     }
 
     void OnDrawGizmos()
     {
-        // if (currentWaveIndex < 0) return;
-        // if (currentWaveIndex < waves.Count && waves[currentWaveIndex] != null)
-        // {
-        //     WaveData w = waves[currentWaveIndex];
-        //     Gizmos.color = Color.red;
-
-        //     Gizmos.DrawWireCube(w.spawnArea.pos + w.spawnArea.offset, w.spawnArea.size);
-        // }
-
-        if (waves[0] != null)
+        if (spawnAreas.Count > 0)
         {
-            WaveData w = waves[0];
-            Gizmos.color = Color.red;
-
-            Gizmos.DrawWireCube(w.spawnArea.pos + w.spawnArea.offset, w.spawnArea.size);
+            foreach (var area in spawnAreas)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(area.pos + area.offset, area.size);
+            }
         }
     }
 }

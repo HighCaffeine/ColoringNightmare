@@ -16,10 +16,10 @@ public class WeaponController : MonoBehaviour
         playerController = GetComponent<PlayerController>();
     }
 
+    public bool IsEquip() => weapon != null;
+
     public void SetupWeapon(Weapon weapon)
     {
-        playerController.EquipWeapon(weapon);
-
         this.weapon = weapon;
 
         this.weapon.transform.SetParent(weaponPivot);
@@ -35,6 +35,11 @@ public class WeaponController : MonoBehaviour
         boneFollower.followSkeletonFlip = false;
 
         boneFollower.followLocalScale = false;
+    }
+
+    public void SubDurability()
+    {
+        if (weapon.DecreaseDurability() == 0) weapon = null;
     }
 
     public void Flip(bool isRight)

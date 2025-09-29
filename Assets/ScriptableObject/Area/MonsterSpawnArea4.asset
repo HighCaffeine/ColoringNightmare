@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86e3c53c45e9b4b4687c7d82df3562c5, type: 3}
-  m_Name: Test_WaveData
+  m_Script: {fileID: 11500000, guid: 6e0480d43558b764792d3f6b8a7a8949, type: 3}
+  m_Name: MonsterSpawnArea4
   m_EditorClassIdentifier: 
-  waveNumber: 0
-  spawnArea: {fileID: 11400000, guid: 0f95aaae4f389a44485b591c5e97c366, type: 2}
-  waveType: 1
-  typeValue: 10
-  monsterDatas: 000000000100000002000000
+  pos: {x: -7.64, y: -4.33, z: 0}
+  size: {x: 2, y: 0.3, z: 0}
+  offset: {x: 0, y: 0, z: 0}

@@ -2478,7 +2478,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waves:
   - {fileID: 11400000, guid: 3c4d2c41be4af094eaa3b73bf7d215ed, type: 2}
-  spawnDelay: 2
+  spawnAreas:
+  - {fileID: 11400000, guid: 0f95aaae4f389a44485b591c5e97c366, type: 2}
+  - {fileID: 11400000, guid: 1099812781e784f4e903116833c73eec, type: 2}
+  - {fileID: 11400000, guid: 57db72396061b5e489b06ab2534d410b, type: 2}
+  - {fileID: 11400000, guid: 218a9fac796357b44b2eb630eb215918, type: 2}
+  - {fileID: 11400000, guid: 6c9f00d40c230184e8fde0609efa768f, type: 2}
   currentWaveIndex: 0
 --- !u!1 &825676001
 GameObject:
@@ -4474,7 +4479,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   txt: {fileID: 1808483858}
-  worldHP: 1
+  worldHP: 10
   OnGameOver:
     m_PersistentCalls:
       m_Calls:
@@ -5763,7 +5768,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  currentWeapon: {fileID: 0}
   weaponController: {fileID: 0}
   groggyDuration: 5
   invincibilityDuration: 2
@@ -6027,7 +6031,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   monsterObjParent: {fileID: 127427731}
-  monsterMoveArea: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
+  monsterMoveArea: {fileID: 11400000, guid: 4ea11ba45e9f7d443ba723423fedf128, type: 2}
   detectPoolParent: {fileID: 1496682692}
   wallPoolParent: {fileID: 721190145}
   bossPoolParent: {fileID: 843801323}
@@ -6550,7 +6554,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  currentWeapon: {fileID: 0}
+      - m_Target: {fileID: 1711070371}
+        m_TargetAssemblyTypeName: WeaponController, Assembly-CSharp
+        m_MethodName: SubDurability
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   weaponController: {fileID: 1711070371}
   groggyDuration: 5
   invincibilityDuration: 2
@@ -6771,6 +6786,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 5336017889468166996, guid: d297aaa892fc4d94e84814af7498e635, type: 3}
   skillSpeed: 5
   effectPivot: {fileID: 400480535}
+  weaponController: {fileID: 1711070371}
   test_lifeTime: 5
 --- !u!61 &1711070380
 BoxCollider2D:
@@ -6954,7 +6970,6 @@ MonoBehaviour:
   OnAttack:
     m_PersistentCalls:
       m_Calls: []
-  currentWeapon: {fileID: 0}
   weaponController: {fileID: 0}
   groggyDuration: 5
   invincibilityDuration: 2
@@ -9054,7 +9069,6 @@ MonoBehaviour:
   OnAttack:
     m_PersistentCalls:
       m_Calls: []
-  currentWeapon: {fileID: 0}
   weaponController: {fileID: 0}
   groggyDuration: 5
   invincibilityDuration: 2

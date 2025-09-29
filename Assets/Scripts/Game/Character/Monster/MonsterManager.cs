@@ -139,4 +139,13 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     {
         OnSubWorldHP?.Invoke();
     }
+
+    void OnDrawGizmos()
+    {
+        if (monsterMoveArea != null)
+        {
+            Gizmos.color = Color.grey;
+            Gizmos.DrawWireCube(monsterMoveArea.pos + monsterMoveArea.offset, monsterMoveArea.size);
+        }
+    }
 }

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e0480d43558b764792d3f6b8a7a8949, type: 3}
-  m_Name: MonsterSpawnArea
+  m_Name: MonsterSpawnArea0
   m_EditorClassIdentifier: 
-  pos: {x: -8.5, y: 0, z: 0}
-  size: {x: 0.3, y: 9, z: 0}
+  pos: {x: -7.64, y: 4.33, z: 0}
+  size: {x: 2, y: 0.3, z: 0}
   offset: {x: 0, y: 0, z: 0}

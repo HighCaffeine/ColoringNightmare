@@ -16,10 +16,11 @@ MonoBehaviour:
   characterName: Test_DetectMonster
   maxHp: 5
   dmg: 1
-  speed: 5
+  speed: 2
   attackDelay: 1
   isSpine: 1
   colorType: 0
   type: 1
+  pushForce: 0
   attackRange: 1.5
   dashSpeed: 1

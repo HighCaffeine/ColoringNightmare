@@ -7,6 +7,8 @@ public class SkillController : MonoBehaviour
     [SerializeField] private float skillSpeed = 5f;
     [SerializeField] private Transform effectPivot;
 
+    [SerializeField] private WeaponController weaponController;
+
     public float test_lifeTime = 5f;
 
     public void UseSkill()
@@ -16,6 +18,7 @@ public class SkillController : MonoBehaviour
             Debug.LogWarning("Projectile Prefab is missing");
             return;
         }
+        if (!weaponController.IsEquip()) return;
 
         // 기준 방향 캐릭터 앞
         Vector3 forward = transform.right * -1 * Mathf.Sign(effectPivot.localScale.x);

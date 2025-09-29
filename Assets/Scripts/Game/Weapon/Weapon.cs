@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -15,15 +16,37 @@ public class Weapon : MonoBehaviour
         damage = weaponInkData.damage;
     }
 
-    public void DecreaseDurability()
+    public int DecreaseDurability()
     {
         currentDurability--;
 
         if (currentDurability <= 0)
         {
             OnWeaponBroken?.Invoke();
-            Destroy(gameObject);
+            StartCoroutine(DestroyWeapon());
+
+            return 0;
         }
+
+        return currentDurability;
+    }
+
+    private IEnumerator DestroyWeapon()
+    {
+        float time = 0.0f;
+        float duration = 2.0f;
+        Vector3 initialScale = transform.localScale;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(initialScale, Vector3.zero, time / duration);
+            yield return null;
+        }
+
+        transform.localScale = Vector3.zero;
+
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

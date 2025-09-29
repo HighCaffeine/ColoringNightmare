@@ -23,7 +23,6 @@ public class PlayerController : Character
     [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
 
     [Header("Weapon")]
-    [SerializeField] private Weapon currentWeapon; // 현재 장착 중인 무기
     [SerializeField] private WeaponController weaponController;
 
     [Header("Groggy")]
@@ -217,28 +216,8 @@ public class PlayerController : Character
         }
     }
 
-    public void EquipWeapon(Weapon weapon)
-    {
-        if (currentWeapon != null)
-        {
-            Destroy(currentWeapon.gameObject);
-        }
-
-        currentWeapon = weapon;
-    }
-
     protected override void Attack()
     {
-        if (currentWeapon != null)
-        {
-            currentWeapon.DecreaseDurability();
-
-            if (currentWeapon.CurrentDurability <= 0)
-            {
-                currentWeapon = null;
-            }
-        }
-
         base.Attack();
     }
 
@@ -254,7 +233,7 @@ public class PlayerController : Character
         if (axisX != 0.0f)
         {
             Flip(axisX > 0);
-            weaponController.Flip(axisX > 0);
+            if (weaponController != null) weaponController.Flip(axisX > 0);
         }
     }
 
