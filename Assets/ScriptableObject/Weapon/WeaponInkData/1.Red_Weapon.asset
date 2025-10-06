@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 1.Red_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 6f3d8346e8f89d04485f396963772ccb, type: 2}
-  durability: 5
+  durability: 8
   damage: 1
   weaponType: 0
   passiveEffect: {fileID: 11400000, guid: 7f7df5203f1c6524faf7c81bd95057bb, type: 2}

@@ -53,6 +53,7 @@ public class Character : MonoBehaviour
     {
         if (!canAttack) return;
 
+        canAttack = false;
         Invoke(nameof(InitCanAttack), info.attackDelay);
     }
     private void InitCanAttack() { canAttack = true; }

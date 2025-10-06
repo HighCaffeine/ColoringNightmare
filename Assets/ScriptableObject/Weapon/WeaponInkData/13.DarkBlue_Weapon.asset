@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 13.DarkBlue_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: fb0c0efd35b2a8f44a9796d720ec63e9, type: 2}
-  durability: 5
+  durability: 8
   damage: 1
   weaponType: 0
   passiveEffect: {fileID: 11400000, guid: 3d757bdba8ba3d44fa9f472048bf64b2, type: 2}

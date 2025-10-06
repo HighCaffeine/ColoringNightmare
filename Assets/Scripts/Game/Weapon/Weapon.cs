@@ -46,7 +46,7 @@ public class Weapon : MonoBehaviour
     private IEnumerator DestroyWeaponCoroutine()
     {
         float time = 0.0f;
-        float duration = 2.0f;
+        float duration = 1.0f;
         Vector3 initialScale = transform.localScale;
 
         while (time < duration)

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9164f995018a2d4481d14ceecee0a2b, type: 3}
-  m_Name: Group1_Test2
+  m_Name: Group3_Test1
   m_EditorClassIdentifier: 
   groupID: 2
   monsterCode: 1
   spawnCount: 5
-  spawnInterval: 0.3
+  spawnInterval: 0.5
   spawnPointIndex: 2
   delayAfterGroup: 0.1

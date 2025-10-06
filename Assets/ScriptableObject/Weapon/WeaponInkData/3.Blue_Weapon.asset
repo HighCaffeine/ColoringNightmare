@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 3.Blue_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 8dfb0cd4edfe1f343801033b82a2a039, type: 2}
-  durability: 5
+  durability: 8
   damage: 1
   weaponType: 0
   passiveEffect: {fileID: 11400000, guid: 8bb6a6befbeb6b243974ea08a04098eb, type: 2}

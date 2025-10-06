@@ -87,6 +87,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     protected void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.LogError("WallMonster : OntriggerEnter2D");
         if (other.CompareTag("Player1"))
         {
             PlayerController player = other.GetComponent<PlayerController>();
@@ -99,7 +100,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
                 Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
                 if (playerRb != null)
                 {
-                    playerRb.AddForce(pushDirection * monsterData.PushForce, ForceMode2D.Force);
+                    playerRb.AddForce(pushDirection * monsterData.PushForce, ForceMode2D.Impulse);
                 }
             }
         }

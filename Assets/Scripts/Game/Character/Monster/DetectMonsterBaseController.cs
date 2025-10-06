@@ -9,9 +9,9 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     [Header("Detect Settings")]
     public float detectionRange = 5f;
-    private Transform targetPlayer;
+    [SerializeField] private Transform targetPlayer;
     private float detectInterval = 0.1f;
-    private float detectTimer = 0f;
+    [SerializeField] private float detectTimer = 0f;
 
     private bool isDashing = false;
 
@@ -53,6 +53,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
         if (targetPlayer != null)
         {
+            detectTimer = 0.0f;
             ChangeState(StateType.Move);
         }
     }
@@ -89,6 +90,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     {
         if (onPlayerIsDead?.Invoke() == true)
         {
+            detectTimer = 0.0f;
             targetPlayer = null;
             return;
         }
@@ -144,7 +146,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
                 {
                     attackAction?.Invoke();
                     player.TakeDamage(monsterData.dmg);
-                    Debug.Log("Player hit!");
                 }
             }
 
@@ -170,6 +171,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
         else
         {
+            detectTimer = 0.0f;
             ChangeState(StateType.Idle);
         }
     }

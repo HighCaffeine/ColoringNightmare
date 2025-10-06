@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 12.LightYellow_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: b2ef2307536e46c4ca2e488cf20c1593, type: 2}
-  durability: 5
+  durability: 8
   damage: 1
   weaponType: 0
   passiveEffect: {fileID: 11400000, guid: 168237ae1a0319a40b01405d298e950a, type: 2}

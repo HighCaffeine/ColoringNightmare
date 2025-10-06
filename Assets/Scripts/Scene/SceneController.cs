@@ -53,16 +53,12 @@ public class SceneController : GenericSingleton<SceneController>
 
             if (async.progress >= 0.9f)
             {
-                loadingBarProgress?.Invoke(1f);
-                yield return new WaitForSeconds(1f);
+                yield return null;
 
                 // Game 씬일 때만 플래그 true
                 isLoadGameScene = (sceneName == SceneName.Game.ToString());
 
                 async.allowSceneActivation = true;
-
-                if (isLoadGameScene && SoundManager.Instance != null)
-                    SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), true);
 
                 break;
             }

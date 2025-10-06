@@ -188,6 +188,7 @@ public class PlayerController : Character
         UnlockMovement();
 
         onPlayerStateUpdate?.Invoke(false);
+        playerCollider.enabled = true;
 
         StartCoroutine(GroggyCoroutine(invincibilityDuration));
     }

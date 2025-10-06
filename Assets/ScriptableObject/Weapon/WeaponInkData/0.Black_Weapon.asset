@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 0.Black_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: bfbf3643c4014f84e854a9f84e46b779, type: 2}
-  durability: 5
+  durability: 8
   damage: 1
   weaponType: 0
   passiveEffect: {fileID: 11400000, guid: 678e7b52e7e639c40818400e68e87cce, type: 2}

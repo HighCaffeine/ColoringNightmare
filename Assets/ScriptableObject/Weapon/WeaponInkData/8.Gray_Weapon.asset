@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 8.Gray_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: f6b20a895aa54ac41baafb86108de1c7, type: 2}
-  durability: 5
+  durability: 8
   damage: 1
   weaponType: 0
   passiveEffect: {fileID: 11400000, guid: f382a836731cb664f8f6c31742e6a1a4, type: 2}

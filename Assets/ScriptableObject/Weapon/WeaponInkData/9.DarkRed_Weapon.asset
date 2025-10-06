@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 9.DarkRed_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 4927b0154f191804985dd8e78c05941a, type: 2}
-  durability: 5
+  durability: 8
   damage: 1
   weaponType: 0
   passiveEffect: {fileID: 11400000, guid: bb5ba569310b6834eaa09c52aa744217, type: 2}

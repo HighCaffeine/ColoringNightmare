@@ -10,6 +10,10 @@ public class WaveManager : GenericSingleton<WaveManager>
         TimeLimit, Elimination, Boss,
     }
 
+    [Header("Test Event")]
+    [SerializeField] private UnityEngine.Events.UnityEvent OnWaveStart;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnWaveEnd;
+
     [SerializeField] private List<WaveData> waves;
 
     [Header("Spawn Areas")]
@@ -17,7 +21,7 @@ public class WaveManager : GenericSingleton<WaveManager>
 
     [Space(5f)]
     [Header("TEST_CurrentWave")]
-    [SerializeField] private int currentWaveIndex = 1;
+    [SerializeField] private int currentWaveIndex = 0;
 
     private Coroutine spawnCoroutine;
 
@@ -40,6 +44,11 @@ public class WaveManager : GenericSingleton<WaveManager>
         spawnCoroutine = StartCoroutine(SpawnWaveCoroutine(waveIndex));
     }
 
+    private void TestWaveStart()
+    {
+        WaveStart(currentWaveIndex);
+    }
+
     private void InitWaveValue()
     {
         eliminateCount = 0;
@@ -48,6 +57,8 @@ public class WaveManager : GenericSingleton<WaveManager>
 
     private IEnumerator SpawnWaveCoroutine(int waveIndex)
     {
+        OnWaveStart?.Invoke();
+
         if (waveIndex < 0 || waveIndex >= waves.Count)
         {
             yield break;
@@ -96,10 +107,35 @@ public class WaveManager : GenericSingleton<WaveManager>
                     MonsterManager.Instance.SpawnMonster(so, spawnPos);
                 });
 
-                // Wait for the interval between individual monsters
                 yield return new WaitForSeconds(group.spawnInterval);
             }
         }
+
+        //check wave clear 
+        if (CheckWaveClear(wave.waveType))
+        {
+            OnWaveEnd?.Invoke();
+        }
+
+        currentWaveIndex++;
+
+        //임의로 0.5초 딜레이 후 다음 웨이브
+        Invoke(nameof(TestWaveStart), 2f);
+    }
+
+    private bool CheckWaveClear(WaveType waveType)
+    {
+        switch (waveType)
+        {
+            case WaveType.Elimination:
+
+                break;
+            case WaveType.TimeLimit:
+
+                break;
+        }
+
+        return true;
     }
 
     void OnDrawGizmos()
