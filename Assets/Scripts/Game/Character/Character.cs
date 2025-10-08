@@ -118,25 +118,35 @@ public class Character : MonoBehaviour
             return;
         }
 
-        Vector2 spriteHalfSize = Vector2.zero;
         SpriteRenderer render = GetComponent<SpriteRenderer>();
-        if (render != null)
+        if (render == null)
         {
-            spriteHalfSize = render.bounds.extents;
+            Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
+
+            if (area.Contains(newPos))
+            {
+                rigid.MovePosition(newPos);
+                OnMoveAction?.Invoke(newPos);
+            }
+            else
+            {
+                rigid.linearVelocity = Vector2.zero;
+            }
+
+            return;
         }
 
-        Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-        Vector2 minPos = newPos - spriteHalfSize;
-        Vector2 maxPos = newPos + spriteHalfSize;
+        Vector2 spriteHalfSize = render.bounds.extents;
+        Vector2 targetPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
+        Bounds characterBounds = new Bounds(targetPos, spriteHalfSize * 2);
 
-        if (!area.Contains(maxPos))
+        if (!area.Intersects(characterBounds))
         {
             rigid.linearVelocity = Vector2.zero;
             return;
         }
-
-        rigid.MovePosition(newPos);
-        OnMoveAction?.Invoke(newPos);
+        rigid.MovePosition(targetPos);
+        OnMoveAction?.Invoke(targetPos);
 
         if (dir.x != 0) Flip(dir.x > 0);
     }

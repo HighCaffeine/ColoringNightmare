@@ -123,6 +123,24 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         }
     }
 
+    public Vector2 GetCalibrationSpawnPos(Transform monster, SpriteRenderer render)
+    {
+        Vector2 result = Vector2.zero;
+
+        if (render != null)
+        {
+            Vector2 monsterHalfSize = render.bounds.extents;
+            Bounds area = monsterMoveArea.GetBounds();
+
+            float caliX = Mathf.Clamp(monster.position.x, area.min.x + monsterHalfSize.x, area.max.x - monsterHalfSize.x);
+            float caliY = Mathf.Clamp(monster.position.y, area.min.y + monsterHalfSize.y, area.max.y - monsterHalfSize.y);
+
+            result = new Vector2(caliX, caliY);
+        }
+
+        return result;
+    }
+
     [SerializeField] private bool isPlayerDead = false;
     public bool IsPlayerDead() { return isPlayerDead; }
     public delegate bool OnPlayerIsDead();
