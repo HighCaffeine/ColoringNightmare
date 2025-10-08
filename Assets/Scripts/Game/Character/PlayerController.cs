@@ -138,9 +138,6 @@ public class PlayerController : Character
         {
             transform.position = Vector2.MoveTowards(transform.position, targetPos, info.speed * Time.fixedDeltaTime);
 
-            Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
-            Flip(moveDirection.x > 0);
-
             if (Vector2.Distance(transform.position, targetPos) < 0.1f)
             {
                 isMouseMoving = false;
@@ -157,8 +154,12 @@ public class PlayerController : Character
 
         if (!moveArea.GetBounds().Contains(targetPos)) return;
 
+        Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
+        Flip(moveDirection.x < 0);
+
         isMouseMoving = true;
         ChangeState(StateType.Move);
+
 
         if (spine != null) spine.TestPlayRunSpine();
     }

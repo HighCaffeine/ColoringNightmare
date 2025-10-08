@@ -16,6 +16,6 @@ MonoBehaviour:
   characterName: Player_wolf
   maxHp: 5
   dmg: 1
-  speed: 5
+  speed: 2
   attackDelay: 1
   isSpine: 1

@@ -84,7 +84,7 @@ public class Character : MonoBehaviour
             float newScaleX = Mathf.Abs(currentScaleX) * (isRight ? -1f : 1f);
             skeleton.skeleton.ScaleX = newScaleX;
 
-            FlipEffectPivot(isRight);
+            if (effectPivot != null) FlipEffectPivot(isRight);
         }
         else if (spriteRenderer != null)
         {
