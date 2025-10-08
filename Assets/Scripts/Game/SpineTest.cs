@@ -9,7 +9,7 @@ public class SpineTest : MonoBehaviour
     {
         attack1,
         idle,
-        run,
+        walk,
     }
 
     public SkeletonAnimation skeleton;
@@ -47,7 +47,7 @@ public class SpineTest : MonoBehaviour
     public void TestPlayRunSpine()
     {
         CheckCoroutine();
-        spineCoroutine = StartCoroutine(PlaySpine(AniName.run, true));
+        spineCoroutine = StartCoroutine(PlaySpine(AniName.walk, true));
     }
 
     public void TestPlayIdleSpine()
