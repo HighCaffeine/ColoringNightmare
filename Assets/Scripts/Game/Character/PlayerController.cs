@@ -49,11 +49,13 @@ public class PlayerController : Character
 
 
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
+    private SpineTest spine;
 
     protected new void Awake()
     {
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
+        spine = GetComponent<SpineTest>();
 
         SODataLoader.Instance.LoadSO<CharacterData>(addressableName.ToString(), so =>
         {
@@ -82,7 +84,7 @@ public class PlayerController : Character
                 //Move Callback
                 playerInput.Player1.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player1.Move.performed += callback => Move(Vector2.zero);
-                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
+                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
 
                 playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); ChangeState(StateType.Attack); };
 
@@ -100,7 +102,7 @@ public class PlayerController : Character
                 //Move Callback
                 playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player2.Move.performed += callback => { Move(Vector2.zero); };
-                playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
+                playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
 
                 playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
 
@@ -230,6 +232,12 @@ public class PlayerController : Character
 
         axisX = input.x;
         axisY = input.y;
+
+        if (input.magnitude > 0)
+        {
+            if (spine != null) spine.TestPlayRunSpine();
+
+        }
 
         if (axisX != 0.0f)
         {

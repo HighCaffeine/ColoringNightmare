@@ -44,6 +44,12 @@ public class SpineTest : MonoBehaviour
         }));
     }
 
+    public void TestPlayRunSpine()
+    {
+        CheckCoroutine();
+        spineCoroutine = StartCoroutine(PlaySpine(AniName.run, true));
+    }
+
     public void TestPlayIdleSpine()
     {
         CheckCoroutine();
