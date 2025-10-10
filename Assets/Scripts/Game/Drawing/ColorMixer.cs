@@ -121,7 +121,7 @@ public class ColorMixer : GenericSingleton<ColorMixer>
         result.color = Color.HSVToRGB(hsv.h, hsv.s, hsv.v);
     }
 
-    private HSV GetHSV(ColorType color)
+    public HSV GetHSV(ColorType color)
     {
         if (color >= ColorType.Count || color == ColorType.None) return new HSV(0f, 0f, 0f);
 

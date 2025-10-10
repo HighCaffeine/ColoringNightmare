@@ -14,6 +14,7 @@ public class DataManager : GenericSingleton<DataManager>
     {
         base.Awake();
     }
+    
 
     public void SetMoney(ref long money)
     {

@@ -40,6 +40,8 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
         currentHP = info.maxHp;
         state = StateType.Idle;
 
+        transform.position = MonsterManager.Instance.GetCalibrationSpawnPos(transform, spriteRender);
+
         UpdateCollider();
         Flip(true);
     }

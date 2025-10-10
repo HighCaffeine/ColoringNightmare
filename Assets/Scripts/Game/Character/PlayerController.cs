@@ -49,11 +49,13 @@ public class PlayerController : Character
 
 
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
+    private SpineTest spine;
 
     protected new void Awake()
     {
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
+        spine = GetComponent<SpineTest>();
 
         SODataLoader.Instance.LoadSO<CharacterData>(addressableName.ToString(), so =>
         {
@@ -82,7 +84,7 @@ public class PlayerController : Character
                 //Move Callback
                 playerInput.Player1.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player1.Move.performed += callback => Move(Vector2.zero);
-                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
+                playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
 
                 playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); ChangeState(StateType.Attack); };
 
@@ -98,9 +100,12 @@ public class PlayerController : Character
                 OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
 
                 //Move Callback
-                playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
-                playerInput.Player2.Move.performed += callback => { Move(Vector2.zero); };
-                playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); };
+                // playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
+                // playerInput.Player2.Move.performed += callback => { Move(Vector2.zero); };
+                // playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
+                playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
+                mainCam = Camera.main;
+
 
                 playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
 
@@ -118,11 +123,45 @@ public class PlayerController : Character
     private Vector2 input;
     private Action<Vector2> OnMoveAction;
 
+    private Vector2 targetPos;
+    private bool isMouseMoving;
+    private Camera mainCam;
+
     void FixedUpdate()
     {
-        if (axisX == 0.0f && axisY == 0.0f) return;
+        if (playerType == PlayerType.Player1)
+        {
+            if (axisX == 0.0f && axisY == 0.0f) return;
+            MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
+        }
+        else if (playerType == PlayerType.Player2 && isMouseMoving)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, info.speed * Time.fixedDeltaTime);
 
-        MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
+            if (Vector2.Distance(transform.position, targetPos) < 0.1f)
+            {
+                isMouseMoving = false;
+                ChangeState(StateType.Idle);
+                if (spine != null) spine.TestPlayIdleSpine();
+            }
+        }
+    }
+
+    private void OnMouseClick()
+    {
+        Vector2 mousePos = Mouse.current.position.ReadValue();
+        targetPos = mainCam.ScreenToWorldPoint(mousePos);
+
+        if (!moveArea.GetBounds().Contains(targetPos)) return;
+
+        Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
+        Flip(moveDirection.x < 0);
+
+        isMouseMoving = true;
+        ChangeState(StateType.Move);
+
+
+        if (spine != null) spine.TestPlayRunSpine();
     }
 
     protected override void Idle()
@@ -230,6 +269,12 @@ public class PlayerController : Character
 
         axisX = input.x;
         axisY = input.y;
+
+        if (input.magnitude > 0)
+        {
+            if (spine != null) spine.TestPlayRunSpine();
+
+        }
 
         if (axisX != 0.0f)
         {
