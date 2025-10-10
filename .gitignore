@@ -69,7 +69,7 @@ obj/
 .sln
 .vsconfig
 
-Assets/ExternalFiles/
+Assets/ExternalFiles/Unity-Logs-Viewer
 
 # Unity3D generated meta files
 *.pidb.meta
