@@ -226,6 +226,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         InitLine();
     }
 
+    public void Undo()
+    {
+        Destroy(lineRenderers[^0].gameObject);
+    }
+
     private void InitLine()
     {
         foreach (var line in lineRenderers)
