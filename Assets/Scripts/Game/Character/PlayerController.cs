@@ -137,6 +137,7 @@ public class PlayerController : Character
         else if (playerType == PlayerType.Player2 && isMouseMoving)
         {
             transform.position = Vector2.MoveTowards(transform.position, targetPos, info.speed * Time.fixedDeltaTime);
+            OnMoveAction?.Invoke(transform.position);
 
             if (Vector2.Distance(transform.position, targetPos) < 0.1f)
             {

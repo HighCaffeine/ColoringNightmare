@@ -34,4 +34,6 @@ public class OutlineController : MonoBehaviour
         outlineRenderer.sortingLayerID = mainRenderer.sortingLayerID;
         outlineRenderer.sortingOrder = mainRenderer.sortingOrder - 1;
     }
+
+    public void SetOutLineObj(bool active) { outlineRenderer.gameObject.SetActive(active); }
 }
