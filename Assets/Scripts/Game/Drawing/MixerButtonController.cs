@@ -36,6 +36,8 @@ public class MixerButtonController : MonoBehaviour
 
     [SerializeField] private CursorData defaultCursor;
 
+    [SerializeField] private SpriteRenderer colorResultSprite;
+
     private int selectedColors = 0;
 
     private ColorMixer.ColorType c1, c2;
@@ -76,6 +78,8 @@ public class MixerButtonController : MonoBehaviour
 
         DrawWeapon.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor), resultColor);
         ColorMixer.Instance.SetFirstColor(ColorMixer.ColorType.White);
+
+        if (colorResultSprite != null) colorResultSprite.color = ColorMixer.Instance.GetColor(resultColor);
     }
 
     private int cursorIndex = 0;
