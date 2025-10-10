@@ -44,6 +44,14 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
     private WorkStationType workStationType = WorkStationType.None;
     private bool isOnInteractive = false;
 
+    public bool IsOnInteractive => isOnInteractive;
+
+    public void SetIsOnInteractive(bool isOnInteractive) { this.isOnInteractive = isOnInteractive; }
+
+    public void SetPaletteType() { workStationType = WorkStationType.Palette; }
+    public void SetEnhanceType() { workStationType = WorkStationType.Enhance; }
+    public void SetSketchType() { workStationType = WorkStationType.Sketch; }
+
     void OnDrawGizmos()
     {
         if (paletteArea != null)
@@ -75,16 +83,16 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
             case WorkStationType.None:
                 break;
             case WorkStationType.Palette:
-                if (isOnInteractive) OnPalettePanelOff?.Invoke();
-                else OnPalettePanelOn?.Invoke();
+                if (isOnInteractive) OnPalettePanelOn?.Invoke();
+                else OnPalettePanelOff?.Invoke();
                 break;
             case WorkStationType.Sketch:
-                if (isOnInteractive) OnSketchOff?.Invoke();
-                else OnSketchOn?.Invoke();
+                if (isOnInteractive) OnSketchOn?.Invoke();
+                else OnSketchOff?.Invoke();
                 break;
             case WorkStationType.Enhance:
-                if (isOnInteractive) OnEnhancePanelOff?.Invoke();
-                else OnEnhancePanelOn?.Invoke();
+                if (isOnInteractive) OnEnhancePanelOn?.Invoke();
+                else OnEnhancePanelOff?.Invoke();
                 break;
         }
     }
