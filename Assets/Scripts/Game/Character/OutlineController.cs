@@ -28,11 +28,14 @@ public class OutlineController : MonoBehaviour
         // 원본 스프라이트의 속성 복사
         outlineRenderer.sprite = mainRenderer.sprite;
         outlineRenderer.color = outlineColor;
-        outlineRenderer.transform.localScale = Vector3.one * outlineThickness;
+        outlineRenderer.transform.localScale = transform.localScale * outlineThickness;
+        outlineObject.transform.localPosition = Vector3.zero;
 
         // 렌더링 순서 설정
         outlineRenderer.sortingLayerID = mainRenderer.sortingLayerID;
         outlineRenderer.sortingOrder = mainRenderer.sortingOrder - 1;
+
+        SetOutLineObj(false);
     }
 
     public void SetOutLineObj(bool active) { outlineRenderer.gameObject.SetActive(active); }
