@@ -1,25 +1,35 @@
+using UnityEngine.UI;
 using UnityEngine;
 
 public class ColorButton : MonoBehaviour
 {
     public UnityEngine.Events.UnityEvent OnClickEvent;
+    [SerializeField] private Image buttonImage;
 
-    [SerializeField] private GameObject disablePanel;
+    private bool isDisabled => !buttonImage.raycastTarget;
 
     public void OnButtonClick()
     {
+        if (isDisabled) return;
         OnClickEvent?.Invoke();
     }
 
     public void ConvertAbleState()
     {
-        if (disablePanel.activeSelf)
+        if (isDisabled)
         {
-            disablePanel.SetActive(false);
+            buttonImage.raycastTarget = true;
+            buttonImage.color = new Color(buttonImage.color.r, buttonImage.color.g, buttonImage.color.b, 255f);
         }
         else
         {
-            disablePanel.SetActive(true);
+            buttonImage.raycastTarget = false;
+            buttonImage.color = new Color(buttonImage.color.r, buttonImage.color.g, buttonImage.color.b, 125f);
         }
+    }
+
+    public void Init()
+    {
+        buttonImage.raycastTarget = true;
     }
 }

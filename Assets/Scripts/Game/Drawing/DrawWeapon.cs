@@ -95,6 +95,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
             return false;
         }
 
+        if (colorType == ColorMixer.ColorType.None || colorType == ColorMixer.ColorType.Count)
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -228,7 +233,9 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     public void Undo()
     {
-        Destroy(lineRenderers[^0].gameObject);
+        if (lineRenderers.Count == 0) return;
+        Destroy(lineRenderers[^1].gameObject);
+        lineRenderers.RemoveAt(lineRenderers.Count - 1);
     }
 
     private void InitLine()
@@ -283,6 +290,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [Space(5f)]
     [Header("유사도")]
     [SerializeField] private TMPro.TextMeshProUGUI similarityText;
+
+    public void SetRefSprite(SpriteRenderer refSprite)
+    {
+        this.refSprite = refSprite;
+    }
 
     public (float cosine, float jaccard, float dice) CalculateSimilarity()
     {
@@ -422,7 +434,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         var weapon = obj.AddComponent<Weapon>();
         obj.tag = "Weapon";
 
-        spriteRender.sortingOrder = 0;
+        spriteRender.sortingOrder = 100;
         spriteRender.sprite = s;
 
         obj.transform.position = refPivotWorld;
@@ -449,6 +461,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         }
 
         weapon.SetupInkData(weaponData);
+        colorType = ColorMixer.ColorType.None;
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)
