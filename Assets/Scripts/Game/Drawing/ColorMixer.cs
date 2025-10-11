@@ -9,7 +9,8 @@ public class ColorMixer : GenericSingleton<ColorMixer>
 
     [Header("Blend Settings")]
     [SerializeField] private float blendDuration = 2f; // 혼합 완료까지 시간
-    [SerializeField] private UnityEngine.UI.Image result;
+    //[SerializeField] private UnityEngine.UI.Image result;
+    [SerializeField] private SpriteRenderer result;
 
 
     public class HSV

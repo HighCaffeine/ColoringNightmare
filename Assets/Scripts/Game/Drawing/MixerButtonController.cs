@@ -36,6 +36,11 @@ public class MixerButtonController : MonoBehaviour
 
     [SerializeField] private CursorData defaultCursor;
 
+    [SerializeField] private SpriteRenderer colorResultSprite;
+
+    [SerializeField] private UnityEngine.UI.Image color1Render;
+    [SerializeField] private UnityEngine.UI.Image color2Render;
+
     private int selectedColors = 0;
 
     private ColorMixer.ColorType c1, c2;
@@ -50,16 +55,28 @@ public class MixerButtonController : MonoBehaviour
     {
         if (selectedColors == 0)
         {
+            color1Render.gameObject.SetActive(true);
+            color1Render.color = ColorMixer.Instance.GetColor(colorType);
+
             c1 = colorType;
-            ColorMixer.Instance.SetFirstColor(c1);
             selectedColors++;
         }
         else if (selectedColors == 1)
         {
+            color2Render.gameObject.SetActive(true);
+            color2Render.color = ColorMixer.Instance.GetColor(colorType);
+
             convertButtonState?.Invoke();
+
             c2 = colorType;
-            Mix();
         }
+    }
+
+    public void Init()
+    {
+        c1 = ColorMixer.ColorType.None;
+        c2 = ColorMixer.ColorType.None;
+        selectedColors = 0;
     }
 
     private ColorMixer.ColorType resultColor;
@@ -71,11 +88,14 @@ public class MixerButtonController : MonoBehaviour
 
     public void SelectColor()
     {
+        ColorMixer.Instance.SetFirstColor(c1);
+        Mix();
         cursorIndex = Devcat.ValueCastTo<int>.From(resultColor);
-        convertButtonState?.Invoke();
 
         DrawWeapon.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor), resultColor);
         ColorMixer.Instance.SetFirstColor(ColorMixer.ColorType.White);
+
+        if (colorResultSprite != null) colorResultSprite.color = ColorMixer.Instance.GetColor(resultColor);
     }
 
     private int cursorIndex = 0;

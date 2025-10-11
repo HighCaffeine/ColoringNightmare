@@ -136,7 +136,14 @@ public class PlayerController : Character
         }
         else if (playerType == PlayerType.Player2 && isMouseMoving)
         {
+            if (UnityEngine.EventSystems.EventSystem.current != null &&
+                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            {
+                //return;
+            }
+
             transform.position = Vector2.MoveTowards(transform.position, targetPos, info.speed * Time.fixedDeltaTime);
+            OnMoveAction?.Invoke(transform.position);
 
             if (Vector2.Distance(transform.position, targetPos) < 0.1f)
             {
@@ -149,11 +156,14 @@ public class PlayerController : Character
 
     private void OnMouseClick()
     {
+        if (WolfWorkStation.Instance.IsOnInteractive) return;
+
         Vector2 mousePos = Mouse.current.position.ReadValue();
-        targetPos = mainCam.ScreenToWorldPoint(mousePos);
+        Vector2 newPos = mainCam.ScreenToWorldPoint(mousePos);
 
-        if (!moveArea.GetBounds().Contains(targetPos)) return;
+        if (!moveArea.GetBounds().Contains(newPos)) return;
 
+        targetPos = newPos;
         Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
         Flip(moveDirection.x < 0);
 
@@ -279,7 +289,7 @@ public class PlayerController : Character
         if (axisX != 0.0f)
         {
             Flip(axisX > 0);
-            if (weaponController != null) weaponController.Flip(axisX > 0);
+            //if (weaponController != null) weaponController.Flip(axisX > 0);
         }
     }
 
