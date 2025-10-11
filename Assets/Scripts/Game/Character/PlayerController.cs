@@ -239,6 +239,8 @@ public class PlayerController : Character
         onPlayerStateUpdate?.Invoke(false);
         playerCollider.enabled = true;
 
+        SetDamageImmune(true);
+
         StartCoroutine(GroggyCoroutine(invincibilityDuration));
     }
 
@@ -251,6 +253,8 @@ public class PlayerController : Character
             yield return new WaitForSeconds(0.1f);
             elapsed += 0.1f;
         }
+
+        SetDamageImmune(false);
     }
 
     private void LockMovement()

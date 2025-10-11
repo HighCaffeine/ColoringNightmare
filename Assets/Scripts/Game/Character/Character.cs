@@ -19,6 +19,8 @@ public class Character : MonoBehaviour
     private bool canAttack = true;
     private float attackTimer = 0f;
 
+    private bool isDamageImmune = false;
+
     protected virtual void Awake()
     {
         //currentHP = info.maxHp;
@@ -49,6 +51,8 @@ public class Character : MonoBehaviour
     protected virtual void Idle() { Debug.Log($"[State] Idle : {info.characterName}"); }
     protected virtual void Dead() { Debug.Log($"[State] Dead : {info.characterName}"); }
     protected virtual void Move(Vector2 dir) { Debug.Log($"[State] Move : {info.characterName}"); }
+
+    protected void SetDamageImmune(bool isImmune) { isDamageImmune = isImmune; }
     protected virtual void Attack()
     {
         if (!canAttack) return;
@@ -94,6 +98,8 @@ public class Character : MonoBehaviour
 
     public virtual void TakeDamage(int amount)
     {
+        if (isDamageImmune) return;
+
         currentHP -= amount;
 
         if (currentHP <= 0)

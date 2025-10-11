@@ -87,19 +87,19 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
         }
     }
 
-    protected void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.LogError("WallMonster : OntriggerEnter2D");
-        if (other.CompareTag("Player1"))
+        if (collision.gameObject.CompareTag("Player1"))
         {
-            PlayerController player = other.GetComponent<PlayerController>();
+            PlayerController player = collision.transform.GetComponent<PlayerController>();
             if (player != null)
             {
                 player.TakeDamage(monsterData.dmg);
 
-                Vector2 pushDirection = (other.transform.position - transform.position).normalized;
+                Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
 
-                Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
+                Rigidbody2D playerRb = collision.transform.GetComponent<Rigidbody2D>();
                 if (playerRb != null)
                 {
                     playerRb.AddForce(pushDirection * monsterData.PushForce, ForceMode2D.Impulse);
@@ -107,6 +107,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
             }
         }
     }
+
 
     private IEnumerator SelfDestructCoroutine(float delay)
     {
