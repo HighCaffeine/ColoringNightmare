@@ -15,6 +15,7 @@ public class DrawingMouseCursor : MonoBehaviour
 
     public void SetMouse()
     {
+        spineObject.gameObject.SetActive(true);
         lastMouseX = Input.mousePosition.x;
         Cursor.visible = false;
         isActivateDrawMouse = true;
@@ -43,7 +44,7 @@ public class DrawingMouseCursor : MonoBehaviour
 
         if (Mathf.Abs(mouseDeltaX) > idleThreshold)
         {
-            if (mouseDeltaX > 0)
+            if (mouseDeltaX < 0)
             {
                 SetAnimation("wolf_Right");
             }

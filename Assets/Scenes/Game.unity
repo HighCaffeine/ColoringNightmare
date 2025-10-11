@@ -1623,7 +1623,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 325125903}
-  - component: {fileID: 325125904}
   m_Layer: 0
   m_Name: Cloud
   m_TagString: Untagged
@@ -1648,18 +1647,6 @@ Transform:
   - {fileID: 616986205}
   m_Father: {fileID: 1638373635}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!210 &325125904
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 325125902}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortAtRoot: 0
 --- !u!1 &339986328
 GameObject:
   m_ObjectHideFlags: 0
@@ -3163,7 +3150,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 555447368}
-  - component: {fileID: 555447369}
   m_Layer: 0
   m_Name: WorkStation
   m_TagString: Untagged
@@ -3190,18 +3176,6 @@ Transform:
   - {fileID: 1298010863}
   m_Father: {fileID: 1638373635}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!210 &555447369
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 555447367}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 10
-  m_SortAtRoot: 0
 --- !u!1001 &605026860
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4241,7 +4215,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &858295800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4483,7 +4457,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &895323264
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7397,7 +7371,7 @@ Transform:
   m_GameObject: {fileID: 1206501467}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.45, y: -1.58, z: 0}
+  m_LocalPosition: {x: 0.79, y: -0.66, z: 0}
   m_LocalScale: {x: 0.14263, y: 0.14263, z: 0.14263}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7920,7 +7894,7 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 11
   m_SortAtRoot: 0
 --- !u!1 &1324531906
 GameObject:
@@ -8246,7 +8220,7 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_SortAtRoot: 0
 --- !u!1 &1369437998
 GameObject:
@@ -9076,10 +9050,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 497512436}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 210.24004, y: -19.945}
+  m_SizeDelta: {x: 420.48007, y: 39.89}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1552122475
 MonoBehaviour:
@@ -10737,7 +10711,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 20
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1723600703
 MeshFilter:
@@ -11013,6 +10987,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1112475913}
+        m_TargetAssemblyTypeName: WolfController, Assembly-CSharp
+        m_MethodName: SetMouse
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnSketchOff:
     m_PersistentCalls:
       m_Calls:
@@ -11056,6 +11042,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1112475913}
+        m_TargetAssemblyTypeName: WolfController, Assembly-CSharp
+        m_MethodName: Init
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11358,7 +11356,7 @@ MonoBehaviour:
   unscaledTime: 0
   _animationName: 
   loop: 1
-  timeScale: 1
+  timeScale: 0.7
 --- !u!23 &1763209283
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -11421,7 +11419,7 @@ Transform:
   m_GameObject: {fileID: 1763209281}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.344, y: 0, z: 0}
+  m_LocalPosition: {x: 0.319, y: -0.112, z: 0}
   m_LocalScale: {x: 0.06561295, y: 0.06561295, z: 0.06561295}
   m_ConstrainProportionsScale: 0
   m_Children: []
