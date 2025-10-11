@@ -139,7 +139,7 @@ public class PlayerController : Character
             if (UnityEngine.EventSystems.EventSystem.current != null &&
                             UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
-                return;
+                //return;
             }
 
             transform.position = Vector2.MoveTowards(transform.position, targetPos, info.speed * Time.fixedDeltaTime);
@@ -289,7 +289,7 @@ public class PlayerController : Character
         if (axisX != 0.0f)
         {
             Flip(axisX > 0);
-            if (weaponController != null) weaponController.Flip(axisX > 0);
+            //if (weaponController != null) weaponController.Flip(axisX > 0);
         }
     }
 

@@ -10,6 +10,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
 
     private PlayerController playerController;
+    private SpriteRenderer spriteRenderer;
 
     void Awake()
     {
@@ -36,6 +37,7 @@ public class WeaponController : MonoBehaviour
         boneFollower.followSkeletonFlip = false;
 
         boneFollower.followLocalScale = false;
+        Flip(false);
     }
 
     public void SubDurability()
