@@ -51,6 +51,7 @@ public class WeaponController : MonoBehaviour
 
     public void SubDurability()
     {
+        if (weapon == null) return;
         if (weapon.DecreaseDurability() == 0) weapon = null;
     }
 

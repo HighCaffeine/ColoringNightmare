@@ -93,7 +93,7 @@ public class PlayerController : Character
                 playerInput.Player1.Move.performed += callback => Move(Vector2.zero);
                 playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
 
-                playerInput.Player1.Attack.started += callback => { OnAttack?.Invoke(); ChangeState(StateType.Attack); };
+                playerInput.Player1.Attack.started += callback => { if (isGroggy) return; OnAttack?.Invoke(); ChangeState(StateType.Attack); };
 
                 moveAction = playerInput.FindAction("Move");
 
