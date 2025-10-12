@@ -29,7 +29,7 @@ public class LoadingImageController : MonoBehaviour
         fadeColor = new Color(1f, 1f, 1f, 1f);
 
         //        if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), false);
-        SceneController.Instance.loadingBarProgress = LoadBarProgress;
+        SceneController.Instance.loadingBarProgress += LoadBarProgress;
     }
 
     private void Start()
@@ -41,8 +41,8 @@ public class LoadingImageController : MonoBehaviour
 
     private void OnDisable()
     {
-        StopCoroutine(ChangeImageOnLoadCoroutine);
-        StopCoroutine(TMIGeneratorCoroutine);
+        if (ChangeImageOnLoadCoroutine != null) StopCoroutine(ChangeImageOnLoadCoroutine);
+        if (TMIGeneratorCoroutine != null) StopCoroutine(TMIGeneratorCoroutine);
     }
 
     Coroutine TMIGeneratorCoroutine;

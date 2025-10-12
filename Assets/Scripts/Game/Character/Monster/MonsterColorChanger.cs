@@ -15,13 +15,26 @@ public class MonsterColorChanger : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        if (skeleton == null || skeleton.skeleton == null) return;
         SetColor();
     }
 #endif
 
+    public void TestDeadEvent()
+    {
+        baseColorType = ColorMixer.ColorType.DarkRed;
+        SetColor();
+    }
+
+    public void ReviveEvent()
+    {
+        baseColorType = ColorMixer.ColorType.Black;
+        SetColor();
+    }
+
     private void SetColor()
     {
-        if (skeleton == null) return;
+        if (skeleton == null || skeleton.skeleton == null) return;
         ColorMixer.HSV baseHsv;
 
         if (baseColorType == ColorMixer.ColorType.Black)

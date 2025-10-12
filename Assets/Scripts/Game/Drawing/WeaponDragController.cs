@@ -20,6 +20,9 @@ public class WeaponDragController : MonoBehaviour
 
     private Vector2 defaultPos;
 
+    public void DisallowWeaponControl() { isAllowWeaponControl = false; weaponObj.transform.position = defaultPos; }
+    public void AllowWeaponControl() { isAllowWeaponControl = true; }
+
     private void Awake()
     {
         mainCamera = Camera.main;

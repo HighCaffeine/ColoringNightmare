@@ -18,6 +18,11 @@ public class GameManager : GenericSingleton<GameManager>
         Time.timeScale = 0.0f;
     }
 
+    public void Restart()
+    {
+        SceneController.Instance.ReloadGameScene();
+    }
+
     public void ResetTimeScale()
     {
         Time.timeScale = 1.0f;

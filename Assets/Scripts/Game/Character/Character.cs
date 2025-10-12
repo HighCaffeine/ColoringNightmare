@@ -13,7 +13,7 @@ public class Character : MonoBehaviour
     protected bool isDead => currentHP <= 0;
 
     private SpriteRenderer spriteRenderer;
-    private Rigidbody2D rigid;
+    protected Rigidbody2D rigid;
     public Spine.Unity.SkeletonAnimation skeleton;
 
     private bool canAttack = true;
@@ -124,35 +124,28 @@ public class Character : MonoBehaviour
             return;
         }
 
-        SpriteRenderer render = GetComponent<SpriteRenderer>();
-        if (render == null)
+        Vector2 moveVelocity = dir.normalized * info.speed;
+        rigid.linearVelocity = moveVelocity;
+
+        if (OnMoveAction != null)
         {
-            Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-
-            if (area.Contains(newPos))
-            {
-                rigid.MovePosition(newPos);
-                OnMoveAction?.Invoke(newPos);
-            }
-            else
-            {
-                rigid.linearVelocity = Vector2.zero;
-            }
-
-            return;
+            OnMoveAction.Invoke(transform.position);
         }
 
-        Vector2 spriteHalfSize = render.bounds.extents;
-        Vector2 targetPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-        Bounds characterBounds = new Bounds(targetPos, spriteHalfSize * 2);
+        Vector2 spriteHalfSize = Vector2.zero;
+        SpriteRenderer render = GetComponent<SpriteRenderer>();
+        if (render != null)
+        {
+            spriteHalfSize = render.bounds.extents;
+        }
+
+        Vector2 currentPos = (Vector2)transform.position;
+        Bounds characterBounds = new Bounds(currentPos, spriteHalfSize * 2);
 
         if (!area.Intersects(characterBounds))
         {
             rigid.linearVelocity = Vector2.zero;
-            return;
         }
-        rigid.MovePosition(targetPos);
-        OnMoveAction?.Invoke(targetPos);
 
         if (dir.x != 0) Flip(dir.x > 0);
     }
