@@ -88,10 +88,7 @@ public class ObjectPooling<ManagerType, PoolType> : GenericSingleton<ManagerType
 
         if (pool.Count <= 0)
         {
-            obj = CreateObject();
-            obj.gameObject.SetActive(true);
-
-            return obj;
+            CreateObject();
         }
 
         obj = pool.Pop();
