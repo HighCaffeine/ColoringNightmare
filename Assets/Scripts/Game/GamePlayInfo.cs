@@ -35,8 +35,8 @@ public class GamePlayInfo : MonoBehaviour
         if (currentIndex == 0) return;
         if (currentIndex == playInfo.Length - 1)
         {
-            nextButton.gameObject.SetActive(false);
-            endButton.gameObject.SetActive(true);
+            nextButton.gameObject.SetActive(true);
+            endButton.gameObject.SetActive(false);
         }
         currentIndex--;
         UpdateInfo();
@@ -48,8 +48,8 @@ public class GamePlayInfo : MonoBehaviour
 
         if (currentIndex == playInfo.Length - 1)
         {
-            nextButton.gameObject.SetActive(true);
-            endButton.gameObject.SetActive(false);
+            nextButton.gameObject.SetActive(false);
+            endButton.gameObject.SetActive(true);
         }
 
         UpdateInfo();
