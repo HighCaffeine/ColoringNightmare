@@ -139,7 +139,7 @@ public class PlayerController : Character
             if (UnityEngine.EventSystems.EventSystem.current != null &&
                             UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
-                //return;
+                return;
             }
 
             transform.position = Vector2.MoveTowards(transform.position, targetPos, info.speed * Time.fixedDeltaTime);
@@ -156,6 +156,11 @@ public class PlayerController : Character
 
     private void OnMouseClick()
     {
+        if (UnityEngine.EventSystems.EventSystem.current != null &&
+                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         if (WolfWorkStation.Instance.IsOnInteractive) return;
 
         Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -293,7 +298,7 @@ public class PlayerController : Character
         if (axisX != 0.0f)
         {
             Flip(axisX > 0);
-            //if (weaponController != null) weaponController.Flip(axisX > 0);
+            if (weaponController != null) weaponController.Flip(axisX > 0);
         }
     }
 

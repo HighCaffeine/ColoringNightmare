@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[ExecuteAlways]
 public class ColorMixer : GenericSingleton<ColorMixer>
 {
     public const int MaxColor = 2;

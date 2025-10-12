@@ -19,6 +19,8 @@ public class WeaponController : MonoBehaviour
 
     public bool IsEquip() => weapon != null;
 
+    private bool isFirst = true;
+
     public void SetupWeapon(Weapon weapon)
     {
         if (this.weapon) this.weapon.DestroyWeapon();
@@ -30,14 +32,21 @@ public class WeaponController : MonoBehaviour
         // this.weapon.transform.localRotation = Quaternion.identity;
 
         var boneFollower = weapon.gameObject.AddComponent<Spine.Unity.BoneFollower>();
+        spriteRenderer = weapon.GetComponent<SpriteRenderer>();
         boneFollower.SkeletonRenderer = skeletonAni;
         boneFollower.boneName = "sword";
         boneFollower.followBoneRotation = true;
         boneFollower.followLocalScale = true;
         boneFollower.followSkeletonFlip = false;
 
+        spriteRenderer.sortingOrder = 0;
+
         boneFollower.followLocalScale = false;
+        isFirst = true;
+
         Flip(false);
+
+        isFirst = false;
     }
 
     public void SubDurability()
@@ -50,7 +59,7 @@ public class WeaponController : MonoBehaviour
         if (weapon == null) return;
 
         Vector3 weaponScale = weapon.transform.localScale;
-        weaponScale.x = isRight ? Mathf.Abs(weaponScale.x) : -Mathf.Abs(weaponScale.x);
+        if (isFirst) weaponScale.x = isRight ? Mathf.Abs(weaponScale.x) : -Mathf.Abs(weaponScale.x);
         weaponScale.y = isRight ? Mathf.Abs(weaponScale.y) : -Mathf.Abs(weaponScale.y);
         weapon.transform.localScale = weaponScale;
     }
