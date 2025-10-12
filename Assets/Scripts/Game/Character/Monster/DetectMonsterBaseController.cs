@@ -17,17 +17,24 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     MonsterManager.OnPlayerIsDead onPlayerIsDead;
 
+    private Rigidbody2D rigid;
+
     public override void Setup(DetectMonsterData data)
     {
         base.Setup(data);
         detectionRange = data.AttackRange;
-
         onPlayerIsDead += MonsterManager.Instance.IsPlayerDead;
+        rigid = GetComponent<Rigidbody2D>();
     }
 
-    protected void Update()
+    // Update 대신 FixedUpdate 사용
+    private void FixedUpdate()
     {
-        if (isDead || isDashing) return;
+        if (isDead || isDashing)
+        {
+            rigid.linearVelocity = Vector2.zero;
+            return;
+        }
 
         switch (state)
         {
@@ -40,33 +47,28 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
     }
 
-    protected void IdleAndDetect()
+    private void Update()
     {
-        base.Move(Vector2.right);
-
         detectTimer += Time.deltaTime;
         if (detectTimer >= detectInterval)
         {
             detectTimer = 0f;
             DetectPlayer();
         }
+    }
+
+    protected void IdleAndDetect()
+    {
+        base.Move(Vector2.right);
 
         if (targetPlayer != null)
         {
-            detectTimer = 0.0f;
             ChangeState(StateType.Move);
         }
     }
 
     private void ChasePlayer()
     {
-        detectTimer += Time.deltaTime;
-        if (detectTimer >= detectInterval)
-        {
-            detectTimer = 0f;
-            DetectPlayer();
-        }
-
         if (targetPlayer == null)
         {
             ChangeState(StateType.Idle);
@@ -74,7 +76,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
 
         float distance = Vector2.Distance(transform.position, targetPlayer.position);
-
         if (distance <= monsterData.AttackRange)
         {
             ChangeState(StateType.Attack);
@@ -82,7 +83,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
 
         Vector2 dir = (targetPlayer.position - transform.position).normalized;
-        MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
+        base.Move(dir);
         Flip(dir.x > 0);
     }
 
@@ -126,45 +127,22 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private IEnumerator DashTowardsTarget(Action attackAction, Vector2 dir)
     {
         isDashing = true;
+        rigid.linearVelocity = dir * monsterData.DashSpeed;
 
         float dashTime = 0.2f;
         float elapsed = 0f;
-        Vector3 startPosition = transform.position;
-        Vector3 targetPosition = startPosition + (Vector3)dir * monsterData.DashSpeed * dashTime;
-
-        Flip(dir.x > 0);
 
         while (elapsed <= dashTime)
         {
-            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsed / dashTime);
-
-            Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.3f);
-            if (hit != null && hit.CompareTag("Player1"))
-            {
-                PlayerController player = hit.GetComponent<PlayerController>();
-                if (player != null)
-                {
-                    attackAction?.Invoke();
-                    player.TakeDamage(monsterData.dmg);
-                }
-            }
-
-            var bounds = MonsterManager.Instance.GetAreaBound();
-            Vector3 clamped = transform.position;
-            clamped.x = Mathf.Clamp(clamped.x, bounds.min.x, bounds.max.x);
-            clamped.y = Mathf.Clamp(clamped.y, bounds.min.y, bounds.max.y);
-            transform.position = clamped;
-
             elapsed += Time.deltaTime;
             yield return null;
         }
 
+        rigid.linearVelocity = Vector2.zero;
         isDashing = false;
 
-        // 대쉬가 끝난 후, 즉시 플레이어를 다시 감지
         DetectPlayer();
 
-        // 플레이어가 여전히 범위 안에 있다면 다시 Chase 상태로, 아니면 Idle 상태로
         if (targetPlayer != null)
         {
             ChangeState(StateType.Move);

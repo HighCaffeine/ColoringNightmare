@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 
 public enum PlayerType
@@ -18,6 +19,10 @@ public class PlayerController : Character
 
     [Header("Interactive")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnInteractive;
+
+    [Header("Damaged")]
+    [SerializeField] private UnityEngine.Events.UnityEvent OnDamaged;
+    [SerializeField] private float damageDelay = 2.0f;
 
     [Header("Attack")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
@@ -46,6 +51,8 @@ public class PlayerController : Character
 
     public float axisX { private set; get; }
     public float axisY { private set; get; }
+    public int GetHP() { return currentHP; }
+    public int GetMaxHP() { return info.maxHp; }
 
 
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
@@ -131,6 +138,11 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
+            if (!moveArea.GetBounds().Intersects(playerCollider.bounds))
+            {
+                rigid.linearVelocity = Vector2.zero;
+            }
+
             if (axisX == 0.0f && axisY == 0.0f) return;
             MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
         }
@@ -187,19 +199,28 @@ public class PlayerController : Character
         axisY = 0.0f;
     }
 
+    private bool isAllowDamaged = true;
+
     public override void TakeDamage(int amount)
     {
+        if (!isAllowDamaged) return;
+
         if (isGroggy) return;
 
         base.TakeDamage(amount);
 
+        OnDamaged?.Invoke();
+        Invoke(nameof(InitAllowDamaged), damageDelay);
+
         if (isDead)
         {
+
             // 그로기 상태 진입
             isGroggy = true;
             onPlayerStateUpdate?.Invoke(true);
             OnPlayerDead?.Invoke();
             LockMovement();
+
 
             // 충돌 판정 비활성화
             if (playerCollider != null)
@@ -207,9 +228,12 @@ public class PlayerController : Character
                 playerCollider.enabled = false;
             }
 
+            rigid.linearVelocity = Vector2.zero;
+
             StartCoroutine(RespawnCoroutine(groggyDuration));
         }
     }
+    private void InitAllowDamaged() { isAllowDamaged = true; }
     public bool IsGroggy() => isGroggy;
 
     public void OnGameOver()
@@ -236,8 +260,8 @@ public class PlayerController : Character
         yield return new WaitForSeconds(delay);
 
         isGroggy = false;
-        OnPlayerRespawn?.Invoke();
         currentHP = info.maxHp;
+        OnPlayerRespawn?.Invoke();
         ChangeState(StateType.Idle);
         UnlockMovement();
 
