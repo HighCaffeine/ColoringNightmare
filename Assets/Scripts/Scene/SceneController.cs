@@ -45,6 +45,7 @@ public class SceneController : GenericSingleton<SceneController>
 
     IEnumerator StartLoad(string sceneName)
     {
+        loadingBarProgress = null;
         //if (SoundManager.Instance != null) SoundManager.Instance.PauseBGM();
 
         SceneManager.LoadSceneAsync("Loading");
