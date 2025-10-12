@@ -71,6 +71,13 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         }
     }
 
+    public void AllWorkStationOff()
+    {
+        OnPalettePanelOff?.Invoke();
+        OnSketchOff?.Invoke();
+        OnEnhancePanelOff?.Invoke();
+    }
+
     public void TEST_DisableDrawing()
     {
         OnSketchOff?.Invoke();

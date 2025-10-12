@@ -8052,6 +8052,18 @@ MonoBehaviour:
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 768705724}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 1206501479}
         m_TargetAssemblyTypeName: MonsterColorChanger, Assembly-CSharp
         m_MethodName: TestDeadEvent
@@ -8064,9 +8076,45 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1748574275}
+        m_TargetAssemblyTypeName: WolfWorkStation, Assembly-CSharp
+        m_MethodName: AllWorkStationOff
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 500854242}
+        m_TargetAssemblyTypeName: WeaponDragController, Assembly-CSharp
+        m_MethodName: DisallowWeaponControl
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnPlayerRespawn:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 768705724}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
       - m_Target: {fileID: 1206501480}
         m_TargetAssemblyTypeName: PlayerHPController, Assembly-CSharp
         m_MethodName: UpdateHpGauge
@@ -8082,6 +8130,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1206501479}
         m_TargetAssemblyTypeName: MonsterColorChanger, Assembly-CSharp
         m_MethodName: ReviveEvent
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 500854242}
+        m_TargetAssemblyTypeName: WeaponDragController, Assembly-CSharp
+        m_MethodName: AllowWeaponControl
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8121,6 +8181,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  damageDelay: 2
   OnAttack:
     m_PersistentCalls:
       m_Calls:
@@ -10613,6 +10674,7 @@ MonoBehaviour:
   OnDamaged:
     m_PersistentCalls:
       m_Calls: []
+  damageDelay: 2
   OnAttack:
     m_PersistentCalls:
       m_Calls:
@@ -11696,6 +11758,7 @@ MonoBehaviour:
   OnDamaged:
     m_PersistentCalls:
       m_Calls: []
+  damageDelay: 2
   OnAttack:
     m_PersistentCalls:
       m_Calls: []
