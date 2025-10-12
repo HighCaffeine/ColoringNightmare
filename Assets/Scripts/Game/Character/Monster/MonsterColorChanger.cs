@@ -15,7 +15,6 @@ public class MonsterColorChanger : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (skeleton == null) return;
         SetColor();
     }
 #endif

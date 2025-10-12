@@ -28,15 +28,15 @@ public class LoadingImageController : MonoBehaviour
     {
         fadeColor = new Color(1f, 1f, 1f, 1f);
 
-        SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), false);
+        //        if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), false);
         SceneController.Instance.loadingBarProgress = LoadBarProgress;
     }
 
     private void Start()
     {
         //로딩 이미지 및 ,tmi변경추가
-        ChangeImageOnLoadCoroutine = StartCoroutine(ChangeImageOnLoad());
-        TMIGeneratorCoroutine = StartCoroutine(TMIGenerator());
+        //ChangeImageOnLoadCoroutine = StartCoroutine(ChangeImageOnLoad());
+        //TMIGeneratorCoroutine = StartCoroutine(TMIGenerator());
     }
 
     private void OnDisable()
