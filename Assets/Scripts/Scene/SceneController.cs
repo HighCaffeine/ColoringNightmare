@@ -18,10 +18,8 @@ public class SceneController : GenericSingleton<SceneController>
     private new void Awake()
     {
         base.Awake();
-
         DontDestroyOnLoad(this);
     }
-
     public static bool IsLoadGameScene => isLoadGameScene;
 
     private static bool isLoadGameScene = false;
@@ -35,47 +33,21 @@ public class SceneController : GenericSingleton<SceneController>
     public void ReloadGameScene()
     {
         isLoadGameScene = false; // 초기화
-        StartCoroutine(StartLoadTEST(SceneName.Game.ToString()));
+        StartCoroutine(StartLoad(SceneName.Game.ToString()));
     }
 
-    IEnumerator StartLoadTEST(string sceneName)
+    public void GameOff()
     {
-        if (SoundManager.Instance != null)
-            SoundManager.Instance.PauseBGM();
-
-        AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
-        async.allowSceneActivation = false;
-        WaitForFixedUpdate wait = new WaitForFixedUpdate();
-
-        while (!async.isDone)
-        {
-            loadingBarProgress?.Invoke(async.progress);
-
-            if (async.progress >= 0.9f)
-            {
-                yield return null;
-
-                // Game 씬일 때만 플래그 true
-                isLoadGameScene = (sceneName == SceneName.Game.ToString());
-
-                async.allowSceneActivation = true;
-
-                break;
-            }
-
-            yield return wait;
-        }
+        Application.Quit();
     }
-    //TEST
-
     public delegate void LoadingBarProgress(float progress);
     public LoadingBarProgress loadingBarProgress;
 
     IEnumerator StartLoad(string sceneName)
     {
-        if (SoundManager.Instance != null) SoundManager.Instance.PauseBGM();
+        //if (SoundManager.Instance != null) SoundManager.Instance.PauseBGM();
 
-        //SceneManager.LoadSceneAsync("Loading");
+        SceneManager.LoadSceneAsync("Loading");
 
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
         async.allowSceneActivation = false;
@@ -95,7 +67,7 @@ public class SceneController : GenericSingleton<SceneController>
 
                 isLoadGameScene = true;
 
-                if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), true);
+                //if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_1.ToString(), true);
 
                 break;
             }

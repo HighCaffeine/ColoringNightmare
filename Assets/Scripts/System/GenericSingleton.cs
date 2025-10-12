@@ -4,7 +4,7 @@ public class GenericSingleton<T> : MonoBehaviour where T : Component
 {
     private static T instance;
 
-    public static T Instance{ get { Init(); return instance; } }
+    public static T Instance { get { Init(); return instance; } }
 
     protected virtual void Awake()
     {
@@ -21,10 +21,10 @@ public class GenericSingleton<T> : MonoBehaviour where T : Component
             {
                 GameObject obj = new GameObject();
 
-                #if UNITY_EDITOR_64
-                #else
+                //#if UNITY_EDITOR_64
+                //#else
                 instance = obj.AddComponent<T>();
-                #endif 
+                //#endif
                 obj.name = typeof(T).Name;
                 DontDestroyOnLoad(obj);
             }
