@@ -89,7 +89,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.LogError("WallMonster : OntriggerEnter2D");
+        Debug.Log("WallMonster : OntriggerEnter2D");
         if (collision.gameObject.CompareTag("Player1"))
         {
             PlayerController player = collision.transform.GetComponent<PlayerController>();

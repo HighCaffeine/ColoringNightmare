@@ -150,14 +150,6 @@ public class MonsterManager : GenericSingleton<MonsterManager>
 
     public void PlayerStateUpdate(bool isDead)
     {
-        if (isDead)
-        {
-            Debug.LogError("[PlayerStateUpdate] player dead");
-        }
-        else
-        {
-            Debug.LogError("[PlayerStateUpdate] player revive");
-        }
         isPlayerDead = isDead;
     }
 

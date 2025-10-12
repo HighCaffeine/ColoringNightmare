@@ -21,4 +21,4 @@ MonoBehaviour:
   isSpine: 0
   colorType: 0
   type: 0
-  pushForce: 0
+  pushForce: 10

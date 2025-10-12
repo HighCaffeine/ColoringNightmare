@@ -22,4 +22,9 @@ public class GameManager : GenericSingleton<GameManager>
     {
         Time.timeScale = 1.0f;
     }
+
+    public void GameStart()
+    {
+        ResetTimeScale();
+    }
 }

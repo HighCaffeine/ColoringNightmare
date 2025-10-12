@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -7402758206057227813}
   - component: {fileID: 5318341489920535923}
   - component: {fileID: 9129032917942855167}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Boss
   m_TagString: Monster
   m_Icon: {fileID: 0}
@@ -155,11 +155,11 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &9129032917942855167
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -176,7 +176,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
