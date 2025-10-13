@@ -1,4 +1,5 @@
 using System;
+using Spine.Unity;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
@@ -70,12 +71,15 @@ public class PlayerController : Character
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
     private SpineTest spine;
 
+    private SkeletonAnimation skeletonAnimation;
+
     protected new void Awake()
     {
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
         effectController = GetComponent<EffectController>();
         spine = GetComponent<SpineTest>();
+        skeletonAnimation = GetComponent<SkeletonAnimation>();
 
         // SkillController 초기화 (같은 오브젝트에 있다고 가정)
         if (skillController == null)
@@ -115,7 +119,7 @@ public class PlayerController : Character
                 playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
 
                 // Attack 호출 시, ChangeState(Attack) -> Attack() -> SkillController.UseSkill() 호출
-                playerInput.Player1.Attack.started += callback => { if (isGroggy || !CanAttack()) return; OnAttack?.Invoke(); ChangeState(StateType.Attack); };
+                playerInput.Player1.Attack.started += callback => { if (isGroggy || !CanAttack()) return; ChangeState(StateType.Attack); OnAttack?.Invoke(); };
 
                 moveAction = playerInput.FindAction("Move");
 
@@ -161,8 +165,6 @@ public class PlayerController : Character
         if (playerType == PlayerType.Player1)
         {
             if (isDead) return;
-            if (!rigid.simulated) return;
-            if (!playerCollider.enabled) return;
             input = moveAction.ReadValue<Vector2>();
             if (input.x == 0.0f && input.y == 0.0f)
             {
@@ -232,21 +234,21 @@ public class PlayerController : Character
 
         if (isGroggy) return;
 
-        base.TakeDamage(amount);
+        Debug.Log($"[TakeDamage]{transform.name} : {amount} {currentHP}");
 
-        OnDamaged?.Invoke();
-        Invoke(nameof(InitAllowDamaged), damageDelay);
+        currentHP -= amount;
+
+        if (currentHP <= 0)
+        {
+            currentHP = 0;
+        }
+
 
         if (isDead)
         {
+            gameObject.layer = LayerMask.NameToLayer("IgnoreHit");
 
-            // 그로기 상태 진입
-            isGroggy = true;
-            onPlayerStateUpdate?.Invoke(true);
-            OnPlayerDead?.Invoke();
-            LockMovement();
-
-            // 충돌 판정 비활성화
+            skeletonAnimation.enabled = false;
             playerCollider.enabled = false;
             rigid.simulated = false;
 
@@ -254,7 +256,16 @@ public class PlayerController : Character
             rigid.linearVelocity = Vector2.zero;
 
             StartCoroutine(RespawnCoroutine(groggyDuration));
+
+            // 그로기 상태 진입
+            isGroggy = true;
+            onPlayerStateUpdate?.Invoke(true);
+            LockMovement();
+            OnPlayerDead?.Invoke();
         }
+
+        OnDamaged?.Invoke();
+        Invoke(nameof(InitAllowDamaged), damageDelay);
     }
 
     private void InitAllowDamaged() { isAllowDamaged = true; }
@@ -290,6 +301,9 @@ public class PlayerController : Character
         UnlockMovement();
 
         onPlayerStateUpdate?.Invoke(false);
+
+        gameObject.layer = LayerMask.NameToLayer("Player");
+        skeletonAnimation.enabled = true;
         playerCollider.enabled = true;
         rigid.simulated = true;
 
@@ -313,12 +327,12 @@ public class PlayerController : Character
 
     private void LockMovement()
     {
-        if (rigid == null || playerCollider == null) return;
+        // if (rigid == null || playerCollider == null) return;
 
-        rigid.linearVelocity = Vector2.zero;
-        rigid.angularVelocity = 0f;
-        rigid.simulated = false;
-        playerCollider.enabled = false;
+        // rigid.linearVelocity = Vector2.zero;
+        // rigid.angularVelocity = 0f;
+        // rigid.simulated = false;
+        // playerCollider.enabled = false;
 
         switch (playerType)
         {
@@ -344,7 +358,7 @@ public class PlayerController : Character
 
         if (!weaponController.IsEquip())
         {
-            playerNoneWeapon.EnableCollider();
+            playerNoneWeapon.OnResetAttack();
             effectController.NoneWeapon(playerNoneEffect);
             //noneWeaponPivot.gameObject.SetActive(true);
         }

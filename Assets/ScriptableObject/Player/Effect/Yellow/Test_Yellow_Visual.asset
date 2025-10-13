@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Test_Yellow_Visual
   m_EditorClassIdentifier: 
   colorType: 2
-  visualType: 0
+  visualType: 1
   sprites:
   - {fileID: 21300000, guid: 20e3cef612c5c52469064b472949e881, type: 3}
   animationSpeed: 40
-  prefab: {fileID: 0}
+  prefab: {fileID: 2129912802638987133, guid: b991c2cd1e45676408394666d396dae6, type: 3}

@@ -9,10 +9,8 @@ public class Projectile : MonoBehaviour
     {
         this.speed = speed;
         this.direction = dir;
-        transform.localScale = new Vector3(dir.x > 0 ? -1 : 1, 1, 1);
+        transform.localScale = new Vector3(dir.x < 0 ? -1 : 1, 1, 1);
         Destroy(gameObject, lifeTime); // lifetime 후 자동 삭제
-
-        transform.localScale *= 0.3f;
     }
 
     void Update()

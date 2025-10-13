@@ -52,6 +52,7 @@ public class SpineTest : MonoBehaviour
 
     public void TestPlayIdleSpine()
     {
+        skeleton.AnimationState.ClearTrack(0);
         CheckCoroutine();
         spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
     }
@@ -60,6 +61,7 @@ public class SpineTest : MonoBehaviour
     {
         if (spineCoroutine != null)
         {
+            skeleton.AnimationState.ClearTrack(0);
             StopCoroutine(spineCoroutine);
             spineCoroutine = null;
         }
@@ -126,6 +128,7 @@ public class SpineTest : MonoBehaviour
 
     private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
+        skeleton.AnimationState.ClearTrack(0);
         Debug.Log($"Spine Event Fired: {e.Data.Name}");
 
         switch (e.Data.Name)
@@ -152,6 +155,7 @@ public class SpineTest : MonoBehaviour
     {
         if (hasPlayedEffect) return;
         hasPlayedEffect = true;
+        skeleton.AnimationState.ClearTrack(0);
         attackEffect?.Invoke();
     }
 }

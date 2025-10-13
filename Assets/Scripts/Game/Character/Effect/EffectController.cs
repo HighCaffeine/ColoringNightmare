@@ -65,6 +65,8 @@ public class EffectController : GenericSingleton<EffectController>
         {
             GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
 
+            //effectInstance.transform.localScale = new Vector3(isFacingRight ? -1 : 1, 1, 1);
+
             var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
             if (effectPlayer != null)
             {

@@ -1,23 +1,36 @@
 using UnityEngine;
+using System;
+using System.Collections;
 
 public class PlayerNoneWeapon : MonoBehaviour
 {
-    [SerializeField] private BoxCollider2D collider;
-    public void EnableCollider()
+    BoxCollider2D boxCollider2D;
+    private bool hitOnce = false;
+    private bool onAttack = false;
+
+    void Awake()
     {
-        collider.enabled = true;
+        boxCollider2D = GetComponent<BoxCollider2D>();
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    public void OnResetAttack() { boxCollider2D.enabled = true; onAttack = false; }
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.CompareTag("Monster"))
+        if (hitOnce || onAttack) return; // 이미 한 번 맞았으면 종료
+        boxCollider2D.enabled = false;
+
+        if (other.CompareTag("Monster"))
         {
-            var m = collision.GetComponent<Character>();
-
-            m.TakeDamage(1);
-            collider.enabled = false;
-
-            Debug.Log($"[NoneWeapon]{m.CurrentHP} / {m.info.maxHp} take damage 1");
+            other.GetComponent<Character>()?.TakeDamage(1);
+            hitOnce = true;
+            StartCoroutine(ResetHit());
         }
+    }
+
+    private IEnumerator ResetHit()
+    {
+        yield return new WaitForSeconds(0.2f); // 히트박스 지속 동안 반복 공격 방지
+        hitOnce = false;
     }
 }

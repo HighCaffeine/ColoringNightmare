@@ -125,43 +125,58 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private IEnumerator DashTowardsTarget(Vector2 dir)
     {
         isDashing = true;
-
-        // Dash 중 다른 Move 충돌 방지
-        rigid.linearVelocity = Vector2.zero;
-
         float dashTime = 0.2f;
         float elapsed = 0f;
 
-        // Raycast로 Dash 경로 체크
-        Vector2 startPos = transform.position;
-        Vector2 endPos = startPos + dir * statusEffectManager.GetSpeedMultiplier() * dashTime;
+        // 대시 시작
+        rigid.linearVelocity = dir * monsterData.DashSpeed;
 
         while (elapsed <= dashTime)
         {
             elapsed += Time.deltaTime;
 
-            // Dash 이동
-            rigid.linearVelocity = dir * statusEffectManager.GetSpeedMultiplier();
-
-            // Raycast로 경로상 플레이어 감지
+            // 대시 중 플레이어 감지 및 공격
             RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, monsterData.DashSpeed * Time.deltaTime, LayerMask.GetMask("Player"));
-            if (hit.collider != null)
+            if (hit.collider != null && hit.collider.CompareTag("Player"))
             {
                 Character player = hit.collider.GetComponent<Character>();
                 if (player != null)
+                {
                     player.TakeDamage(monsterData.dmg);
-            }
 
+                    // 플레이어 공격 후, 대시 즉시 중단
+                    rigid.linearVelocity = Vector2.zero;
+                    isDashing = false;
+
+                    // 다음 공격까지 일정 시간 대기 (쿨타임)
+                    yield return new WaitForSeconds(info.attackDelay);
+
+                    // 대기 후 상태 재설정
+                    DetectPlayer();
+                    if (targetPlayer != null)
+                    {
+                        ChangeState(StateType.Move);
+                    }
+                    else
+                    {
+                        ChangeState(StateType.Idle);
+                    }
+
+                    yield break; // 코루틴 종료
+                }
+            }
             yield return null;
         }
 
+        // 대시가 끝났는데 플레이어를 못 맞혔을 경우
         rigid.linearVelocity = Vector2.zero;
         isDashing = false;
-
         DetectPlayer();
 
         if (targetPlayer != null)
+        {
             ChangeState(StateType.Move);
+        }
         else
         {
             detectTimer = 0.0f;
