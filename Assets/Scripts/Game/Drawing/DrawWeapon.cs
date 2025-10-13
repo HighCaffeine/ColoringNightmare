@@ -234,8 +234,14 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     public void Undo()
     {
         if (lineRenderers.Count == 0) return;
-        Destroy(lineRenderers[^1].gameObject);
+
+        // 마지막 라인 제거
+        var lastLine = lineRenderers[lineRenderers.Count - 1];
         lineRenderers.RemoveAt(lineRenderers.Count - 1);
+
+        // 게임 오브젝트 삭제
+        if (lastLine != null)
+            Destroy(lastLine.gameObject);
     }
 
     private void InitLine()

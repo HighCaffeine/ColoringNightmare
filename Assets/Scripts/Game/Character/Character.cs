@@ -163,7 +163,7 @@ public class Character : MonoBehaviour
             return;
         }
 
-        Vector2 moveVelocity = dir.normalized * statusEffectManager.GetSpeedMultiplier();
+        Vector2 moveVelocity = dir.normalized * info.speed;
         rigid.linearVelocity = moveVelocity;
 
         if (OnMoveAction != null)

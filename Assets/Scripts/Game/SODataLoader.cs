@@ -20,6 +20,9 @@ public enum MonsterDataName
 {
     TestWallData,
     TestDetectData,
+    TestDetectBNONData,
+    TestDetectKillerData,
+
     TestBossData,
     Count
 };

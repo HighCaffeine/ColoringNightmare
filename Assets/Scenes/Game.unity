@@ -1765,14 +1765,15 @@ MonoBehaviour:
   playInfo:
   - {fileID: 21300000, guid: cf00eb7dafb27a14c8097e04177df07e, type: 3}
   - {fileID: 21300000, guid: cdaf69ecef549174ea532201318d8dd5, type: 3}
-  - {fileID: 21300000, guid: 0699a20c39246cf4a853e6e7e38cfd80, type: 3}
-  - {fileID: 21300000, guid: 41e9dc3b809312a4b8e5f6c7b7b77f10, type: 3}
+  - {fileID: 21300000, guid: 669c724621cad324b816e5c4a90203fc, type: 3}
+  - {fileID: 21300000, guid: cdd0148aa64698741a2e19540ac535ee, type: 3}
   - {fileID: 21300000, guid: 8e0222a9dd7d6dc4097b1c7ea156d814, type: 3}
   - {fileID: 21300000, guid: 5a37abe4f77cbce4eb80680b8cc558ea, type: 3}
   - {fileID: 21300000, guid: 2a3c177b059f436419aa26c4b33fc47e, type: 3}
   - {fileID: 21300000, guid: 8f25652424f459c488a6cfa77263f0eb, type: 3}
-  - {fileID: 21300000, guid: 58f0e0c2cfa201044aa8613d1b7ab253, type: 3}
-  - {fileID: 21300000, guid: e7c19c11ec7f58e4aac5e0011b359a9f, type: 3}
+  - {fileID: 21300000, guid: 0699a20c39246cf4a853e6e7e38cfd80, type: 3}
+  - {fileID: 21300000, guid: 41e9dc3b809312a4b8e5f6c7b7b77f10, type: 3}
+  - {fileID: 21300000, guid: 3a5c35b7761983d4f857c9bcfb7dfd91, type: 3}
   endButton: {fileID: 227724147}
   nextButton: {fileID: 790746350}
   startPanel: {fileID: 276328241}
@@ -5013,7 +5014,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   waves:
-  - {fileID: 11400000, guid: 3c4d2c41be4af094eaa3b73bf7d215ed, type: 2}
+  - {fileID: 11400000, guid: 262eb4357c62cc842b41a6df13b21000, type: 2}
   - {fileID: 11400000, guid: 2b4855f64f4e0594cbfa5cd9bf5691c3, type: 2}
   - {fileID: 11400000, guid: dea03ac613e298045a07a8fba30e6b5c, type: 2}
   - {fileID: 11400000, guid: e4260f508d6bef44580a81fd1ae85da8, type: 2}
@@ -5525,12 +5526,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 879956050}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1525301309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &883833798 stripped
 GameObject:
@@ -10503,6 +10504,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 879956051}
   - {fileID: 276002991}
   - {fileID: 1918038609}
   - {fileID: 2081776440}
@@ -17043,7 +17045,6 @@ SceneRoots:
   - {fileID: 250245135}
   - {fileID: 455327773}
   - {fileID: 2116628812}
-  - {fileID: 879956051}
   - {fileID: 1525301309}
   - {fileID: 2076779311}
   - {fileID: 1046392648}

@@ -25,10 +25,9 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    // FixedUpdate에서 Dash 중 velocity 덮어쓰지 않도록 처리
     private void FixedUpdate()
     {
-        if (isDead || isDashing)
+        if (isDead) // 대시 중 velocity는 그대로 유지
         {
             rigid.linearVelocity = Vector2.zero;
             return;
@@ -67,23 +66,43 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     private void ChasePlayer()
     {
-        if (targetPlayer == null)
+        Vector2 targetPos;
+
+        if (targetPlayer != null)
+        {
+            targetPos = targetPlayer.position;
+            lastKnownPlayerPos = targetPos;
+        }
+        else if (lastKnownPlayerPos != null)
+        {
+            targetPos = lastKnownPlayerPos.Value;
+        }
+        else
         {
             ChangeState(StateType.Idle);
             return;
         }
 
-        float distance = Vector2.Distance(transform.position, targetPlayer.position);
+        float distance = Vector2.Distance(transform.position, targetPos);
         if (distance <= monsterData.AttackRange)
         {
             ChangeState(StateType.Attack);
             return;
         }
 
-        Vector2 dir = (targetPlayer.position - transform.position).normalized;
+        Vector2 dir = (targetPos - (Vector2)transform.position).normalized;
         MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
         Flip(dir.x > 0);
+
+        // 마지막 위치에 도착하면 targetPlayer null이면 Idle로
+        if (targetPlayer == null && distance <= 0.1f)
+        {
+            ChangeState(StateType.Idle);
+            lastKnownPlayerPos = null;
+        }
     }
+
+    private Vector2? lastKnownPlayerPos = null;
 
     private void DetectPlayer()
     {
@@ -91,6 +110,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         {
             detectTimer = 0.0f;
             targetPlayer = null;
+            lastKnownPlayerPos = null;
             return;
         }
 
@@ -101,6 +121,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             if (hits[i] != null && hits[i].CompareTag("Player1"))
             {
                 targetPlayer = hits[i].transform;
+                lastKnownPlayerPos = targetPlayer.position;
                 break;
             }
         }
@@ -128,14 +149,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         float dashTime = 0.2f;
         float elapsed = 0f;
 
-        // 대시 시작
         rigid.linearVelocity = dir * monsterData.DashSpeed;
 
         while (elapsed <= dashTime)
         {
             elapsed += Time.deltaTime;
 
-            // 대시 중 플레이어 감지 및 공격
             RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, monsterData.DashSpeed * Time.deltaTime, LayerMask.GetMask("Player"));
             if (hit.collider != null && hit.collider.CompareTag("Player"))
             {
@@ -144,42 +163,32 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
                 {
                     player.TakeDamage(monsterData.dmg);
 
-                    // 플레이어 공격 후, 대시 즉시 중단
                     rigid.linearVelocity = Vector2.zero;
                     isDashing = false;
 
-                    // 다음 공격까지 일정 시간 대기 (쿨타임)
                     yield return new WaitForSeconds(info.attackDelay);
 
-                    // 대기 후 상태 재설정
                     DetectPlayer();
                     if (targetPlayer != null)
-                    {
                         ChangeState(StateType.Move);
-                    }
                     else
-                    {
                         ChangeState(StateType.Idle);
-                    }
 
-                    yield break; // 코루틴 종료
+                    yield break;
                 }
             }
             yield return null;
         }
 
-        // 대시가 끝났는데 플레이어를 못 맞혔을 경우
         rigid.linearVelocity = Vector2.zero;
         isDashing = false;
-        DetectPlayer();
 
+        DetectPlayer();
         if (targetPlayer != null)
-        {
             ChangeState(StateType.Move);
-        }
         else
         {
-            detectTimer = 0.0f;
+            detectTimer = 0f;
             ChangeState(StateType.Idle);
         }
     }

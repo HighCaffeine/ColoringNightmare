@@ -95,7 +95,7 @@ public class WaveManager : GenericSingleton<WaveManager>
                     }
                     else
                     {
-                        selectedArea = spawnAreas[group.spawnPointIndex];
+                        selectedArea = spawnAreas[group.spawnPointIndex - 1];
                     }
                 }
 

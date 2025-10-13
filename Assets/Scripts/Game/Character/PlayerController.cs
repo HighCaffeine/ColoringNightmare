@@ -260,8 +260,8 @@ public class PlayerController : Character
             // 그로기 상태 진입
             isGroggy = true;
             onPlayerStateUpdate?.Invoke(true);
-            LockMovement();
             OnPlayerDead?.Invoke();
+            LockMovement();
         }
 
         OnDamaged?.Invoke();
@@ -367,6 +367,8 @@ public class PlayerController : Character
             //noneWeaponPivot.gameObject.SetActive(false);
             if (weaponController != null && skillController != null)
             {
+                weaponController.CurrentColliderSetActive(true);
+
                 SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
                 skillController.UseSkill(currentSkillData.colorType);
             }

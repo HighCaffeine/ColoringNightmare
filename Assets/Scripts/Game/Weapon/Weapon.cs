@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -12,12 +13,20 @@ public class Weapon : MonoBehaviour
 
     private System.Func<bool> isAllowAttack;
 
+    private EdgeCollider2D testCollider;
+
     public void SetupInkData(WeaponInkData weaponInkData)
     {
         inkData = weaponInkData;
         currentDurability = weaponInkData.durability;
         damage = weaponInkData.damage;
         this.skillData = weaponInkData.skillData;
+
+        testCollider = GetComponent<EdgeCollider2D>();
+    }
+    public void SetActiveCollider(bool active)
+    {
+        testCollider.enabled = active;
     }
 
     public void InitEvent(System.Func<bool> func)

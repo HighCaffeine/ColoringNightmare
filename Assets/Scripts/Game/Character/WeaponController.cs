@@ -13,7 +13,7 @@ public class WeaponController : MonoBehaviour
 
     public bool isAllowAttack { private set; get; }
 
-    private void InitAllowAttack() { isAllowAttack = true; }
+    private void InitAllowAttack() { CurrentColliderSetActive(false); isAllowAttack = true; }
     public bool GetAllowAttack() { return isAllowAttack; }
 
     public bool IsEquip() => weapon != null;
@@ -70,6 +70,13 @@ public class WeaponController : MonoBehaviour
         Flip(false);
 
         isFirst = false;
+
+        CurrentColliderSetActive(false);
+    }
+
+    public void CurrentColliderSetActive(bool activate)
+    {
+        weapon.SetActiveCollider(activate);
     }
 
     public void SubDurability()

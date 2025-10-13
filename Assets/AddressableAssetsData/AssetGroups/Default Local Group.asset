@@ -156,7 +156,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 87c4087471a224940ada137fe19ca13d
-    m_Address: TestDetectData
+    m_Address: TestDetectBNONData
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -192,6 +192,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b2ef2307536e46c4ca2e488cf20c1593
     m_Address: Assets/ScriptableObject/Ink/12.LightYellow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b591033dcb4d8f04ba8f96b5f161a45f
+    m_Address: TestDetectData
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -232,6 +237,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d6aa5545e26c57f46b07b9606dbba753
     m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/13.DarkBlue_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d888ad99ad68c74489cd2c3b244cee9c
+    m_Address: TestDetectKillerData
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
