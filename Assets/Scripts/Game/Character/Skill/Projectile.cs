@@ -11,6 +11,8 @@ public class Projectile : MonoBehaviour
         this.direction = dir;
         transform.localScale = new Vector3(dir.x > 0 ? -1 : 1, 1, 1);
         Destroy(gameObject, lifeTime); // lifetime 후 자동 삭제
+
+        transform.localScale *= 0.3f;
     }
 
     void Update()
@@ -28,7 +30,7 @@ public class Projectile : MonoBehaviour
             {
                 monster.TakeDamage(1);  //테스트 1데미지
             }
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
 }

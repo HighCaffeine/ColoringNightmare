@@ -17,7 +17,7 @@ public class PlayerHPController : MonoBehaviour
     public void OnDamagedPanelEvent()
     {
         SetActivePanel(true);
-        Invoke(nameof(SetActivePanel), panelDisplayTime);
+        Invoke(nameof(OffPanel), panelDisplayTime);
 
         UpdateHpGauge();
     }
@@ -32,4 +32,5 @@ public class PlayerHPController : MonoBehaviour
 
 
     private void SetActivePanel(bool active) { damagedPanel.gameObject.SetActive(active); }
+    private void OffPanel() { SetActivePanel(false); }
 }

@@ -30,10 +30,14 @@ public class WaveManager : GenericSingleton<WaveManager>
     private int eliminateCount;
     private float time;
 
+    private bool isFirst = true;
+
     public void AddEliminateCount() { eliminateCount++; onAddEliminateCount?.Invoke(); }
 
     public void TEST_WaveStart()
     {
+        if (!isFirst) return;
+        isFirst = false;
         WaveStart(currentWaveIndex);
     }
 

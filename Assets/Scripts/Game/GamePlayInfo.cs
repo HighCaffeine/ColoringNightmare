@@ -12,6 +12,17 @@ public class GamePlayInfo : MonoBehaviour
     [SerializeField] private Transform endButton;
     [SerializeField] private Transform nextButton;
 
+    [SerializeField] private Transform startPanel;
+
+    [SerializeField] private float panelOff = 1.0f;
+    [SerializeField] private float startTime = 5.0f;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnWaitTimeEndEvent;
+
+
+    [Header("TEST")][SerializeField] private bool isAllowGameStart;
+
+    private bool isFirst = true;
+
     void Awake()
     {
         infoPanel.gameObject.SetActive(true);
@@ -28,6 +39,27 @@ public class GamePlayInfo : MonoBehaviour
         GameManager.Instance.GameOver();
         currentIndex = 0;
         UpdateInfo();
+    }
+
+    private void OnWaitTimeEnd()
+    {
+        OnWaitTimeEndEvent?.Invoke();
+    }
+
+    public void OnStartPanel()
+    {
+        if (!isAllowGameStart) return;
+        if (!isFirst) return;
+        isFirst = true;
+
+        startPanel.gameObject.SetActive(true);
+        Invoke(nameof(PanelOff), panelOff);
+        Invoke(nameof(OnWaitTimeEnd), startTime);
+    }
+
+    private void PanelOff()
+    {
+        startPanel.gameObject.SetActive(false);
     }
 
     public void PrevInfo()

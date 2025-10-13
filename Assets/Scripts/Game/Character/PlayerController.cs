@@ -30,6 +30,11 @@ public class PlayerController : Character
     [Header("Weapon")]
     [SerializeField] private WeaponController weaponController;
 
+    // 신규 추가: 스킬 컨트롤러 연결
+    [Header("Skill")]
+    [SerializeField] private SkillController skillController;
+    [SerializeField] private StatusEffectManager statusEffectManager;
+
     [Header("Groggy")]
     [SerializeField] private float groggyDuration = 5f;
     [SerializeField] private float invincibilityDuration = 2f;
@@ -49,6 +54,7 @@ public class PlayerController : Character
     [SerializeField] private PlayerType playerType;
     private PlayerMouseHandler mouseHandler;
 
+
     public float axisX { private set; get; }
     public float axisY { private set; get; }
     public int GetHP() { return currentHP; }
@@ -63,6 +69,14 @@ public class PlayerController : Character
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
         spine = GetComponent<SpineTest>();
+
+        // SkillController 초기화 (같은 오브젝트에 있다고 가정)
+        if (skillController == null)
+        {
+            statusEffectManager = GetComponent<StatusEffectManager>();
+            skillController = GetComponent<SkillController>();
+        }
+
 
         SODataLoader.Instance.LoadSO<CharacterData>(addressableName.ToString(), so =>
         {
@@ -93,7 +107,8 @@ public class PlayerController : Character
                 playerInput.Player1.Move.performed += callback => Move(Vector2.zero);
                 playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
 
-                playerInput.Player1.Attack.started += callback => { if (isGroggy) return; OnAttack?.Invoke(); ChangeState(StateType.Attack); };
+                // Attack 호출 시, ChangeState(Attack) -> Attack() -> SkillController.UseSkill() 호출
+                playerInput.Player1.Attack.started += callback => { if (isGroggy || !CanAttack()) return; OnAttack?.Invoke(); ChangeState(StateType.Attack); };
 
                 moveAction = playerInput.FindAction("Move");
 
@@ -138,12 +153,15 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
-            if (!moveArea.GetBounds().Intersects(playerCollider.bounds))
+            if (isDead) return;
+            if (!rigid.simulated) return;
+            if (!playerCollider.enabled) return;
+            input = moveAction.ReadValue<Vector2>();
+            if (input.x == 0.0f && input.y == 0.0f)
             {
                 rigid.linearVelocity = Vector2.zero;
+                return;
             }
-
-            if (axisX == 0.0f && axisY == 0.0f) return;
             MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
         }
         else if (playerType == PlayerType.Player2 && isMouseMoving)
@@ -221,18 +239,17 @@ public class PlayerController : Character
             OnPlayerDead?.Invoke();
             LockMovement();
 
-
             // 충돌 판정 비활성화
-            if (playerCollider != null)
-            {
-                playerCollider.enabled = false;
-            }
+            playerCollider.enabled = false;
+            rigid.simulated = false;
+
 
             rigid.linearVelocity = Vector2.zero;
 
             StartCoroutine(RespawnCoroutine(groggyDuration));
         }
     }
+
     private void InitAllowDamaged() { isAllowDamaged = true; }
     public bool IsGroggy() => isGroggy;
 
@@ -267,6 +284,7 @@ public class PlayerController : Character
 
         onPlayerStateUpdate?.Invoke(false);
         playerCollider.enabled = true;
+        rigid.simulated = true;
 
         SetDamageImmune(true);
 
@@ -288,6 +306,11 @@ public class PlayerController : Character
 
     private void LockMovement()
     {
+        rigid.linearVelocity = Vector2.zero;
+        rigid.angularVelocity = 0f;
+        rigid.simulated = false;
+        playerCollider.enabled = false;
+
         switch (playerType)
         {
             case PlayerType.Player1:
@@ -301,13 +324,27 @@ public class PlayerController : Character
 
     protected override void Attack()
     {
+        if (!CanAttack()) return;
+
         base.Attack();
+
+        if (spine != null)
+        {
+            spine.TestPlayAttackSpine();
+        }
+
+        if (weaponController != null && weaponController.IsEquip() && skillController != null)
+        {
+            SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
+            skillController.UseSkill(currentSkillData.colorType);
+        }
     }
+
 
     protected new void Move(Vector2 dir)
     {
         //base.Move(dir);
-
+        if (isGroggy) return;
         input = moveAction.ReadValue<Vector2>();
 
         axisX = input.x;

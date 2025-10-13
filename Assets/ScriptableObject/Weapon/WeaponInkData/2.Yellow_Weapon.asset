@@ -16,4 +16,5 @@ MonoBehaviour:
   durability: 8
   damage: 1
   weaponType: 0
+  skillData: {fileID: 11400000, guid: 73bb492ddc5ac1c41bdf62e772413664, type: 2}
   passiveEffect: {fileID: 11400000, guid: c5407c7b3ea401941a1a69b6284eff5e, type: 2}

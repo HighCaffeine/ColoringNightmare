@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335b47cab4611d740b94413b15d1d877, type: 3}
   m_Name: 3.Blue_PassiveEffectData
   m_EditorClassIdentifier: 
-  effectType: 0
+  effectType: 1
   effectValue1: 0
   effectValue2: 0
   effectPrefab: {fileID: 0}

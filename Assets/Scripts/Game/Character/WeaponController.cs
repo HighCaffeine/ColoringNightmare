@@ -9,17 +9,37 @@ public class WeaponController : MonoBehaviour
     [Header("Spine Skeleton Target")]
     [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
 
-    private PlayerController playerController;
     private SpriteRenderer spriteRenderer;
 
-    void Awake()
-    {
-        playerController = GetComponent<PlayerController>();
-    }
+    public bool isAllowAttack { private set; get; }
+
+    private void InitAllowAttack() { isAllowAttack = true; }
+    public bool GetAllowAttack() { return isAllowAttack; }
 
     public bool IsEquip() => weapon != null;
 
     private bool isFirst = true;
+
+    public delegate bool IsAllowAttack();
+    public IsAllowAttack isAllowAttackEvent;
+
+    public SkillData GetEquippedWeaponSkillData()
+    {
+        if (weapon != null)
+        {
+            return weapon.GetSKillData();
+        }
+        return null;
+    }
+
+    public WeaponInkData GetEquippedWeaponInkData()
+    {
+        if (weapon != null)
+        {
+            return weapon.GetInkData();
+        }
+        return null;
+    }
 
     public void SetupWeapon(Weapon weapon)
     {
@@ -39,10 +59,13 @@ public class WeaponController : MonoBehaviour
         boneFollower.followLocalScale = true;
         boneFollower.followSkeletonFlip = false;
 
+        isAllowAttack = true;
         spriteRenderer.sortingOrder = 0;
 
         boneFollower.followLocalScale = false;
         isFirst = true;
+
+        weapon.InitEvent(GetAllowAttack);
 
         Flip(false);
 
@@ -53,6 +76,8 @@ public class WeaponController : MonoBehaviour
     {
         if (weapon == null) return;
         if (weapon.DecreaseDurability() == 0) weapon = null;
+
+        Invoke(nameof(InitAllowAttack), 1f);
     }
 
     public void Flip(bool isRight)

@@ -10,18 +10,19 @@ public class EffectPlayer : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Play(bool isRight, EffectData data)
+    public void Play(bool isRight, EffectVisualData data)
     {
         transform.localScale = new Vector3(isRight ? -1 : 1, 1, 1);
         StartCoroutine(PlayAnimation(data));
     }
 
-    private IEnumerator PlayAnimation(EffectData data)
+    // EffectPlayer.cs
+    private IEnumerator PlayAnimation(EffectVisualData data)
     {
         for (int i = 0; i < data.sprites.Length; i++)
         {
             spriteRenderer.sprite = data.sprites[i];
-            yield return new WaitForSeconds(1f / data.speed * Time.deltaTime);
+            yield return new WaitForSeconds(1f / data.animationSpeed);
         }
 
         Destroy(gameObject);

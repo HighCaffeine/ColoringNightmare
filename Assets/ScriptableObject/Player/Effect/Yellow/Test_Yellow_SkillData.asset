@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a38eed17daa1a1442947ed56f5a98158, type: 3}
+  m_Name: Test_Yellow_SkillData
+  m_EditorClassIdentifier: 
+  colorType: 2
+  skillType: 1
+  baseDamage: 1
+  cooldown: 0.5
+  skillDuration: 0
+  visualData: {fileID: 11400000, guid: b21e71de065b5a14f93022dbcccdbbc2, type: 2}
+  projectileParams:
+    speed: 10
+    lifeTime: 2
+    size: 1
+    piercingCount: 1
+  statusEffectParams:
+    slowRate: 0.5
+    duration: 3
+  doubleHitDelay: 0.1

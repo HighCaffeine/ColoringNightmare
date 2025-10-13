@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6839256795080504488}
   - component: {fileID: 8308626804064736158}
   - component: {fileID: 4194982512856803268}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Main (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4902,7 +4902,7 @@ GameObject:
   - component: {fileID: 2053295945927004804}
   - component: {fileID: 7888290856700540560}
   - component: {fileID: 1450770472691802812}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9793,7 +9793,10 @@ GameObject:
   - component: {fileID: 2606442222208748699}
   - component: {fileID: 2262290339570664573}
   - component: {fileID: 2248186084197720060}
-  m_Layer: 0
+  - component: {fileID: 1322924986816166494}
+  - component: {fileID: 8300778735786777247}
+  - component: {fileID: 6098922144595363328}
+  m_Layer: 10
   m_Name: Effect_Player_RedAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14620,6 +14623,83 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &1322924986816166494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5200874295711356006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d90544fb20a3846a519c1bf54439e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 1
+  isDoubleHit: 1
+--- !u!58 &8300778735786777247
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5200874295711356006}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.24, y: 0}
+  m_Radius: 1.2
+--- !u!50 &6098922144595363328
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5200874295711356006}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &6052037428218014720
 GameObject:
   m_ObjectHideFlags: 0
@@ -14631,7 +14711,7 @@ GameObject:
   - component: {fileID: 3492622853596093835}
   - component: {fileID: 3601105079533123182}
   - component: {fileID: 8802427351607719426}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: sub01 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19464,7 +19544,7 @@ GameObject:
   - component: {fileID: 7232531226837331105}
   - component: {fileID: 8703942393692838247}
   - component: {fileID: 5017932749872988430}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: sub01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24297,7 +24377,7 @@ GameObject:
   - component: {fileID: 7932210222918320406}
   - component: {fileID: 2885103479276316320}
   - component: {fileID: 6784478073476741247}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Main (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

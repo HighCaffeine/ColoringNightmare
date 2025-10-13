@@ -8,22 +8,38 @@ public class Weapon : MonoBehaviour
     private int damage;
 
     public UnityEngine.Events.UnityEvent OnWeaponBroken;
+    private SkillData skillData;
+
+    private System.Func<bool> isAllowAttack;
 
     public void SetupInkData(WeaponInkData weaponInkData)
     {
         inkData = weaponInkData;
         currentDurability = weaponInkData.durability;
         damage = weaponInkData.damage;
+        this.skillData = weaponInkData.skillData;
     }
+
+    public void InitEvent(System.Func<bool> func)
+    {
+        isAllowAttack = func;
+    }
+
+    public WeaponInkData GetInkData() { return inkData; }
+
+    public SkillData GetSKillData() { return skillData; }
 
     public int DecreaseDurability()
     {
+        if (!isAllowAttack()) return currentDurability;
+
         currentDurability--;
 
         if (currentDurability <= 0)
         {
             OnWeaponBroken?.Invoke();
 
+            EffectController.Instance.SetVisualData(null);
             DestroyWeapon();
             return 0;
         }
@@ -65,10 +81,21 @@ public class Weapon : MonoBehaviour
     {
         if (other.CompareTag("Monster"))
         {
+            Debug.Log("[Weapon] OnTriggerEnter Monster");
+
             Character monster = other.GetComponent<Character>();
             if (monster != null)
             {
                 monster.TakeDamage(Damage);
+
+                if (inkData.passiveEffect != null && inkData.passiveEffect.effectType == PassiveEffectData.EffectType.Slow)
+                {
+                    float slowRate = inkData.passiveEffect.effectValue1; // 둔화율
+                    float slowDuration = inkData.passiveEffect.effectValue2; // 둔화 지속시간
+
+                    // 몬스터에게 새로운 SlowEffect 인스턴스 적용
+                    monster.ApplyStatusEffect(new SlowEffect(0.5f, 2.0f));
+                }
             }
         }
     }

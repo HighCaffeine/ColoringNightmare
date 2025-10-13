@@ -64,6 +64,39 @@ public class SpineTest : MonoBehaviour
             spineCoroutine = null;
         }
     }
+    public void TestPlayAttackReverse()
+    {
+        CheckCoroutine();
+        spineCoroutine = StartCoroutine(PlaySpineReverse(AniName.attack1, false, onComplete: () =>
+        {
+            spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
+        }));
+    }
+
+    private IEnumerator PlaySpineReverse(AniName aniName, bool isLoop, System.Action onComplete = null)
+    {
+        if (skeleton == null)
+            yield break;
+
+        var ani = skeleton.Skeleton.Data.FindAnimation(aniName.ToString());
+        if (ani == null)
+        {
+            Debug.LogError($"Animation '{aniName}' not found");
+            yield break;
+        }
+
+        TrackEntry entry = skeleton.AnimationState.SetAnimation(currentTrack, ani, isLoop);
+
+        entry.TimeScale = -1f;
+        entry.TrackTime = ani.Duration;
+
+        if (!isLoop && onComplete != null)
+        {
+            entry.Complete += _ => onComplete();
+        }
+
+        yield return null;
+    }
 
     private IEnumerator PlaySpine(AniName aniName, bool isLoop, System.Action onComplete = null)
     {
@@ -113,10 +146,12 @@ public class SpineTest : MonoBehaviour
     {
         Debug.Log("weapon created");
     }
+    private bool hasPlayedEffect = false;
 
     private void PlayEffect()
     {
-        Debug.Log("play effect");
+        if (hasPlayedEffect) return;
+        hasPlayedEffect = true;
         attackEffect?.Invoke();
     }
 }

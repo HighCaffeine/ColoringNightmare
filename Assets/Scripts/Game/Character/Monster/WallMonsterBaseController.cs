@@ -17,6 +17,8 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     protected bool isAttacking = false;
 
+    private float speed = 1.0f;
+
     void UpdateCollider()
     {
         if (spriteRender == null) spriteRender = GetComponent<SpriteRenderer>();
@@ -67,21 +69,26 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
             idleTimer = 0f;
             ChangeState(StateType.Move);
         }
+        // Idle 상태에서도 RigidBody 속도를 0으로 설정
+        StopMove();
     }
 
     protected new virtual void Move(Vector2 dir)
     {
+        // Character.MoveCharacter를 호출하여 둔화 효과와 경계 처리를 모두 적용합니다.
         MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
         Flip(dir.x > 0);
 
+        // MoveCharacter에서 이미 속도가 적용되므로 여기서는 추가적인 속도 계산을 하지 않습니다.
+
+        // 경계 체크 로직: 오른쪽 경계에 닿으면 자폭
         Vector2 spriteHalfSize = Vector2.zero;
         SpriteRenderer render = GetComponent<SpriteRenderer>();
         if (render != null) spriteHalfSize = render.bounds.extents;
 
-        Vector2 newPos = (Vector2)transform.position + dir * info.speed * Time.deltaTime;
-
+        // 현재 위치를 기준으로 다음 위치를 예측하는 대신, 현재 위치가 경계 근처인지 확인
         var bounds = MonsterManager.Instance.GetAreaBound();
-        if (newPos.x + spriteHalfSize.x >= bounds.max.x)
+        if (transform.position.x + spriteHalfSize.x >= bounds.max.x - 0.1f) // 0.1f는 오차 범위
         {
             StartCoroutine(SelfDestructCoroutine(2f)); // 2초 후 폭발
         }

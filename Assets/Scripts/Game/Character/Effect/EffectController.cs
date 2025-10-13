@@ -1,28 +1,54 @@
 using UnityEngine;
-
-
-public enum EffectType
+public interface IStatusEffect
 {
-    Attack,
+    float Duration { get; }
+    void Apply(Character target);
+    void UpdateEffect(float deltaTime);
+    void Remove(Character target);
+    bool IsFinished { get; }
 }
-
-public class EffectController : MonoBehaviour
+public class EffectController : GenericSingleton<EffectController>
 {
-    [SerializeField] private GameObject effectPrefab;
+    [Header("Effect Prefab")]
+    [SerializeField] private GameObject effectPrefab; // EffectPlayer 컴포넌트가 붙은 프리팹
+    [SerializeField] private Transform effectPivot; // 이펙트가 출력될 위치/방향 기준
+    private EffectVisualData visualData;
 
-    [SerializeField] private Transform effectPivot;
-
-
-    [Header("TEST")]
-    [SerializeField] private EffectData test_data;
+    public void SetVisualData(EffectVisualData visualData) { this.visualData = visualData; }
 
     public void PlayEffect()
     {
-        GameObject effectInstance = Instantiate(effectPrefab, transform.position, Quaternion.identity);
+        if (effectPrefab == null)
+        {
+            return;
+        }
 
-        effectInstance.transform.position = effectPivot.position;
-        bool isRight = effectPivot.parent.transform.localScale.x < 0;
-        effectInstance.GetComponent<EffectPlayer>().Play(isRight, test_data);
+
+        bool isFacingRight = effectPivot.parent.transform.localScale.x < 0;
+        if (visualData.visualType == EffectVisualType.SpriteAnimation)
+        {
+            GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
+
+            var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
+            if (effectPlayer != null)
+            {
+                effectPlayer.Play(isFacingRight, visualData);
+            }
+        }
+        else if (visualData.visualType == EffectVisualType.ParticleSystem)
+        {
+            ParticleSystem particleSystem = Instantiate(visualData.prefab, effectPivot.position, Quaternion.identity, effectPivot).GetComponent<ParticleSystem>();
+
+            //particleSystem.transform.localScale = new Vector3(isFacingRight ? -1 : 1, 1, 1);
+            particleSystem.transform.rotation = new Quaternion(-90, 0, 0, 0);
+
+            if (particleSystem != null)
+            {
+                particleSystem.Play();
+
+                var mainModule = particleSystem.main;
+                Destroy(particleSystem.gameObject, mainModule.duration * 2);
+            }
+        }
     }
 }
-

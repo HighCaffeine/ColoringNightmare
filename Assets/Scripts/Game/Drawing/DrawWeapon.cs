@@ -459,6 +459,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
                 break;
             }
         }
+        if (weaponData.skillData.visualData != null)
+        {
+            EffectController.Instance.SetVisualData(weaponData.skillData.visualData);
+        }
 
         weapon.SetupInkData(weaponData);
         colorType = ColorMixer.ColorType.None;

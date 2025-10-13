@@ -14,7 +14,10 @@ public class Character : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     protected Rigidbody2D rigid;
+    private BoxCollider2D boxCollider;
     public Spine.Unity.SkeletonAnimation skeleton;
+
+    protected StatusEffectManager statusEffectManager;
 
     private bool canAttack = true;
     private float attackTimer = 0f;
@@ -25,8 +28,9 @@ public class Character : MonoBehaviour
     {
         //currentHP = info.maxHp;
         state = StateType.Idle;
-
+        statusEffectManager = GetComponent<StatusEffectManager>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider2D>();
         rigid = GetComponent<Rigidbody2D>();
     }
 
@@ -100,6 +104,8 @@ public class Character : MonoBehaviour
     {
         if (isDamageImmune) return;
 
+        Debug.Log($"[TakeDamage]{transform.name} : {amount} {currentHP}");
+
         currentHP -= amount;
 
         if (currentHP <= 0)
@@ -115,38 +121,69 @@ public class Character : MonoBehaviour
     {
         rigid.linearVelocity = Vector2.zero;
     }
+    // MoveCharacter 메서드 수정 (이전 코드에서 호출되던 부분)
+    protected void MoveCharacter(AreaData moveArea, Vector2 dir, System.Action<Vector2> onMove)
+    {
+        if (rigid == null) return;
+
+        Vector2 movement = dir.normalized * statusEffectManager.GetSpeedMultiplier();
+        rigid.linearVelocity = movement;
+        onMove?.Invoke(transform.position);
+
+        // 경계 처리
+        if (moveArea != null)
+        {
+            // 경계 내에 있도록 위치 조정
+            Vector3 pos = transform.position;
+            pos.x = Mathf.Clamp(pos.x, moveArea.GetBounds().min.x, moveArea.GetBounds().max.x);
+            pos.y = Mathf.Clamp(pos.y, moveArea.GetBounds().min.y, moveArea.GetBounds().max.y);
+            transform.position = pos;
+        }
+    }
 
     protected virtual void MoveCharacter(Bounds area, Vector2 dir, Action<Vector2> OnMoveAction)
     {
+        Vector2 currentPos = (Vector2)transform.position;
+        Bounds characterBounds = new Bounds(currentPos, boxCollider.bounds.extents * 2);
+        if (!area.Intersects(characterBounds))
+        {
+            rigid.linearVelocity = Vector2.zero;
+        }
+
+        Bounds bounds = area;
+        float clampedX = Mathf.Clamp(transform.position.x, bounds.min.x, bounds.max.x);
+        float clampedY = Mathf.Clamp(transform.position.y, bounds.min.y, bounds.max.y);
+        transform.position = new Vector2(clampedX, clampedY);
+
         if (dir == Vector2.zero)
         {
             rigid.linearVelocity = Vector2.zero;
             return;
         }
 
-        Vector2 moveVelocity = dir.normalized * info.speed;
+        Vector2 moveVelocity = dir.normalized * statusEffectManager.GetSpeedMultiplier();
         rigid.linearVelocity = moveVelocity;
 
         if (OnMoveAction != null)
         {
             OnMoveAction.Invoke(transform.position);
         }
-
-        Vector2 spriteHalfSize = Vector2.zero;
-        SpriteRenderer render = GetComponent<SpriteRenderer>();
-        if (render != null)
-        {
-            spriteHalfSize = render.bounds.extents;
-        }
-
-        Vector2 currentPos = (Vector2)transform.position;
-        Bounds characterBounds = new Bounds(currentPos, spriteHalfSize * 2);
-
-        if (!area.Intersects(characterBounds))
-        {
-            rigid.linearVelocity = Vector2.zero;
-        }
-
         if (dir.x != 0) Flip(dir.x > 0);
+    }
+    public void ApplyStatusEffect(IStatusEffect effect)
+    {
+        if (statusEffectManager != null)
+        {
+            statusEffectManager.ApplyEffect(effect);
+        }
+    }
+    public float GetSpeed()
+    {
+        float speedMultiplier = 1.0f;
+        if (statusEffectManager != null)
+        {
+            speedMultiplier = statusEffectManager.GetSpeedMultiplier();
+        }
+        return info.speed * speedMultiplier;
     }
 }

@@ -17,8 +17,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     MonsterManager.OnPlayerIsDead onPlayerIsDead;
 
-    private Rigidbody2D rigid;
-
     public override void Setup(DetectMonsterData data)
     {
         base.Setup(data);
@@ -27,7 +25,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    // Update 대신 FixedUpdate 사용
+    // FixedUpdate에서 Dash 중 velocity 덮어쓰지 않도록 처리
     private void FixedUpdate()
     {
         if (isDead || isDashing)
@@ -83,7 +81,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
 
         Vector2 dir = (targetPlayer.position - transform.position).normalized;
-        base.Move(dir);
+        MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
         Flip(dir.x > 0);
     }
 
@@ -116,7 +114,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         if (targetPlayer != null)
         {
             Vector2 dashDir = (targetPlayer.position - transform.position).normalized;
-            StartCoroutine(DashTowardsTarget(base.Attack, dashDir));
+            StartCoroutine(DashTowardsTarget(dashDir));
         }
         else
         {
@@ -124,29 +122,51 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
     }
 
-    private IEnumerator DashTowardsTarget(Action attackAction, Vector2 dir)
+    private IEnumerator DashTowardsTarget(Vector2 dir)
     {
         isDashing = true;
-        rigid.linearVelocity = dir * monsterData.DashSpeed;
+
+        // Dash 중 다른 Move 충돌 방지
+        rigid.linearVelocity = Vector2.zero;
+
+        // Dash 전용 Layer로 변경 (옵션)
+        int originalLayer = gameObject.layer;
+        gameObject.layer = LayerMask.NameToLayer("Dash");
 
         float dashTime = 0.2f;
         float elapsed = 0f;
 
+        // Raycast로 Dash 경로 체크
+        Vector2 startPos = transform.position;
+        Vector2 endPos = startPos + dir * statusEffectManager.GetSpeedMultiplier() * dashTime;
+
         while (elapsed <= dashTime)
         {
             elapsed += Time.deltaTime;
+
+            // Dash 이동
+            rigid.linearVelocity = dir * statusEffectManager.GetSpeedMultiplier();
+
+            // Raycast로 경로상 플레이어 감지
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, monsterData.DashSpeed * Time.deltaTime, LayerMask.GetMask("Player"));
+            if (hit.collider != null)
+            {
+                Character player = hit.collider.GetComponent<Character>();
+                if (player != null)
+                    player.TakeDamage(monsterData.dmg);
+            }
+
             yield return null;
         }
 
         rigid.linearVelocity = Vector2.zero;
+        gameObject.layer = originalLayer;
         isDashing = false;
 
         DetectPlayer();
 
         if (targetPlayer != null)
-        {
             ChangeState(StateType.Move);
-        }
         else
         {
             detectTimer = 0.0f;

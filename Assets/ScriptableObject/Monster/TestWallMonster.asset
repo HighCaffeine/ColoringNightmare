@@ -16,7 +16,7 @@ MonoBehaviour:
   characterName: Test_Monster2
   maxHp: 14
   dmg: 1
-  speed: 1
+  speed: 0.2
   attackDelay: 1
   isSpine: 0
   colorType: 0
