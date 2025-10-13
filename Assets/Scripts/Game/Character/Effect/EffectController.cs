@@ -51,4 +51,25 @@ public class EffectController : GenericSingleton<EffectController>
             }
         }
     }
+
+    public void NoneWeapon(EffectVisualData effectVisualData)
+    {
+        if (effectPrefab == null)
+        {
+            return;
+        }
+
+
+        bool isFacingRight = effectPivot.parent.transform.localScale.x < 0;
+        if (effectVisualData.visualType == EffectVisualType.SpriteAnimation)
+        {
+            GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
+
+            var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
+            if (effectPlayer != null)
+            {
+                effectPlayer.Play(isFacingRight, effectVisualData);
+            }
+        }
+    }
 }

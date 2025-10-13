@@ -12,6 +12,8 @@ public class MonsterColorChanger : MonoBehaviour
 
     private ColorMixer.ColorType defaultColor = ColorMixer.ColorType.White;
 
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -30,6 +32,43 @@ public class MonsterColorChanger : MonoBehaviour
     {
         baseColorType = ColorMixer.ColorType.Black;
         SetColor();
+    }
+
+    public void SetColorEnum(ColorMixer.ColorType colorType)
+    {
+        this.baseColorType = colorType;
+        if (spriteRenderer != null)
+        {
+            NoneSpine();
+        }
+        else
+        {
+            SetColor();
+        }
+    }
+
+    private void NoneSpine()
+    {
+        ColorMixer.HSV baseHsv;
+        if (baseColorType == ColorMixer.ColorType.Black)
+        {
+            baseHsv = ColorMixer.Instance.GetHSV(defaultColor);
+        }
+        else
+        {
+            baseHsv = ColorMixer.Instance.GetHSV(baseColorType);
+        }
+        float finalH = baseHsv.h;
+        float finalS = baseHsv.s * saturation;
+        float finalV = baseHsv.v * brightness;
+
+        // if (baseColorType == ColorMixer.ColorType.White)
+        // {
+        //     spriteRenderer.color.a = 1.5f;
+        // }
+
+        Color newColor = Color.HSVToRGB(finalH, finalS, finalV);
+        spriteRenderer.color = newColor;
     }
 
     private void SetColor()

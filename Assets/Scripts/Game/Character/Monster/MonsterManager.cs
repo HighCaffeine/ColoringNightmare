@@ -102,6 +102,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
             case MonsterType.Wall:
                 var wall = GetWallMonster(pos);
                 wall.Setup(data);
+                ColorTest(wall.transform, data.ColorType);
                 break;
 
             case MonsterType.Detect:
@@ -110,6 +111,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
 
                 var detect = GetDetectMonster(pos);
                 detect.Setup(detectData);
+                ColorTest(detect.transform, data.ColorType);
                 break;
 
             case MonsterType.Boss:
@@ -118,9 +120,16 @@ public class MonsterManager : GenericSingleton<MonsterManager>
 
                 var boss = GetBoss(pos);
                 boss.Setup(bossData);
-
+                ColorTest(boss.transform, data.ColorType);
                 break;
         }
+    }
+
+    private void ColorTest(Transform t, ColorMixer.ColorType colorType)
+    {
+        MonsterColorChanger m = t.GetComponent<MonsterColorChanger>();
+
+        m.SetColorEnum(colorType);
     }
 
     public Vector2 GetCalibrationSpawnPos(Transform monster, SpriteRenderer render)

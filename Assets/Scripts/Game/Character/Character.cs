@@ -10,6 +10,8 @@ public class Character : MonoBehaviour
     protected StateType state;
     [SerializeField] protected int currentHP;
 
+    public int CurrentHP => currentHP;
+
     protected bool isDead => currentHP <= 0;
 
     private SpriteRenderer spriteRenderer;

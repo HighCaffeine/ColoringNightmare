@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -3099973225250209719}
   - component: {fileID: 4599698694627025172}
   - component: {fileID: -4894609849395106151}
+  - component: {fileID: -1744414191687617544}
   m_Layer: 8
   m_Name: DetectMonster
   m_TagString: Monster
@@ -221,3 +222,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 463931c68ea42a141bdb6b23972c722c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentSpeedMultiplier: 1
+--- !u!114 &-1744414191687617544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5030641573151781587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 002ae4200373ffa439768a4a534a0171, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColorType: 0
+  saturation: 1
+  brightness: 1
+  skeleton: {fileID: 0}
+  spriteRenderer: {fileID: -6327373218514567981}

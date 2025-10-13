@@ -129,10 +129,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         // Dash 중 다른 Move 충돌 방지
         rigid.linearVelocity = Vector2.zero;
 
-        // Dash 전용 Layer로 변경 (옵션)
-        int originalLayer = gameObject.layer;
-        gameObject.layer = LayerMask.NameToLayer("Dash");
-
         float dashTime = 0.2f;
         float elapsed = 0f;
 
@@ -160,7 +156,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
 
         rigid.linearVelocity = Vector2.zero;
-        gameObject.layer = originalLayer;
         isDashing = false;
 
         DetectPlayer();

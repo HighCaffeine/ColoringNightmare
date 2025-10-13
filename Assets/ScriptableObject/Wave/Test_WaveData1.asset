@@ -18,3 +18,4 @@ MonoBehaviour:
   monsterGroups:
   - {fileID: 11400000, guid: c8288c115049f0f46a9f2911127cc436, type: 2}
   - {fileID: 11400000, guid: e24b518a702713e4da3b130cfa0d9407, type: 2}
+  - {fileID: 11400000, guid: 7e4444c20dcee7c468dac8bb11d42ba0, type: 2}

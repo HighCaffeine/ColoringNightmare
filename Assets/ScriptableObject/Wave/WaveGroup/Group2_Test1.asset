@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Group2_Test1
   m_EditorClassIdentifier: 
   groupID: 2
-  monsterCode: 0
-  spawnCount: 5
-  spawnInterval: 0.3
-  spawnPointIndex: 3
-  delayAfterGroup: 0.1
+  monsterCode: 1
+  spawnCount: 2
+  spawnInterval: 1
+  spawnPointIndex: 1
+  delayAfterGroup: 2

@@ -111,7 +111,7 @@ public class WaveManager : GenericSingleton<WaveManager>
                     MonsterManager.Instance.SpawnMonster(so, spawnPos);
                 });
 
-                yield return new WaitForSeconds(group.spawnInterval);
+                yield return new WaitForSeconds(group.spawnInterval * 2f);
             }
         }
 

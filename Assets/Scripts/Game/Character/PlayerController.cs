@@ -33,7 +33,6 @@ public class PlayerController : Character
     // 신규 추가: 스킬 컨트롤러 연결
     [Header("Skill")]
     [SerializeField] private SkillController skillController;
-    [SerializeField] private StatusEffectManager statusEffectManager;
 
     [Header("Groggy")]
     [SerializeField] private float groggyDuration = 5f;
@@ -55,6 +54,13 @@ public class PlayerController : Character
     private PlayerMouseHandler mouseHandler;
 
 
+    [SerializeField][Header("NoneWeapon")] private Transform noneWeaponPivot;
+    [SerializeField] private PlayerNoneWeapon playerNoneWeapon;
+
+    [SerializeField] private EffectVisualData playerNoneEffect;
+    private EffectController effectController;
+
+
     public float axisX { private set; get; }
     public float axisY { private set; get; }
     public int GetHP() { return currentHP; }
@@ -68,6 +74,7 @@ public class PlayerController : Character
     {
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
+        effectController = GetComponent<EffectController>();
         spine = GetComponent<SpineTest>();
 
         // SkillController 초기화 (같은 오브젝트에 있다고 가정)
@@ -306,6 +313,8 @@ public class PlayerController : Character
 
     private void LockMovement()
     {
+        if (rigid == null || playerCollider == null) return;
+
         rigid.linearVelocity = Vector2.zero;
         rigid.angularVelocity = 0f;
         rigid.simulated = false;
@@ -333,10 +342,20 @@ public class PlayerController : Character
             spine.TestPlayAttackSpine();
         }
 
-        if (weaponController != null && weaponController.IsEquip() && skillController != null)
+        if (!weaponController.IsEquip())
         {
-            SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
-            skillController.UseSkill(currentSkillData.colorType);
+            playerNoneWeapon.EnableCollider();
+            effectController.NoneWeapon(playerNoneEffect);
+            //noneWeaponPivot.gameObject.SetActive(true);
+        }
+        else
+        {
+            //noneWeaponPivot.gameObject.SetActive(false);
+            if (weaponController != null && skillController != null)
+            {
+                SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
+                skillController.UseSkill(currentSkillData.colorType);
+            }
         }
     }
 
