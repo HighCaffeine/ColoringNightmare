@@ -52,6 +52,11 @@ public class WeaponController : MonoBehaviour
         CurrentColliderSetActive(false);
     }
 
+    public Weapon GetEquippedWeapon()
+    {
+        return weapon;
+    }
+
     public void CurrentColliderSetActive(bool activate)
     {
         if (weapon != null)
