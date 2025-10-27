@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public interface IStatusEffect
 {
     float Duration { get; }
@@ -7,71 +8,63 @@ public interface IStatusEffect
     void Remove(Character target);
     bool IsFinished { get; }
 }
+
 public class EffectController : GenericSingleton<EffectController>
 {
     [Header("Effect Prefab")]
-    [SerializeField] private GameObject effectPrefab; // EffectPlayer 컴포넌트가 붙은 프리팹
-    [SerializeField] private Transform effectPivot; // 이펙트가 출력될 위치/방향 기준
-    private EffectVisualData visualData;
+    [SerializeField] private GameObject effectPrefab;
+    [SerializeField] private Transform effectPivot;
 
-    public void SetVisualData(EffectVisualData visualData) { this.visualData = visualData; }
+    [Header("Dependencies")]
+    [SerializeField] private Character character;
 
-    public void PlayEffect()
+    public void PlayEffect(EffectVisualData specificVisualData)
     {
-        if (effectPrefab == null)
+        if (specificVisualData == null)
         {
+            Debug.LogWarning("재생할 VisualData가 없음.");
             return;
         }
 
-
-        bool isFacingRight = effectPivot.parent.transform.localScale.x < 0;
-        if (visualData.visualType == EffectVisualType.SpriteAnimation)
+        bool isFacingRight = true;
+        if (character != null && character.skeleton != null)
         {
-            GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
+            isFacingRight = character.skeleton.skeleton.ScaleX > 0;
+        }
+        effectPivot.parent.localScale = new Vector3(isFacingRight ? 1 : -1, 1, 1);
 
+        if (specificVisualData.visualType == EffectVisualType.SpriteAnimation)
+        {
+
+            if (effectPrefab == null) return;
+            GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
             var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
+
+
             if (effectPlayer != null)
             {
-                effectPlayer.Play(isFacingRight, visualData);
+                effectPlayer.Play(isFacingRight, specificVisualData);
             }
         }
-        else if (visualData.visualType == EffectVisualType.ParticleSystem)
+        else if (specificVisualData.visualType == EffectVisualType.ParticleSystem)
         {
-            ParticleSystem particleSystem = Instantiate(visualData.prefab, effectPivot.position, Quaternion.identity, effectPivot).GetComponent<ParticleSystem>();
-
-            //particleSystem.transform.localScale = new Vector3(isFacingRight ? -1 : 1, 1, 1);
-            particleSystem.transform.rotation = new Quaternion(-90, 0, 0, 0);
-
+            if (specificVisualData.prefab == null) return;
+            ParticleSystem particleSystem = Instantiate(specificVisualData.prefab, effectPivot.position, Quaternion.identity, effectPivot).GetComponent<ParticleSystem>();
             if (particleSystem != null)
             {
-                particleSystem.Play();
+                var shape = particleSystem.shape;
+                shape.rotation = isFacingRight ? new Vector3(0, 90, 0) : new Vector3(0, -90, 0);
 
+                particleSystem.Play();
                 var mainModule = particleSystem.main;
-                Destroy(particleSystem.gameObject, mainModule.duration * 2);
+                Destroy(particleSystem.gameObject, mainModule.duration + mainModule.startLifetime.constantMax);
             }
         }
     }
 
     public void NoneWeapon(EffectVisualData effectVisualData)
     {
-        if (effectPrefab == null)
-        {
-            return;
-        }
-
-
-        bool isFacingRight = effectPivot.parent.transform.localScale.x < 0;
-        if (effectVisualData.visualType == EffectVisualType.SpriteAnimation)
-        {
-            GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
-
-            //effectInstance.transform.localScale = new Vector3(isFacingRight ? -1 : 1, 1, 1);
-
-            var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
-            if (effectPlayer != null)
-            {
-                effectPlayer.Play(isFacingRight, effectVisualData);
-            }
-        }
+        if (effectVisualData == null) return;
+        PlayEffect(effectVisualData);
     }
 }

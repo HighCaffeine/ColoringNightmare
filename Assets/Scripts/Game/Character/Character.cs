@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using System.Collections;
+using Spine.Unity;
 
 public enum StateType { None = -1, Idle, Attack, Move, Dead, Skill, Count }
 
@@ -9,71 +11,48 @@ public class Character : MonoBehaviour
     public CharacterData info;
     protected StateType state;
     [SerializeField] protected int currentHP;
-
     public int CurrentHP => currentHP;
-
     protected bool isDead => currentHP <= 0;
 
-    private SpriteRenderer spriteRenderer;
+    protected SpriteRenderer spriteRenderer;
     protected Rigidbody2D rigid;
-    private BoxCollider2D boxCollider;
     public Spine.Unity.SkeletonAnimation skeleton;
-
     protected StatusEffectManager statusEffectManager;
 
-    private bool canAttack = true;
-    private float attackTimer = 0f;
-
     private bool isDamageImmune = false;
+    private Coroutine hitEffectCoroutine;
 
     protected virtual void Awake()
     {
-        //currentHP = info.maxHp;
         state = StateType.Idle;
-        statusEffectManager = GetComponent<StatusEffectManager>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        boxCollider = GetComponent<BoxCollider2D>();
         rigid = GetComponent<Rigidbody2D>();
-    }
-
-    [Header("Effect Rotate Pivot")]
-    [SerializeField] private Transform effectPivot;
-
-    private void FlipEffectPivot(bool isRight)
-    {
-        Vector3 s = effectPivot.transform.localScale;
-        s.x = isRight ? -1 : 1;
-
-        effectPivot.transform.localScale = s;
+        statusEffectManager = GetComponent<StatusEffectManager>();
+        if (statusEffectManager == null)
+        {
+            statusEffectManager = gameObject.AddComponent<StatusEffectManager>();
+        }
     }
 
     protected void OnCharacterDataLoaded(CharacterData data)
     {
         info = data;
         currentHP = info.maxHp;
-        Debug.Log($"[Character] Loaded {info.characterName}");
     }
 
-    protected virtual void Idle() { Debug.Log($"[State] Idle : {info.characterName}"); }
-    protected virtual void Dead() { Debug.Log($"[State] Dead : {info.characterName}"); }
-    protected virtual void Move(Vector2 dir) { Debug.Log($"[State] Move : {info.characterName}"); }
+    protected virtual void Idle() { }
+    protected virtual void Dead() { }
+    protected virtual void Move(Vector2 dir) { }
 
     protected void SetDamageImmune(bool isImmune) { isDamageImmune = isImmune; }
-    protected virtual void Attack()
-    {
-        if (!canAttack) return;
 
-        canAttack = false;
-        Invoke(nameof(InitCanAttack), info.attackDelay);
-    }
-    private void InitCanAttack() { canAttack = true; }
-    protected bool CanAttack() { return canAttack; }
-    protected bool IsAllowAttack() { return canAttack; }
+    protected virtual void Attack() { }
+    private void InitCanAttack() { }
+    protected bool CanAttack() { return true; }
 
     protected void ChangeState(StateType newState)
     {
         if (state == newState) return;
-
         state = newState;
 
         switch (state)
@@ -85,30 +64,25 @@ public class Character : MonoBehaviour
         }
     }
 
-
     protected virtual void Flip(bool isRight)
     {
         if (info != null && info.isSpine && skeleton != null)
         {
-            float currentScaleX = skeleton.skeleton.ScaleX;
-            float newScaleX = Mathf.Abs(currentScaleX) * (isRight ? -1f : 1f);
-            skeleton.skeleton.ScaleX = newScaleX;
-
-            if (effectPivot != null) FlipEffectPivot(isRight);
+            skeleton.skeleton.ScaleX = isRight ? -1f : 1f;
         }
         else if (spriteRenderer != null)
         {
-            spriteRenderer.flipX = isRight;
+            spriteRenderer.flipX = !isRight;
         }
     }
 
     public virtual void TakeDamage(int amount)
     {
-        if (isDamageImmune) return;
-
-        Debug.Log($"[TakeDamage]{transform.name} : {amount} {currentHP}");
-
+        if (isDamageImmune || isDead) return;
         currentHP -= amount;
+
+        if (hitEffectCoroutine != null) StopCoroutine(hitEffectCoroutine);
+        hitEffectCoroutine = StartCoroutine(HitEffectCoroutine());
 
         if (currentHP <= 0)
         {
@@ -117,75 +91,58 @@ public class Character : MonoBehaviour
         }
     }
 
-    protected virtual void Interactive() { }
+    private IEnumerator HitEffectCoroutine()
+    {
+        Color hitColor = Color.red;
+        Color originalColor = Color.white;
+        float duration = 0.1f;
+
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+            spriteRenderer.color = hitColor;
+            yield return new WaitForSeconds(duration);
+            spriteRenderer.color = originalColor;
+        }
+        else if (skeleton != null && skeleton.skeleton != null)
+        {
+            skeleton.skeleton.SetColor(hitColor);
+            yield return new WaitForSeconds(duration);
+            skeleton.skeleton.SetColor(originalColor);
+        }
+    }
+
+    public void ApplyStatusEffect(IStatusEffect effect)
+    {
+        statusEffectManager?.ApplyEffect(effect);
+    }
 
     protected void StopMove()
     {
-        rigid.linearVelocity = Vector2.zero;
-    }
-    // MoveCharacter 메서드 수정 (이전 코드에서 호출되던 부분)
-    protected void MoveCharacter(AreaData moveArea, Vector2 dir, System.Action<Vector2> onMove)
-    {
-        if (rigid == null) return;
-
-        Vector2 movement = dir.normalized * statusEffectManager.GetSpeedMultiplier();
-        rigid.linearVelocity = movement;
-        onMove?.Invoke(transform.position);
-
-        // 경계 처리
-        if (moveArea != null)
-        {
-            // 경계 내에 있도록 위치 조정
-            Vector3 pos = transform.position;
-            pos.x = Mathf.Clamp(pos.x, moveArea.GetBounds().min.x, moveArea.GetBounds().max.x);
-            pos.y = Mathf.Clamp(pos.y, moveArea.GetBounds().min.y, moveArea.GetBounds().max.y);
-            transform.position = pos;
-        }
+        if (rigid != null) rigid.linearVelocity = Vector2.zero;
     }
 
     protected virtual void MoveCharacter(Bounds area, Vector2 dir, Action<Vector2> OnMoveAction)
     {
-        Vector2 currentPos = (Vector2)transform.position;
-        Bounds characterBounds = new Bounds(currentPos, boxCollider.bounds.extents * 2);
-        if (!area.Intersects(characterBounds))
-        {
-            rigid.linearVelocity = Vector2.zero;
-        }
-
-        Bounds bounds = area;
-        float clampedX = Mathf.Clamp(transform.position.x, bounds.min.x, bounds.max.x);
-        float clampedY = Mathf.Clamp(transform.position.y, bounds.min.y, bounds.max.y);
-        transform.position = new Vector2(clampedX, clampedY);
-
         if (dir == Vector2.zero)
         {
-            rigid.linearVelocity = Vector2.zero;
+            StopMove();
             return;
         }
 
-        Vector2 moveVelocity = dir.normalized * info.speed;
-        rigid.linearVelocity = moveVelocity;
+        float speedMultiplier = statusEffectManager?.GetSpeedMultiplier() ?? 1.0f;
+        float finalSpeed = info.speed * speedMultiplier * Time.deltaTime * 50;
 
-        if (OnMoveAction != null)
-        {
-            OnMoveAction.Invoke(transform.position);
-        }
-        if (dir.x != 0) Flip(dir.x > 0);
-    }
-    public void ApplyStatusEffect(IStatusEffect effect)
-    {
-        if (statusEffectManager != null)
-        {
-            statusEffectManager.ApplyEffect(effect);
-        }
-    }
-    public float GetSpeed()
-    {
-        float speedMultiplier = 1.0f;
-        if (statusEffectManager != null)
-        {
-            speedMultiplier = statusEffectManager.GetSpeedMultiplier();
-        }
-        return info.speed * speedMultiplier;
+        Vector2 newPosition = rigid.position + dir.normalized * finalSpeed * Time.fixedDeltaTime;
+
+        Vector2 characterExtents = GetComponent<Collider2D>()?.bounds.extents ?? Vector2.zero;
+        newPosition.x = Mathf.Clamp(newPosition.x, area.min.x + characterExtents.x, area.max.x - characterExtents.x);
+        newPosition.y = Mathf.Clamp(newPosition.y, area.min.y + characterExtents.y, area.max.y - characterExtents.y);
+
+        rigid.MovePosition(newPosition);
+
+        OnMoveAction?.Invoke(transform.position);
+
+        if (dir.x != 0) Flip(dir.x < 0);
     }
 }

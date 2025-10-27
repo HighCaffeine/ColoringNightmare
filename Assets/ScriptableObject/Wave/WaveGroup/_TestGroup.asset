@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec8f8ed3ade798748b78e9eb62eaf54a, type: 3}
-  m_Name: Player1
+  m_Script: {fileID: 11500000, guid: d9164f995018a2d4481d14ceecee0a2b, type: 3}
+  m_Name: _TestGroup
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: bdee9b3ba4b03dd4cac6e2315db4868e, type: 3}
-  characterName: Player_Sheep
-  maxHp: 5
-  dmg: 1
-  speed: 1
-  attackDelay: 1
-  isSpine: 1
+  groupID: 0
+  monsterCode: 1
+  spawnCount: 20
+  spawnInterval: 1
+  spawnPointIndex: 3
+  delayAfterGroup: 2

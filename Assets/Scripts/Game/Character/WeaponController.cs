@@ -1,99 +1,88 @@
 using UnityEngine;
+using System.Collections;
 
 public class WeaponController : MonoBehaviour
 {
     [SerializeField] private Weapon weapon;
-
     [SerializeField] private Transform weaponPivot;
-
-    [Header("Spine Skeleton Target")]
     [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
-
     private SpriteRenderer spriteRenderer;
 
-    public bool isAllowAttack { private set; get; }
-
-    private void InitAllowAttack() { CurrentColliderSetActive(false); isAllowAttack = true; }
-    public bool GetAllowAttack() { return isAllowAttack; }
+    [Header("Dependencies")]
+    [SerializeField] private SkillController skillController;
 
     public bool IsEquip() => weapon != null;
 
-    private bool isFirst = true;
-
-    public delegate bool IsAllowAttack();
-    public IsAllowAttack isAllowAttackEvent;
-
     public SkillData GetEquippedWeaponSkillData()
     {
-        if (weapon != null)
-        {
-            return weapon.GetSKillData();
-        }
-        return null;
+        return weapon?.GetSKillData();
     }
 
-    public WeaponInkData GetEquippedWeaponInkData()
+    public Weapon GetEquippedWeapon()
     {
-        if (weapon != null)
-        {
-            return weapon.GetInkData();
-        }
-        return null;
+        return weapon;
     }
 
-    public void SetupWeapon(Weapon weapon)
+    public void SetupWeapon(Weapon newWeapon)
     {
         if (this.weapon) this.weapon.DestroyWeapon();
-        this.weapon = weapon;
+        this.weapon = newWeapon;
 
-        this.weapon.transform.SetParent(weaponPivot);
-
-        // this.weapon.transform.localPosition = Vector3.zero;
-        // this.weapon.transform.localRotation = Quaternion.identity;
+        this.weapon.transform.SetParent(weaponPivot, false);
+        this.weapon.transform.localPosition = Vector3.zero;
+        this.weapon.transform.localRotation = Quaternion.identity;
+        this.weapon.transform.localScale = Vector3.one;
 
         var boneFollower = weapon.gameObject.AddComponent<Spine.Unity.BoneFollower>();
         spriteRenderer = weapon.GetComponent<SpriteRenderer>();
         boneFollower.SkeletonRenderer = skeletonAni;
         boneFollower.boneName = "sword";
         boneFollower.followBoneRotation = true;
-        boneFollower.followLocalScale = true;
-        boneFollower.followSkeletonFlip = false;
-
-        isAllowAttack = true;
+        boneFollower.followLocalScale = false;
+        boneFollower.followSkeletonFlip = true;
         spriteRenderer.sortingOrder = 0;
 
-        boneFollower.followLocalScale = false;
-        isFirst = true;
-
-        weapon.InitEvent(GetAllowAttack);
-
-        Flip(false);
-
-        isFirst = false;
+        if (skillController != null && this.weapon != null)
+        {
+            skillController.SetCurrentSkill(this.weapon.GetSKillData());
+        }
 
         CurrentColliderSetActive(false);
     }
 
     public void CurrentColliderSetActive(bool activate)
     {
-        weapon.SetActiveCollider(activate);
+        if (weapon != null)
+            weapon.SetActiveCollider(activate);
+    }
+
+    public void ActivateHitboxForDuration(float duration)
+    {
+        StartCoroutine(HitboxCoroutine(duration));
+    }
+
+    private IEnumerator HitboxCoroutine(float duration)
+    {
+        CurrentColliderSetActive(true);
+        yield return new WaitForSeconds(duration);
+        CurrentColliderSetActive(false);
     }
 
     public void SubDurability()
     {
         if (weapon == null) return;
-        if (weapon.DecreaseDurability() == 0) weapon = null;
-
-        Invoke(nameof(InitAllowAttack), 1f);
+        if (weapon.DecreaseDurability() <= 0)
+        {
+            weapon = null;
+            if (skillController != null)
+            {
+                skillController.SetCurrentSkill(null);
+            }
+        }
     }
 
     public void Flip(bool isRight)
     {
-        if (weapon == null) return;
-
-        Vector3 weaponScale = weapon.transform.localScale;
-        if (isFirst) weaponScale.x = isRight ? Mathf.Abs(weaponScale.x) : -Mathf.Abs(weaponScale.x);
-        weaponScale.y = isRight ? Mathf.Abs(weaponScale.y) : -Mathf.Abs(weaponScale.y);
-        weapon.transform.localScale = weaponScale;
+        // BoneFollower의 followSkeletonFlip이 true이므로 별도 처리 불필요
     }
 }

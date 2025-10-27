@@ -4,150 +4,90 @@ using System.Collections.Generic;
 
 public class SkillController : MonoBehaviour
 {
-    [SerializeField] private SpineTest spineTest;
-
-    public GameObject projectilePrefab; // 투사체 프리팹
+    [Header("외부 참조")]
+    public GameObject projectilePrefab;
     [SerializeField] private Transform effectPivot;
     [SerializeField] private WeaponController weaponController;
     [SerializeField] private EffectController effectController;
-    [Header("Attack Settings")]
-    [SerializeField] private float attackRange = 2f;
-    [SerializeField] private LayerMask monsterLayer;
+    private Character character;
+    private SkillData currentSkill;
+    private int hitCountForDoubleAttack = 0; // 2연타 횟수를 세는 카운터
 
-    [Header("스킬 데이터 매핑 (인스펙터에서 설정)")]
-    public List<SkillData> skillDataList;
-    private Dictionary<ColorMixer.ColorType, SkillData> skillMap = new Dictionary<ColorMixer.ColorType, SkillData>();
-
-    private bool isSkillReady = true;
-
-    private void Awake()
+    void Awake()
     {
-        foreach (var data in skillDataList)
+        character = GetComponent<Character>();
+    }
+
+    // WeaponController가 무기를 장착/해제할 때 호출하여 현재 스킬 정보를 업데이트
+    public void SetCurrentSkill(SkillData skillData)
+    {
+        this.currentSkill = skillData;
+    }
+
+    // PlayerController가 공격을 시작할 때 호출
+    public void UseSkill()
+    {
+        // '더블 어택' 스킬이 시작될 때마다 타격 횟수 카운터를 0으로 초기화
+        if (currentSkill != null && currentSkill.skillType == SkillType.DoubleHit)
         {
-            if (!skillMap.ContainsKey(data.colorType))
-            {
-                skillMap.Add(data.colorType, data);
-            }
+            hitCountForDoubleAttack = 0;
+        }
+
+        // 투사체 스킬일 경우, 애니메이션 시작과 동시에 발사 로직 실행
+        if (currentSkill != null && currentSkill.skillType == SkillType.Projectile)
+        {
+            ExecuteProjectileSkill(currentSkill);
         }
     }
 
-    public void UseSkill(ColorMixer.ColorType weaponColor)
+    public void OnAnimationHit()
     {
-        if (!isSkillReady) return;
-        if (!weaponController.IsEquip()) return;
+        if (currentSkill == null) return;
 
-        if (skillMap.TryGetValue(weaponColor, out SkillData skillData))
+        if (currentSkill.skillType == SkillType.DoubleHit)
         {
-            StartCoroutine(SkillCoroutine(skillData));
+            if (hitCountForDoubleAttack == 0)
+            {
+                effectController.PlayEffect(currentSkill.visualData);
+            }
+            else
+            {
+                effectController.PlayEffect(currentSkill.secondHitVisualData ?? currentSkill.visualData);
+            }
+            hitCountForDoubleAttack++;
         }
         else
         {
-            ExecuteAttack(skillDataList.Find(d => d.colorType == ColorMixer.ColorType.Black));
+            effectController.PlayEffect(currentSkill.visualData);
+        }
+
+        weaponController.SubDurability();
+
+        if (currentSkill.skillType == SkillType.BasicAttack || currentSkill.skillType == SkillType.DoubleHit)
+        {
+            weaponController.ActivateHitboxForDuration(0.15f);
         }
     }
 
-    private IEnumerator SkillCoroutine(SkillData data)
-    {
-        isSkillReady = false;
-
-        switch (data.skillType)
-        {
-            case SkillType.BasicAttack: // [검검] & [파파] (파파는 Hitbox/Projectile에서 상태이상 처리)
-                ExecuteAttack(data);
-                break;
-
-            case SkillType.Projectile: // [노노] 관통형 투사체
-                ExecuteProjectileSkill(data);
-                break;
-
-            case SkillType.DoubleHit: // [빨빨] 2연속 공격
-                yield return StartCoroutine(ExecuteDoubleHit(data));
-                break;
-        }
-
-        // 쿨다운 적용
-        yield return new WaitForSeconds(data.cooldown);
-        isSkillReady = true;
-    }
-
-    private void ExecuteAttack(SkillData data, bool isEffectOnlyOnce = false)
-    {
-        // 시각 효과 재생 (1회만)
-        if (effectController != null && !isEffectOnlyOnce)
-        {
-            effectController.SetVisualData(data.visualData);
-            effectController.PlayEffect();
-        }
-
-        // 몬스터 검색 및 공격
-        Collider2D[] hitMonsters = Physics2D.OverlapCircleAll(transform.position, attackRange, monsterLayer);
-        foreach (Collider2D monsterCollider in hitMonsters)
-        {
-            Character monster = monsterCollider.GetComponent<Character>();
-            if (monster != null)
-            {
-                // 몬스터에게 데미지 적용
-                monster.TakeDamage(weaponController.GetEquippedWeaponSkillData().baseDamage);
-
-                // 패시브 효과 적용
-                WeaponInkData inkData = weaponController.GetEquippedWeaponInkData();
-                if (inkData != null && inkData.passiveEffect != null)
-                {
-                    if (inkData.passiveEffect.effectType == PassiveEffectData.EffectType.Slow)
-                    {
-                        // float slowRate = inkData.passiveEffect.effectValue1;
-                        // float slowDuration = inkData.passiveEffect.effectValue2; 
-                        float slowRate = 0.5f;
-                        float slowDuration = 2.0f;
-                        monster.ApplyStatusEffect(new SlowEffect(slowRate, slowDuration));
-                    }
-                }
-            }
-        }
-
-        Debug.Log($"[{data.colorType}] 기본 공격 실행. 데미지: {data.baseDamage}");
-    }
-
-
-
-    // [노노] 관통형 투사체 로직
     private void ExecuteProjectileSkill(SkillData data)
     {
-        if (projectilePrefab == null)
-        {
-            Debug.LogError("Projectile Prefab이 없어 스킬을 실행할 수 없습니다.");
-            return;
-        }
+        if (projectilePrefab == null) return;
 
-        Vector3 forward = transform.right * -1 * Mathf.Sign(effectPivot.localScale.x);
-
-        // 3방향 (중앙, 15도 플마)
-        float[] angles = { 0f, /*-15f, 15f*/ };
+        float currentScaleX = character.skeleton.skeleton.ScaleX;
+        Vector3 forward = transform.right * Mathf.Sign(currentScaleX) * -1;
+        float[] angles = { 0f /*15f, -15f*/ };
 
         foreach (float angle in angles)
         {
             Quaternion rot = Quaternion.Euler(0, 0, angle);
             Vector3 dir = rot * forward;
+            GameObject proj = Instantiate(projectilePrefab, effectPivot.position, Quaternion.identity);
 
-            GameObject proj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            proj.GetComponent<Projectile>().Init(data.projectileParams.lifeTime, data.projectileParams.speed, dir);
+            Projectile projComponent = proj.GetComponent<Projectile>();
+            if (projComponent != null)
+            {
+                projComponent.Init(data, dir);
+            }
         }
-
-        Debug.Log($"[{data.colorType}] 관통형 투사체 발사. 데미지: {data.baseDamage}");
-    }
-
-    // [빨빨] 2연속 공격 로직
-    private IEnumerator ExecuteDoubleHit(SkillData data)
-    {
-        // 1차 공격 (파티클 포함)
-        ExecuteAttack(data, false);
-        Debug.Log($"[{data.colorType}] 1차 공격. 딜레이: {data.doubleHitDelay}s");
-
-        yield return new WaitForSeconds(data.doubleHitDelay);
-
-        // 2차 공격 (데미지만 적용, 파티클 재생 안 함)
-        ExecuteAttack(data, true);
-
-        Debug.Log($"[{data.colorType}] 2차 공격 완료.");
     }
 }

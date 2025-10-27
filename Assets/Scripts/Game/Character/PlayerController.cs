@@ -1,19 +1,15 @@
 using System;
-using Spine.Unity;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 
 public enum PlayerType
 {
     Player1,
     Player2,
-
 }
 
 public class PlayerController : Character
 {
-
     [Header("TEST Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerDead;
     [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerRespawn;
@@ -29,11 +25,15 @@ public class PlayerController : Character
     [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
 
     [Header("Weapon")]
+    [Header("Weapon")]
     [SerializeField] private WeaponController weaponController;
 
-    // 신규 추가: 스킬 컨트롤러 연결
     [Header("Skill")]
     [SerializeField] private SkillController skillController;
+
+    [Header("NoneWeapon")]
+    [SerializeField] private EffectVisualData playerNoneEffect;
+    private EffectController effectController;
 
     [Header("Groggy")]
     [SerializeField] private float groggyDuration = 5f;
@@ -54,56 +54,39 @@ public class PlayerController : Character
     [SerializeField] private PlayerType playerType;
     private PlayerMouseHandler mouseHandler;
 
-
-    [SerializeField][Header("NoneWeapon")] private Transform noneWeaponPivot;
-    [SerializeField] private PlayerNoneWeapon playerNoneWeapon;
-
-    [SerializeField] private EffectVisualData playerNoneEffect;
-    private EffectController effectController;
-
-
     public float axisX { private set; get; }
     public float axisY { private set; get; }
     public int GetHP() { return currentHP; }
     public int GetMaxHP() { return info.maxHp; }
 
-
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
     private SpineTest spine;
 
-    private SkeletonAnimation skeletonAnimation;
+    // 공격 가능 상태를 제어하는 변수
+    private bool isAttackReady = true;
 
     protected new void Awake()
     {
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
-        effectController = GetComponent<EffectController>();
         spine = GetComponent<SpineTest>();
-        skeletonAnimation = GetComponent<SkeletonAnimation>();
-
-        // SkillController 초기화 (같은 오브젝트에 있다고 가정)
-        if (skillController == null)
-        {
-            statusEffectManager = GetComponent<StatusEffectManager>();
-            skillController = GetComponent<SkillController>();
-        }
-
 
         SODataLoader.Instance.LoadSO<CharacterData>(addressableName.ToString(), so =>
         {
-            CharacterData data = so;
-
-            if (data != null)
+            if (so != null)
             {
-                OnCharacterDataLoaded(data);
+                OnCharacterDataLoaded(so);
             }
         });
+
+        playerCollider = GetComponent<BoxCollider2D>();
+        spine = GetComponent<SpineTest>();
+        effectController = GetComponent<EffectController>();
 
         playerInput = new PlayerInputActions();
         mouseHandler = GetComponent<PlayerMouseHandler>();
         ActivePlayerInput();
     }
-
 
     private void ActivePlayerInput()
     {
@@ -111,39 +94,24 @@ public class PlayerController : Character
         {
             case PlayerType.Player1:
                 playerInput.Player1.Enable();
-                Debug.Log("[Player1] : Active");
 
-                //Move Callback
                 playerInput.Player1.Move.started += callback => { ChangeState(StateType.Move); };
                 playerInput.Player1.Move.performed += callback => Move(Vector2.zero);
                 playerInput.Player1.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
 
-                // Attack 호출 시, ChangeState(Attack) -> Attack() -> SkillController.UseSkill() 호출
-                playerInput.Player1.Attack.started += callback => { if (isGroggy || !CanAttack()) return; ChangeState(StateType.Attack); OnAttack?.Invoke(); };
+                // 공격 입력을 받으면 PerformAttack 메서드를 호출
+                playerInput.Player1.Attack.started += callback => { PerformAttack(); };
 
                 moveAction = playerInput.FindAction("Move");
-
                 onPlayerStateUpdate += MonsterManager.Instance.PlayerStateUpdate;
                 break;
             case PlayerType.Player2:
                 playerInput.Player2.Enable();
-                Debug.Log("[Player2] : Active");
-
-                //늑대 움직일 때 워크 스테이션에 들어가는지 검사용
                 OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
-
-                //Move Callback
-                // playerInput.Player2.Move.started += callback => { ChangeState(StateType.Move); };
-                // playerInput.Player2.Move.performed += callback => { Move(Vector2.zero); };
-                // playerInput.Player2.Move.canceled += callback => { ChangeState(StateType.Idle); StopMove(); if (spine != null) spine.TestPlayIdleSpine(); };
                 playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
                 mainCam = Camera.main;
-
-
                 playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
-
                 moveAction = playerInput.FindAction("Move");
-
                 if (mouseHandler)
                 {
                     mouseHandler.SetupMouse(this);
@@ -152,10 +120,8 @@ public class PlayerController : Character
         }
     }
 
-
     private Vector2 input;
     private Action<Vector2> OnMoveAction;
-
     private Vector2 targetPos;
     private bool isMouseMoving;
     private Camera mainCam;
@@ -164,23 +130,40 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
-            if (isDead) return;
-            input = moveAction.ReadValue<Vector2>();
-            if (input.x == 0.0f && input.y == 0.0f)
+            if (isGroggy || isDead)
             {
-                rigid.linearVelocity = Vector2.zero;
+                StopMove();
                 return;
             }
+
+            Vector2 input = moveAction.ReadValue<Vector2>();
+
+            if (input.magnitude > 0.1f)
+            {
+                ChangeState(StateType.Move);
+                if (spine != null) spine.TestPlayRunSpine();
+            }
+            else
+            {
+                ChangeState(StateType.Idle);
+                if (spine != null) spine.TestPlayIdleSpine();
+            }
+
             MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
+
+            if (input.x != 0.0f)
+            {
+                Flip(input.x > 0);
+                if (weaponController != null) weaponController.Flip(input.x > 0);
+            }
         }
         else if (playerType == PlayerType.Player2 && isMouseMoving)
         {
             if (UnityEngine.EventSystems.EventSystem.current != null &&
-                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }
-
             transform.position = Vector2.MoveTowards(transform.position, targetPos, info.speed * Time.fixedDeltaTime);
             OnMoveAction?.Invoke(transform.position);
 
@@ -196,7 +179,7 @@ public class PlayerController : Character
     private void OnMouseClick()
     {
         if (UnityEngine.EventSystems.EventSystem.current != null &&
-                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
@@ -205,23 +188,68 @@ public class PlayerController : Character
         Vector2 mousePos = Mouse.current.position.ReadValue();
         Vector2 newPos = mainCam.ScreenToWorldPoint(mousePos);
 
-        if (!moveArea.GetBounds().Contains(newPos)) return;
+        if (!moveArea.GetBounds().Contains(newPos))
+        {
+            return;
+        }
 
+        isMouseMoving = true;
         targetPos = newPos;
+
         Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
         Flip(moveDirection.x < 0);
 
-        isMouseMoving = true;
         ChangeState(StateType.Move);
-
-
         if (spine != null) spine.TestPlayRunSpine();
+    }
+
+    private void PerformAttack()
+    {
+        if (isGroggy || !isAttackReady) return;
+
+        isAttackReady = false;
+        ChangeState(StateType.Attack);
+
+        OnAttack?.Invoke();
+
+        if (weaponController != null && weaponController.IsEquip())
+        {
+            if (skillController != null)
+            {
+                SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
+                if (currentSkillData != null)
+                {
+                    skillController.SetCurrentSkill(currentSkillData);
+                    skillController.UseSkill();
+                }
+            }
+        }
+        else
+        {
+            effectController?.NoneWeapon(playerNoneEffect);
+        }
+
+        Invoke(nameof(ResetAttackCooldown), info.attackDelay);
+    }
+
+    public void ResetAttackCooldown()
+    {
+        isAttackReady = true;
+
+        // if (moveAction.ReadValue<Vector2>().magnitude < 0.1f)
+        // {
+        //     ChangeState(StateType.Idle);
+        // }
+    }
+
+    protected override void Attack()
+    {
+        base.Attack();
     }
 
     protected override void Idle()
     {
         base.Idle();
-
         axisX = 0.0f;
         axisY = 0.0f;
     }
@@ -230,50 +258,39 @@ public class PlayerController : Character
 
     public override void TakeDamage(int amount)
     {
-        if (!isAllowDamaged) return;
+        if (!isAllowDamaged || isGroggy) return;
 
-        if (isGroggy) return;
+        base.TakeDamage(amount);
 
-        Debug.Log($"[TakeDamage]{transform.name} : {amount} {currentHP}");
+        OnDamaged?.Invoke();
+        isAllowDamaged = false; // 짧은 시간 동안 무적
 
-        currentHP -= amount;
-
-        if (currentHP <= 0)
-        {
-            currentHP = 0;
-        }
-
+        Invoke(nameof(InitAllowDamaged), damageDelay);
 
         if (isDead)
         {
-            gameObject.layer = LayerMask.NameToLayer("IgnoreHit");
-
-            skeletonAnimation.enabled = false;
-            playerCollider.enabled = false;
-            rigid.simulated = false;
-
-
-            rigid.linearVelocity = Vector2.zero;
-
-            StartCoroutine(RespawnCoroutine(groggyDuration));
-
-            // 그로기 상태 진입
             isGroggy = true;
             onPlayerStateUpdate?.Invoke(true);
             OnPlayerDead?.Invoke();
-            LockMovement();
+            LockMovement(); // 이동 및 공격 입력 비활성화
+
+            // 충돌 판정 비활성화
+            if (playerCollider != null)
+            {
+                playerCollider.enabled = false;
+            }
+
+            rigid.linearVelocity = Vector2.zero; // 움직임 즉시 정지
+
+            // 부활 코루틴 시작
+            StartCoroutine(RespawnCoroutine(groggyDuration));
         }
-
-        OnDamaged?.Invoke();
-        Invoke(nameof(InitAllowDamaged), damageDelay);
     }
-
     private void InitAllowDamaged() { isAllowDamaged = true; }
     public bool IsGroggy() => isGroggy;
 
     public void OnGameOver()
     {
-        //OnPlayerDead?.Invoke();
         LockMovement();
     }
 
@@ -284,7 +301,7 @@ public class PlayerController : Character
             case PlayerType.Player1:
                 playerInput.Player1.Enable();
                 break;
-            case PlayerType.Player2: //2번은 죽지 않음
+            case PlayerType.Player2:
                 playerInput.Player2.Enable();
                 break;
         }
@@ -293,47 +310,34 @@ public class PlayerController : Character
     private System.Collections.IEnumerator RespawnCoroutine(float delay)
     {
         yield return new WaitForSeconds(delay);
-
         isGroggy = false;
         currentHP = info.maxHp;
         OnPlayerRespawn?.Invoke();
+
         ChangeState(StateType.Idle);
         UnlockMovement();
 
         onPlayerStateUpdate?.Invoke(false);
-
-        gameObject.layer = LayerMask.NameToLayer("Player");
-        skeletonAnimation.enabled = true;
         playerCollider.enabled = true;
-        rigid.simulated = true;
 
         SetDamageImmune(true);
-
         StartCoroutine(GroggyCoroutine(invincibilityDuration));
     }
 
     private System.Collections.IEnumerator GroggyCoroutine(float duration)
     {
         float elapsed = 0f;
+
         while (elapsed < duration)
         {
-            //그로기 상태 출력
             yield return new WaitForSeconds(0.1f);
             elapsed += 0.1f;
         }
-
         SetDamageImmune(false);
     }
 
     private void LockMovement()
     {
-        // if (rigid == null || playerCollider == null) return;
-
-        // rigid.linearVelocity = Vector2.zero;
-        // rigid.angularVelocity = 0f;
-        // rigid.simulated = false;
-        // playerCollider.enabled = false;
-
         switch (playerType)
         {
             case PlayerType.Player1:
@@ -343,54 +347,20 @@ public class PlayerController : Character
                 playerInput.Player2.Disable();
                 break;
         }
+
+        ChangeState(StateType.Idle);
+        if (spine != null) spine.TestPlayIdleSpine();
     }
-
-    protected override void Attack()
-    {
-        if (!CanAttack()) return;
-
-        base.Attack();
-
-        if (spine != null)
-        {
-            spine.TestPlayAttackSpine();
-        }
-
-        if (!weaponController.IsEquip())
-        {
-            playerNoneWeapon.OnResetAttack();
-            effectController.NoneWeapon(playerNoneEffect);
-            //noneWeaponPivot.gameObject.SetActive(true);
-        }
-        else
-        {
-            //noneWeaponPivot.gameObject.SetActive(false);
-            if (weaponController != null && skillController != null)
-            {
-                weaponController.CurrentColliderSetActive(true);
-
-                SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
-                skillController.UseSkill(currentSkillData.colorType);
-            }
-        }
-    }
-
 
     protected new void Move(Vector2 dir)
     {
-        //base.Move(dir);
-        if (isGroggy) return;
         input = moveAction.ReadValue<Vector2>();
-
         axisX = input.x;
         axisY = input.y;
-
         if (input.magnitude > 0)
         {
             if (spine != null) spine.TestPlayRunSpine();
-
         }
-
         if (axisX != 0.0f)
         {
             Flip(axisX > 0);

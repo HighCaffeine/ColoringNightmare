@@ -2,33 +2,62 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private float speed;
+    private SkillData skillData;
     private Vector3 direction;
+    private int piercingCount;
 
-    public void Init(float lifeTime, float speed, Vector2 dir)
+    private Bounds moveAreaBounds;
+
+    public void Init(SkillData data, Vector3 dir)
     {
-        this.speed = speed;
-        this.direction = dir;
-        transform.localScale = new Vector3(dir.x < 0 ? -1 : 1, 1, 1);
-        Destroy(gameObject, lifeTime); // lifetime 후 자동 삭제
+        this.skillData = data;
+        this.direction = dir.normalized;
+        this.piercingCount = data.projectileParams.piercingCount;
+
+        transform.localScale = Vector3.one * data.projectileParams.size;
+
+        float spriteDirection = dir.x < 0 ? -1f : 1f;
+        transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * spriteDirection, transform.localScale.y, transform.localScale.z);
+
+        Destroy(gameObject, data.projectileParams.lifeTime);
+
+        if (MonsterManager.Instance != null)
+        {
+            moveAreaBounds = MonsterManager.Instance.GetAreaBound();
+        }
     }
 
     void Update()
     {
-        transform.position += direction.normalized * speed * Time.deltaTime;
+        if (skillData != null)
+        {
+            transform.position += direction * skillData.projectileParams.speed * Time.deltaTime;
+
+            if (moveAreaBounds.size != Vector3.zero)
+            {
+                if (!moveAreaBounds.Contains(transform.position))
+                {
+                    Destroy(gameObject);
+                }
+            }
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // 몬스터 태그
         if (other.CompareTag("Monster"))
         {
             Character monster = other.GetComponent<Character>();
             if (monster != null)
             {
-                monster.TakeDamage(1);  //테스트 1데미지
+                monster.TakeDamage(skillData.baseDamage);
+
+                piercingCount--;
+                if (piercingCount < 0)
+                {
+                    Destroy(gameObject);
+                }
             }
-            //Destroy(gameObject);
         }
     }
 }
