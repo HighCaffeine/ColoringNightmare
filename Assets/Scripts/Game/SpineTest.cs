@@ -19,31 +19,21 @@ public class SpineTest : MonoBehaviour
     }
 
     public SkeletonAnimation skeleton;
-    public AniName spineAniName;
-    public int currentTrack = 0;
-
     private Coroutine spineCoroutine;
 
-    [Header("AttackEffect")]
-    [SerializeField] private UnityEngine.Events.UnityEvent attackEffect;
-
-    //private PlayerController playerController;
+    [Header("Dependencies")]
+    [SerializeField] private SkillController skillController;
+    private PlayerController playerController;
 
     void Awake()
     {
-        if (skeleton == null)
-        {
-            skeleton = GetComponent<SkeletonAnimation>();
-        }
-        //playerController = GetComponent<PlayerController>();
+        if (skeleton == null) skeleton = GetComponent<SkeletonAnimation>();
+        playerController = GetComponent<PlayerController>();
     }
 
     void Start()
     {
-        if (skeleton != null)
-        {
-            skeleton.AnimationState.Event += HandleSpineEvent;
-        }
+        if (skeleton != null) skeleton.AnimationState.Event += HandleSpineEvent;
         TestPlayIdleSpine();
     }
 
@@ -53,10 +43,7 @@ public class SpineTest : MonoBehaviour
         spineCoroutine = StartCoroutine(PlaySpine(AniName.attack1, false, onComplete: () =>
         {
             TestPlayIdleSpine();
-            // if (playerController != null)
-            // {
-            //     playerController.ResetAttackCooldown();
-            // }
+            playerController?.ResetAttackCooldown();
         }));
     }
 
@@ -80,25 +67,20 @@ public class SpineTest : MonoBehaviour
 
     private void CheckCoroutine()
     {
-        if (spineCoroutine != null)
-        {
-            StopCoroutine(spineCoroutine);
-            spineCoroutine = null;
-        }
+        if (spineCoroutine != null) StopCoroutine(spineCoroutine);
+        spineCoroutine = null;
     }
 
     private IEnumerator PlaySpine(AniName aniName, bool isLoop, System.Action onComplete = null)
     {
         if (skeleton == null) yield break;
-
-        Spine.Animation ani = skeleton.Skeleton.Data.FindAnimation(aniName.ToString());
+        var ani = skeleton.Skeleton.Data.FindAnimation(aniName.ToString());
         if (ani == null)
         {
             Debug.LogError($"Animation '{aniName}' not found");
             yield break;
         }
-
-        TrackEntry entry = skeleton.AnimationState.SetAnimation(currentTrack, ani, isLoop);
+        TrackEntry entry = skeleton.AnimationState.SetAnimation(0, ani, isLoop);
         if (!isLoop && onComplete != null)
         {
             entry.Complete += _ => onComplete();
@@ -108,27 +90,9 @@ public class SpineTest : MonoBehaviour
 
     private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        SpineEvent eventType;
-        try
+        if (e.Data.Name == "AttackEffect")
         {
-            eventType = (SpineEvent)System.Enum.Parse(typeof(SpineEvent), e.Data.Name);
-        }
-        catch
-        {
-            Debug.LogWarning($"Undefined Spine Event: '{e.Data.Name}'");
-            eventType = SpineEvent.None;
-        }
-
-        // enum 값을 기준으로 분기 처리
-        switch (eventType)
-        {
-            case SpineEvent.AttackEffect:
-                attackEffect?.Invoke();
-                break;
-
-            case SpineEvent.None:
-            default:
-                break;
+            skillController?.OnAnimationHit();
         }
     }
 }

@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 
-// 스킬 유형 정의
 public enum SkillType { BasicAttack, Projectile, DoubleHit }
 
 [CreateAssetMenu(fileName = "SkillData", menuName = "Skill/SkillData")]
@@ -15,7 +14,7 @@ public class SkillData : ScriptableObject
     [Header("필요 시 지정")] public float skillDuration = 0f;
 
     [Header("시각 효과 매핑")]
-    public EffectVisualData visualData; // 어떤 이펙트를 사용할지 연결
+    public EffectVisualData visualData; // 첫 번째 또는 일반 공격용 이펙트
 
     // --- [노노] 관통형 투사체 설정 ---
     [Serializable]
@@ -32,7 +31,6 @@ public class SkillData : ScriptableObject
     }
     public ProjectileParams projectileParams = new ProjectileParams();
 
-
     // --- [파파] 둔화 상태 이상 설정 ---
     [Serializable]
     public class StatusEffectParams
@@ -48,4 +46,7 @@ public class SkillData : ScriptableObject
     [Header("[빨빨] 2연속 공격 설정")]
     [Tooltip("첫 번째 공격 후 두 번째 공격까지의 시간차")]
     public float doubleHitDelay = 0.1f;
+
+    [Tooltip("2연타 공격의 두 번째 타격에 사용할 시각 효과")]
+    public EffectVisualData secondHitVisualData;
 }

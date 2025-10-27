@@ -1,33 +1,26 @@
 using UnityEngine;
+using System.Collections;
 
 public class WeaponController : MonoBehaviour
 {
     [SerializeField] private Weapon weapon;
     [SerializeField] private Transform weaponPivot;
-
-    [Header("Spine Skeleton Target")]
     [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
-
     private SpriteRenderer spriteRenderer;
+
+    [Header("Dependencies")]
+    [SerializeField] private SkillController skillController;
 
     public bool IsEquip() => weapon != null;
 
     public SkillData GetEquippedWeaponSkillData()
     {
-        if (weapon != null)
-        {
-            return weapon.GetSKillData();
-        }
-        return null;
+        return weapon?.GetSKillData();
     }
 
-    public WeaponInkData GetEquippedWeaponInkData()
+    public Weapon GetEquippedWeapon()
     {
-        if (weapon != null)
-        {
-            return weapon.GetInkData();
-        }
-        return null;
+        return weapon;
     }
 
     public void SetupWeapon(Weapon newWeapon)
@@ -49,12 +42,12 @@ public class WeaponController : MonoBehaviour
         boneFollower.followSkeletonFlip = true;
         spriteRenderer.sortingOrder = 0;
 
-        CurrentColliderSetActive(false);
-    }
+        if (skillController != null && this.weapon != null)
+        {
+            skillController.SetCurrentSkill(this.weapon.GetSKillData());
+        }
 
-    public Weapon GetEquippedWeapon()
-    {
-        return weapon;
+        CurrentColliderSetActive(false);
     }
 
     public void CurrentColliderSetActive(bool activate)
@@ -63,13 +56,33 @@ public class WeaponController : MonoBehaviour
             weapon.SetActiveCollider(activate);
     }
 
+    public void ActivateHitboxForDuration(float duration)
+    {
+        StartCoroutine(HitboxCoroutine(duration));
+    }
+
+    private IEnumerator HitboxCoroutine(float duration)
+    {
+        CurrentColliderSetActive(true);
+        yield return new WaitForSeconds(duration);
+        CurrentColliderSetActive(false);
+    }
+
     public void SubDurability()
     {
         if (weapon == null) return;
-        if (weapon.DecreaseDurability() <= 0) weapon = null;
+        if (weapon.DecreaseDurability() <= 0)
+        {
+            weapon = null;
+            if (skillController != null)
+            {
+                skillController.SetCurrentSkill(null);
+            }
+        }
     }
 
     public void Flip(bool isRight)
     {
+        // BoneFollower의 followSkeletonFlip이 true이므로 별도 처리 불필요
     }
 }

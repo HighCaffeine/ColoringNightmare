@@ -10,47 +10,62 @@ public class SkillController : MonoBehaviour
     [SerializeField] private WeaponController weaponController;
     [SerializeField] private EffectController effectController;
     private Character character;
+    private SkillData currentSkill;
+    private int hitCountForDoubleAttack = 0; // 2연타 횟수를 세는 카운터
 
-    [Header("스킬 데이터 매핑")]
-    public List<SkillData> skillDataList;
-    private Dictionary<ColorMixer.ColorType, SkillData> skillMap = new Dictionary<ColorMixer.ColorType, SkillData>();
-
-    [SerializeField] private float skillSpeed = 5.0f;
-    [SerializeField] private float testLifeTime = 5.0f;
-
-    private void Awake()
+    void Awake()
     {
         character = GetComponent<Character>();
-        foreach (var data in skillDataList)
+    }
+
+    // WeaponController가 무기를 장착/해제할 때 호출하여 현재 스킬 정보를 업데이트
+    public void SetCurrentSkill(SkillData skillData)
+    {
+        this.currentSkill = skillData;
+    }
+
+    // PlayerController가 공격을 시작할 때 호출
+    public void UseSkill()
+    {
+        // '더블 어택' 스킬이 시작될 때마다 타격 횟수 카운터를 0으로 초기화
+        if (currentSkill != null && currentSkill.skillType == SkillType.DoubleHit)
         {
-            if (data != null && !skillMap.ContainsKey(data.colorType))
-            {
-                skillMap.Add(data.colorType, data);
-            }
+            hitCountForDoubleAttack = 0;
+        }
+
+        // 투사체 스킬일 경우, 애니메이션 시작과 동시에 발사 로직 실행
+        if (currentSkill != null && currentSkill.skillType == SkillType.Projectile)
+        {
+            ExecuteProjectileSkill(currentSkill);
         }
     }
 
-    public void UseSkill()
+    public void OnAnimationHit()
     {
-        // PlayerController가 공격 애니메이션을 이미 시작했으므로,
-        // SkillController는 스킬 타입에 맞는 추가 행동만 실행합니다.
+        if (currentSkill == null) return;
 
-        SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
-        if (currentSkillData == null) return;
-
-        // 스킬 타입에 따라 필요한 로직만 실행
-        switch (currentSkillData.skillType)
+        if (currentSkill.skillType == SkillType.DoubleHit)
         {
-            case SkillType.Projectile:
-                ExecuteProjectileSkill(currentSkillData);
-                break;
+            if (hitCountForDoubleAttack == 0)
+            {
+                effectController.PlayEffect(currentSkill.visualData);
+            }
+            else
+            {
+                effectController.PlayEffect(currentSkill.secondHitVisualData ?? currentSkill.visualData);
+            }
+            hitCountForDoubleAttack++;
+        }
+        else
+        {
+            effectController.PlayEffect(currentSkill.visualData);
+        }
 
-            // 기본 공격이나 2연타는 SpineTest의 AttackEffect 이벤트가 모든 것을 처리하므로
-            // SkillController가 여기서 할 일은 없습니다.
-            case SkillType.BasicAttack:
-            case SkillType.DoubleHit:
-            default:
-                break;
+        weaponController.SubDurability();
+
+        if (currentSkill.skillType == SkillType.BasicAttack || currentSkill.skillType == SkillType.DoubleHit)
+        {
+            weaponController.ActivateHitboxForDuration(0.15f);
         }
     }
 
@@ -58,12 +73,10 @@ public class SkillController : MonoBehaviour
     {
         if (projectilePrefab == null) return;
 
-        // 투사체 방향 계산
         float currentScaleX = character.skeleton.skeleton.ScaleX;
-        Vector3 forward = transform.right * Mathf.Sign(currentScaleX);
-        float[] angles = { 0f, 15f, -15f }; // 3방향 발사
+        Vector3 forward = transform.right * Mathf.Sign(currentScaleX) * -1;
+        float[] angles = { 0f /*15f, -15f*/ };
 
-        // 투사체 생성 및 초기화
         foreach (float angle in angles)
         {
             Quaternion rot = Quaternion.Euler(0, 0, angle);
@@ -73,7 +86,7 @@ public class SkillController : MonoBehaviour
             Projectile projComponent = proj.GetComponent<Projectile>();
             if (projComponent != null)
             {
-                projComponent.Init(testLifeTime, skillSpeed, dir);
+                projComponent.Init(data, dir);
             }
         }
     }

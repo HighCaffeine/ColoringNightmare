@@ -8329,7 +8329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
   effectPivot: {fileID: 501885919}
-  playerWeaponController: {fileID: 1206501471}
+  character: {fileID: 1206501469}
 --- !u!114 &1206501469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8495,7 +8495,6 @@ MonoBehaviour:
         m_CallState: 2
   weaponController: {fileID: 1206501471}
   skillController: {fileID: 1206501470}
-  playerNoneWeapon: {fileID: 0}
   playerNoneEffect: {fileID: 11400000, guid: b757d91cfc6e63548a12ba318129179b, type: 2}
   groggyDuration: 5
   invincibilityDuration: 2
@@ -8517,8 +8516,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 4053538593039705427, guid: b991c2cd1e45676408394666d396dae6, type: 3}
   effectPivot: {fileID: 1348453517}
   weaponController: {fileID: 1206501471}
-  test_lifeTime: 5
-  skillSpeed: 5
+  effectController: {fileID: 0}
 --- !u!114 &1206501471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8534,6 +8532,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   weaponPivot: {fileID: 1206501478}
   skeletonAni: {fileID: 1206501475}
+  skillController: {fileID: 0}
 --- !u!114 &1206501472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8547,35 +8546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skeleton: {fileID: 1206501475}
-  spineAniName: 0
-  currentTrack: 0
-  attackEffect:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1206501468}
-        m_TargetAssemblyTypeName: EffectController, Assembly-CSharp
-        m_MethodName: PlayEffect
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1206501471}
-        m_TargetAssemblyTypeName: WeaponController, Assembly-CSharp
-        m_MethodName: SubDurability
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillController: {fileID: 0}
 --- !u!50 &1206501473
 Rigidbody2D:
   serializedVersion: 5
@@ -10994,7 +10965,6 @@ MonoBehaviour:
         m_CallState: 2
   weaponController: {fileID: 0}
   skillController: {fileID: 0}
-  playerNoneWeapon: {fileID: 0}
   playerNoneEffect: {fileID: 0}
   groggyDuration: 5
   invincibilityDuration: 2
@@ -11043,6 +11013,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   weaponPivot: {fileID: 825676002}
   skeletonAni: {fileID: 0}
+  skillController: {fileID: 0}
 --- !u!114 &1590202361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11057,7 +11028,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
   effectPivot: {fileID: 0}
-  playerWeaponController: {fileID: 0}
+  character: {fileID: 0}
 --- !u!1 &1596286528
 GameObject:
   m_ObjectHideFlags: 0
@@ -12068,7 +12039,6 @@ MonoBehaviour:
       m_Calls: []
   weaponController: {fileID: 0}
   skillController: {fileID: 0}
-  playerNoneWeapon: {fileID: 0}
   playerNoneEffect: {fileID: 0}
   groggyDuration: 5
   invincibilityDuration: 2
@@ -12349,11 +12319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skeleton: {fileID: 1723600701}
-  spineAniName: 0
-  currentTrack: 0
-  attackEffect:
-    m_PersistentCalls:
-      m_Calls: []
+  skillController: {fileID: 0}
 --- !u!1 &1745466519
 GameObject:
   m_ObjectHideFlags: 0
@@ -14328,7 +14294,7 @@ MonoBehaviour:
   pixelPerUnit: 100
   paddingPixels: 12
   drawPlaneZValue: 0
-  ratioFromSketchBook: 0.8
+  ratioFromSketchBook: 0.826
   weaponInkDataList:
   - {fileID: 11400000, guid: 53f2b8a3a8ab82d4b82a295bf08aa9b7, type: 2}
   - {fileID: 11400000, guid: 2e1caaed2ab5e874daec664ecc6e6e94, type: 2}

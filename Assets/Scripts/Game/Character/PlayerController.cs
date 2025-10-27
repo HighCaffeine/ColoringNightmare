@@ -130,7 +130,7 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
-            if (isGroggy || isDead || state == StateType.Attack)
+            if (isGroggy || isDead)
             {
                 StopMove();
                 return;
@@ -210,6 +210,8 @@ public class PlayerController : Character
         isAttackReady = false;
         ChangeState(StateType.Attack);
 
+        OnAttack?.Invoke();
+
         if (weaponController != null && weaponController.IsEquip())
         {
             if (skillController != null)
@@ -217,15 +219,14 @@ public class PlayerController : Character
                 SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
                 if (currentSkillData != null)
                 {
+                    skillController.SetCurrentSkill(currentSkillData);
                     skillController.UseSkill();
                 }
             }
         }
         else
         {
-            OnAttack?.Invoke();
-
-            if (effectController != null) effectController.NoneWeapon(playerNoneEffect);
+            effectController?.NoneWeapon(playerNoneEffect);
         }
 
         Invoke(nameof(ResetAttackCooldown), info.attackDelay);
@@ -235,10 +236,10 @@ public class PlayerController : Character
     {
         isAttackReady = true;
 
-        if (moveAction.ReadValue<Vector2>().magnitude < 0.1f)
-        {
-            ChangeState(StateType.Idle);
-        }
+        // if (moveAction.ReadValue<Vector2>().magnitude < 0.1f)
+        // {
+        //     ChangeState(StateType.Idle);
+        // }
     }
 
     protected override void Attack()

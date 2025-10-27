@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public interface IStatusEffect
 {
@@ -17,42 +16,45 @@ public class EffectController : GenericSingleton<EffectController>
     [SerializeField] private Transform effectPivot;
 
     [Header("Dependencies")]
-    [SerializeField] private WeaponController playerWeaponController;
+    [SerializeField] private Character character;
 
-    public void PlayEffect()
+    public void PlayEffect(EffectVisualData specificVisualData)
     {
-        if (effectPrefab == null || playerWeaponController == null)
+        if (specificVisualData == null)
         {
+            Debug.LogWarning("재생할 VisualData가 없음.");
             return;
         }
 
-        SkillData currentSkillData = playerWeaponController.GetEquippedWeaponSkillData();
-        if (currentSkillData == null || currentSkillData.visualData == null)
+        bool isFacingRight = true;
+        if (character != null && character.skeleton != null)
         {
-            return;
+            isFacingRight = character.skeleton.skeleton.ScaleX > 0;
         }
+        effectPivot.parent.localScale = new Vector3(isFacingRight ? 1 : -1, 1, 1);
 
-        EffectVisualData visualData = currentSkillData.visualData;
-
-        bool isFacingRight = effectPivot.parent.transform.localScale.x > 0;
-
-        if (visualData.visualType == EffectVisualType.SpriteAnimation)
+        if (specificVisualData.visualType == EffectVisualType.SpriteAnimation)
         {
+
+            if (effectPrefab == null) return;
             GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
             var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
+
+
             if (effectPlayer != null)
             {
-                effectPlayer.Play(isFacingRight, visualData);
+                effectPlayer.Play(isFacingRight, specificVisualData);
             }
         }
-        else if (visualData.visualType == EffectVisualType.ParticleSystem)
+        else if (specificVisualData.visualType == EffectVisualType.ParticleSystem)
         {
-            if (visualData.prefab == null) return;
-
-            ParticleSystem particleSystem = Instantiate(visualData.prefab, effectPivot.position, Quaternion.identity, effectPivot).GetComponent<ParticleSystem>();
-
+            if (specificVisualData.prefab == null) return;
+            ParticleSystem particleSystem = Instantiate(specificVisualData.prefab, effectPivot.position, Quaternion.identity, effectPivot).GetComponent<ParticleSystem>();
             if (particleSystem != null)
             {
+                var shape = particleSystem.shape;
+                shape.rotation = isFacingRight ? new Vector3(0, 90, 0) : new Vector3(0, -90, 0);
+
                 particleSystem.Play();
                 var mainModule = particleSystem.main;
                 Destroy(particleSystem.gameObject, mainModule.duration + mainModule.startLifetime.constantMax);
@@ -62,20 +64,7 @@ public class EffectController : GenericSingleton<EffectController>
 
     public void NoneWeapon(EffectVisualData effectVisualData)
     {
-        if (effectPrefab == null || effectVisualData == null)
-        {
-            return;
-        }
-
-        bool isFacingRight = effectPivot.parent.transform.localScale.x > 0;
-        if (effectVisualData.visualType == EffectVisualType.SpriteAnimation)
-        {
-            GameObject effectInstance = Instantiate(effectPrefab, effectPivot.position, Quaternion.identity, effectPivot);
-            var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
-            if (effectPlayer != null)
-            {
-                effectPlayer.Play(isFacingRight, effectVisualData);
-            }
-        }
+        if (effectVisualData == null) return;
+        PlayEffect(effectVisualData);
     }
 }
