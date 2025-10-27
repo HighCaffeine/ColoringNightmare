@@ -130,8 +130,7 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
-            // [수정] 그로기 상태일 때 모든 움직임을 막습니다.
-            if (isGroggy || isDead)
+            if (isGroggy || isDead || state == StateType.Attack)
             {
                 StopMove();
                 return;
@@ -141,12 +140,12 @@ public class PlayerController : Character
 
             if (input.magnitude > 0.1f)
             {
-                if (state != StateType.Attack) ChangeState(StateType.Move);
+                ChangeState(StateType.Move);
                 if (spine != null) spine.TestPlayRunSpine();
             }
             else
             {
-                if (state != StateType.Attack) ChangeState(StateType.Idle);
+                ChangeState(StateType.Idle);
                 if (spine != null) spine.TestPlayIdleSpine();
             }
 
@@ -186,14 +185,17 @@ public class PlayerController : Character
         }
         if (WolfWorkStation.Instance.IsOnInteractive) return;
 
-        isMouseMoving = true;
-
         Vector2 mousePos = Mouse.current.position.ReadValue();
         Vector2 newPos = mainCam.ScreenToWorldPoint(mousePos);
 
-        if (!moveArea.GetBounds().Contains(newPos)) return;
+        if (!moveArea.GetBounds().Contains(newPos))
+        {
+            return;
+        }
 
+        isMouseMoving = true;
         targetPos = newPos;
+
         Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
         Flip(moveDirection.x < 0);
 
@@ -225,11 +227,18 @@ public class PlayerController : Character
 
             if (effectController != null) effectController.NoneWeapon(playerNoneEffect);
         }
+
+        Invoke(nameof(ResetAttackCooldown), info.attackDelay);
     }
 
     public void ResetAttackCooldown()
     {
         isAttackReady = true;
+
+        if (moveAction.ReadValue<Vector2>().magnitude < 0.1f)
+        {
+            ChangeState(StateType.Idle);
+        }
     }
 
     protected override void Attack()

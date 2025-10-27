@@ -17,5 +17,5 @@ MonoBehaviour:
   maxHp: 5
   dmg: 1
   speed: 1
-  attackDelay: 0.5
+  attackDelay: 1
   isSpine: 1

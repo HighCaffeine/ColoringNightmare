@@ -27,19 +27,23 @@ public class SpineTest : MonoBehaviour
     [Header("AttackEffect")]
     [SerializeField] private UnityEngine.Events.UnityEvent attackEffect;
 
-    private PlayerController playerController;
+    //private PlayerController playerController;
 
     void Awake()
     {
         if (skeleton == null)
+        {
             skeleton = GetComponent<SkeletonAnimation>();
-        playerController = GetComponent<PlayerController>();
+        }
+        //playerController = GetComponent<PlayerController>();
     }
 
     void Start()
     {
         if (skeleton != null)
+        {
             skeleton.AnimationState.Event += HandleSpineEvent;
+        }
         TestPlayIdleSpine();
     }
 
@@ -49,10 +53,10 @@ public class SpineTest : MonoBehaviour
         spineCoroutine = StartCoroutine(PlaySpine(AniName.attack1, false, onComplete: () =>
         {
             TestPlayIdleSpine();
-            if (playerController != null)
-            {
-                playerController.ResetAttackCooldown();
-            }
+            // if (playerController != null)
+            // {
+            //     playerController.ResetAttackCooldown();
+            // }
         }));
     }
 
