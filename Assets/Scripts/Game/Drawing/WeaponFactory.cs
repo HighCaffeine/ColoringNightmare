@@ -101,7 +101,7 @@ public class WeaponFactory : MonoBehaviour
             }
         }
 
-        //weapon.SetupInkData(weaponData);
+        weapon.SetupInkData(weaponData);
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)

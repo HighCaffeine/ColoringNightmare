@@ -15,23 +15,24 @@ public class SpineTest : MonoBehaviour
     public SkeletonAnimation skeleton;
     public AniName spineAniName;
     public int currentTrack = 0;
-
     private Coroutine spineCoroutine;
 
     [Header("AttackEffect")]
     [SerializeField] private UnityEngine.Events.UnityEvent attackEffect;
 
+    private PlayerController playerController;
+
     void Awake()
     {
         if (skeleton == null)
             skeleton = GetComponent<SkeletonAnimation>();
+        playerController = GetComponent<PlayerController>();
     }
 
     void Start()
     {
         if (skeleton != null)
             skeleton.AnimationState.Event += HandleSpineEvent;
-
         spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
     }
 
@@ -40,7 +41,11 @@ public class SpineTest : MonoBehaviour
         CheckCoroutine();
         spineCoroutine = StartCoroutine(PlaySpine(AniName.attack1, false, onComplete: () =>
         {
-            spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
+            TestPlayIdleSpine();
+            if (playerController != null)
+            {
+                playerController.ResetAttackCooldown();
+            }
         }));
     }
 
@@ -52,63 +57,27 @@ public class SpineTest : MonoBehaviour
 
     public void TestPlayIdleSpine()
     {
-        skeleton.AnimationState.ClearTrack(0);
-        CheckCoroutine();
-        spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
+        if (skeleton.AnimationName != AniName.idle.ToString())
+        {
+            CheckCoroutine();
+            spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
+        }
     }
 
     private void CheckCoroutine()
     {
         if (spineCoroutine != null)
         {
-            skeleton.AnimationState.ClearTrack(0);
             StopCoroutine(spineCoroutine);
             spineCoroutine = null;
         }
     }
-    public void TestPlayAttackReverse()
-    {
-        CheckCoroutine();
-        spineCoroutine = StartCoroutine(PlaySpineReverse(AniName.attack1, false, onComplete: () =>
-        {
-            spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
-        }));
-    }
-
-    private IEnumerator PlaySpineReverse(AniName aniName, bool isLoop, System.Action onComplete = null)
-    {
-        if (skeleton == null)
-            yield break;
-
-        var ani = skeleton.Skeleton.Data.FindAnimation(aniName.ToString());
-        if (ani == null)
-        {
-            Debug.LogError($"Animation '{aniName}' not found");
-            yield break;
-        }
-
-        TrackEntry entry = skeleton.AnimationState.SetAnimation(currentTrack, ani, isLoop);
-
-        entry.TimeScale = -1f;
-        entry.TrackTime = ani.Duration;
-
-        if (!isLoop && onComplete != null)
-        {
-            entry.Complete += _ => onComplete();
-        }
-
-        yield return null;
-    }
 
     private IEnumerator PlaySpine(AniName aniName, bool isLoop, System.Action onComplete = null)
     {
-        if (skeleton == null)
-        {
-            yield break;
-        }
+        if (skeleton == null) yield break;
 
         Spine.Animation ani = skeleton.Skeleton.Data.FindAnimation(aniName.ToString());
-
         if (ani == null)
         {
             Debug.LogError($"Animation '{aniName}' not found");
@@ -116,46 +85,18 @@ public class SpineTest : MonoBehaviour
         }
 
         TrackEntry entry = skeleton.AnimationState.SetAnimation(currentTrack, ani, isLoop);
-
         if (!isLoop && onComplete != null)
         {
-            // 애니메이션 한 번 재생 끝나면 onComplete 실행
             entry.Complete += _ => onComplete();
         }
-
         yield return null;
     }
 
     private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        skeleton.AnimationState.ClearTrack(0);
-        Debug.Log($"Spine Event Fired: {e.Data.Name}");
-
-        switch (e.Data.Name)
+        if (e.Data.Name == "AttackEffect")
         {
-            case "CreateWeapon":
-                SpawnWeapon();
-                break;
-            case "AttackEffect":
-                PlayEffect();
-                break;
-            default:
-                Debug.Log("none defined ani");
-                break;
+            attackEffect?.Invoke();
         }
-    }
-
-    private void SpawnWeapon()
-    {
-        Debug.Log("weapon created");
-    }
-    private bool hasPlayedEffect = false;
-
-    private void PlayEffect()
-    {
-        if (hasPlayedEffect) return;
-        hasPlayedEffect = true;
-        skeleton.AnimationState.ClearTrack(0);
-        attackEffect?.Invoke();
     }
 }

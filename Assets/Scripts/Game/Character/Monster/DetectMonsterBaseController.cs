@@ -8,74 +8,60 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     OnReturnPoolEvent<DetectMonsterBaseController> OnReturnPoolEvent;
 
     [Header("Detect Settings")]
-    public float detectionRange = 5f;
+    public float detectionRange = 7f;
     [SerializeField] private Transform targetPlayer;
     private float detectInterval = 0.1f;
-    [SerializeField] private float detectTimer = 0f;
+    private float detectTimer = 0f;
+    private Vector2? lastKnownPlayerPos = null;
 
     private bool isDashing = false;
-
     MonsterManager.OnPlayerIsDead onPlayerIsDead;
 
     public override void Setup(DetectMonsterData data)
     {
         base.Setup(data);
-        detectionRange = data.AttackRange;
+        detectionRange = data.DetectRange;
         onPlayerIsDead += MonsterManager.Instance.IsPlayerDead;
-        rigid = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
     {
-        if (isDead) // 대시 중 velocity는 그대로 유지
+        if (isDead || isDashing)
         {
-            rigid.linearVelocity = Vector2.zero;
+            if (isDead) rigid.linearVelocity = Vector2.zero;
             return;
         }
 
-        switch (state)
-        {
-            case StateType.Idle:
-                IdleAndDetect();
-                break;
-            case StateType.Move:
-                ChasePlayer();
-                break;
-        }
-    }
-
-    private void Update()
-    {
-        detectTimer += Time.deltaTime;
+        detectTimer += Time.fixedDeltaTime;
         if (detectTimer >= detectInterval)
         {
             detectTimer = 0f;
             DetectPlayer();
         }
-    }
 
-    protected void IdleAndDetect()
-    {
-        base.Move(Vector2.right);
-
-        if (targetPlayer != null)
+        switch (state)
         {
-            ChangeState(StateType.Move);
+            case StateType.Idle:
+                base.Move(Vector2.right);
+                break;
+            case StateType.Move:
+                ChaseOrSearch();
+                break;
         }
     }
 
-    private void ChasePlayer()
+    private void ChaseOrSearch()
     {
-        Vector2 targetPos;
+        Vector2 targetPosition;
 
         if (targetPlayer != null)
         {
-            targetPos = targetPlayer.position;
-            lastKnownPlayerPos = targetPos;
+            targetPosition = targetPlayer.position;
+            lastKnownPlayerPos = targetPosition;
         }
-        else if (lastKnownPlayerPos != null)
+        else if (lastKnownPlayerPos.HasValue)
         {
-            targetPos = lastKnownPlayerPos.Value;
+            targetPosition = lastKnownPlayerPos.Value;
         }
         else
         {
@@ -83,47 +69,55 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             return;
         }
 
-        float distance = Vector2.Distance(transform.position, targetPos);
-        if (distance <= monsterData.AttackRange)
+        float distance = Vector2.Distance(transform.position, targetPosition);
+
+        if (targetPlayer != null && distance <= monsterData.AttackRange)
         {
+            StopMove();
             ChangeState(StateType.Attack);
             return;
         }
 
-        Vector2 dir = (targetPos - (Vector2)transform.position).normalized;
-        MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
-        Flip(dir.x > 0);
-
-        // 마지막 위치에 도착하면 targetPlayer null이면 Idle로
-        if (targetPlayer == null && distance <= 0.1f)
+        if (targetPlayer == null && distance < 0.2f)
         {
-            ChangeState(StateType.Idle);
             lastKnownPlayerPos = null;
+            ChangeState(StateType.Idle);
+            return;
         }
-    }
 
-    private Vector2? lastKnownPlayerPos = null;
+        Vector2 dir = (targetPosition - (Vector2)transform.position).normalized;
+        MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
+    }
 
     private void DetectPlayer()
     {
         if (onPlayerIsDead?.Invoke() == true)
         {
-            detectTimer = 0.0f;
             targetPlayer = null;
-            lastKnownPlayerPos = null;
             return;
         }
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, detectionRange);
-        targetPlayer = null;
-        for (int i = 0; i < hits.Length; i++)
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, detectionRange, LayerMask.GetMask("Player"));
+        Transform potentialTarget = null;
+        float closestDist = float.MaxValue;
+
+        foreach (var hit in hits)
         {
-            if (hits[i] != null && hits[i].CompareTag("Player1"))
+            if (hit.CompareTag("Player1"))
             {
-                targetPlayer = hits[i].transform;
-                lastKnownPlayerPos = targetPlayer.position;
-                break;
+                float dist = Vector2.Distance(transform.position, hit.transform.position);
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    potentialTarget = hit.transform;
+                }
             }
+        }
+        targetPlayer = potentialTarget;
+
+        if (targetPlayer != null && state == StateType.Idle)
+        {
+            ChangeState(StateType.Move);
         }
     }
 
@@ -135,6 +129,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         if (targetPlayer != null)
         {
             Vector2 dashDir = (targetPlayer.position - transform.position).normalized;
+            Flip(dashDir.x > 0);
             StartCoroutine(DashTowardsTarget(dashDir));
         }
         else
@@ -146,70 +141,36 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private IEnumerator DashTowardsTarget(Vector2 dir)
     {
         isDashing = true;
-        float dashTime = 0.2f;
-        float elapsed = 0f;
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, monsterData.DashSpeed * 0.2f, LayerMask.GetMask("Player"));
+        if (hit.collider != null && hit.collider.CompareTag("Player1"))
+        {
+            hit.collider.GetComponent<Character>()?.TakeDamage(monsterData.dmg);
+        }
 
         rigid.linearVelocity = dir * monsterData.DashSpeed;
-
-        while (elapsed <= dashTime)
-        {
-            elapsed += Time.deltaTime;
-
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, monsterData.DashSpeed * Time.deltaTime, LayerMask.GetMask("Player"));
-            if (hit.collider != null && hit.collider.CompareTag("Player"))
-            {
-                Character player = hit.collider.GetComponent<Character>();
-                if (player != null)
-                {
-                    player.TakeDamage(monsterData.dmg);
-
-                    rigid.linearVelocity = Vector2.zero;
-                    isDashing = false;
-
-                    yield return new WaitForSeconds(info.attackDelay);
-
-                    DetectPlayer();
-                    if (targetPlayer != null)
-                        ChangeState(StateType.Move);
-                    else
-                        ChangeState(StateType.Idle);
-
-                    yield break;
-                }
-            }
-            yield return null;
-        }
-
+        yield return new WaitForSeconds(0.2f);
         rigid.linearVelocity = Vector2.zero;
+
+        yield return new WaitForSeconds(info.attackDelay);
         isDashing = false;
 
-        DetectPlayer();
-        if (targetPlayer != null)
-            ChangeState(StateType.Move);
-        else
-        {
-            detectTimer = 0f;
-            ChangeState(StateType.Idle);
-        }
+        ChangeState(StateType.Move);
     }
 
     public void Init(OnReturnPoolEvent<DetectMonsterBaseController> onReturnPoolEvent)
     {
         OnReturnPoolEvent = onReturnPoolEvent;
         Flip(true);
+        lastKnownPlayerPos = null;
+        targetPlayer = null;
+        ChangeState(StateType.Idle);
     }
 
     protected override void Dead()
     {
         base.Dead();
+        StopAllCoroutines();
         OnReturnPoolEvent?.Invoke(this);
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
-    }
-#endif
 }
