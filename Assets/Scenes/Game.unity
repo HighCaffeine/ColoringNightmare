@@ -8329,6 +8329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
   effectPivot: {fileID: 501885919}
+  playerWeaponController: {fileID: 1206501471}
 --- !u!114 &1206501469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8492,18 +8493,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1206501471}
-        m_TargetAssemblyTypeName: WeaponController, Assembly-CSharp
-        m_MethodName: SubDurability
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   weaponController: {fileID: 1206501471}
   groggyDuration: 5
   invincibilityDuration: 2
@@ -8563,6 +8552,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1206501468}
         m_TargetAssemblyTypeName: EffectController, Assembly-CSharp
         m_MethodName: PlayEffect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1206501471}
+        m_TargetAssemblyTypeName: WeaponController, Assembly-CSharp
+        m_MethodName: SubDurability
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11050,6 +11051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
   effectPivot: {fileID: 0}
+  playerWeaponController: {fileID: 0}
 --- !u!1 &1596286528
 GameObject:
   m_ObjectHideFlags: 0
@@ -14311,7 +14313,6 @@ MonoBehaviour:
   lineColor: {r: 1, g: 1, b: 1, a: 1}
   saturation: 1
   similarityLimit: 50
-  lineJoinDistance: 0.5
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -14335,12 +14336,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6fd52b45ca82a064fac271c79e473721, type: 2}
   - {fileID: 11400000, guid: d6aa5545e26c57f46b07b9606dbba753, type: 2}
   - {fileID: 11400000, guid: 493ae6b8048d9ff4e8e818b5d134fb46, type: 2}
+  defaultWeaponData: {fileID: 11400000, guid: 53f2b8a3a8ab82d4b82a295bf08aa9b7, type: 2}
   drawArea: {fileID: 2081776441}
   refSprite: {fileID: 1823467083}
   similarityText: {fileID: 937773827}
-  totalTxt: {fileID: 1552122475}
-  colorPrefab: {fileID: 8199805135088459995, guid: 81eb52faec96c5b4a9cc561e2a7f949f, type: 3}
-  colorPixelsParent: {fileID: 497512436}
 --- !u!114 &1918038616
 MonoBehaviour:
   m_ObjectHideFlags: 0
