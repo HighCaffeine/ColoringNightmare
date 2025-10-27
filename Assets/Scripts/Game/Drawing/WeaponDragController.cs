@@ -11,16 +11,11 @@ public class WeaponDragController : MonoBehaviour
 
     [SerializeField] private WeaponController targetWeaponController;
 
-
-
-
-
     private Camera mainCamera;
     private bool isAllowWeaponControl;
-
     private Vector2 defaultPos;
 
-    public void DisallowWeaponControl() { isAllowWeaponControl = false; weaponObj.transform.position = defaultPos; }
+    public void DisallowWeaponControl() { isAllowWeaponControl = false; if (weaponObj != null) weaponObj.transform.position = defaultPos; }
     public void AllowWeaponControl() { isAllowWeaponControl = true; }
 
     private void Awake()
@@ -28,35 +23,30 @@ public class WeaponDragController : MonoBehaviour
         mainCamera = Camera.main;
     }
 
-    //무기 드래그 및 bounds 체크
-
     public void OnBeginWeaponCheck()
     {
         Vector2 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero);
 
-        if (hit.collider != null)
+        if (hit.collider != null && hit.collider.CompareTag("Weapon"))
         {
-            Debug.Log("Hit: " + hit.collider.name);
-
-            if (hit.collider.CompareTag("Weapon"))
+            isAllowWeaponControl = true;
+            weaponObj = hit.collider.GetComponent<Weapon>();
+            if (weaponObj != null)
             {
-                isAllowWeaponControl = true;
-                weaponObj = hit.collider.GetComponent<Weapon>();
-                Debug.Log("Weapon selected");
-
                 defaultPos = weaponObj.transform.position;
             }
         }
         else
         {
+            isAllowWeaponControl = false;
             weaponObj = null;
         }
     }
 
     public void OnDragEvent()
     {
-        if (!isAllowWeaponControl) return;
+        if (!isAllowWeaponControl || weaponObj == null) return;
 
         weaponObj.transform.position = DrawWeapon.Instance.GetMousePos();
 
@@ -68,12 +58,11 @@ public class WeaponDragController : MonoBehaviour
         {
             OnAreaExit?.Invoke();
         }
-
     }
 
     public void OnDropWeaponEvent()
     {
-        if (!isAllowWeaponControl) return;
+        if (!isAllowWeaponControl || weaponObj == null) return;
 
         if (targetArea.GetBounds().Contains(DrawWeapon.Instance.GetMousePos()))
         {
@@ -82,6 +71,7 @@ public class WeaponDragController : MonoBehaviour
                 isAllowWeaponControl = false;
                 targetWeaponController.SetupWeapon(weaponObj);
                 OnAreaExit?.Invoke();
+                weaponObj = null; // 무기 전달 후 참조를 비웁니다.
             }
         }
         else
