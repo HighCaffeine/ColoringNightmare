@@ -118,17 +118,38 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
-            if (!moveArea.GetBounds().Intersects(playerCollider.bounds))
+            // [수정] 그로기 상태일 때 모든 움직임을 막습니다.
+            if (isGroggy || isDead)
             {
-                rigid.linearVelocity = Vector2.zero;
+                StopMove();
+                return;
             }
-            if (axisX == 0.0f && axisY == 0.0f) return;
+
+            Vector2 input = moveAction.ReadValue<Vector2>();
+
+            if (input.magnitude > 0.1f)
+            {
+                if (state != StateType.Attack) ChangeState(StateType.Move);
+                if (spine != null) spine.TestPlayRunSpine();
+            }
+            else
+            {
+                if (state != StateType.Attack) ChangeState(StateType.Idle);
+                if (spine != null) spine.TestPlayIdleSpine();
+            }
+
             MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
+
+            if (input.x != 0.0f)
+            {
+                Flip(input.x > 0);
+                if (weaponController != null) weaponController.Flip(input.x > 0);
+            }
         }
         else if (playerType == PlayerType.Player2 && isMouseMoving)
         {
             if (UnityEngine.EventSystems.EventSystem.current != null &&
-                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }
@@ -147,11 +168,13 @@ public class PlayerController : Character
     private void OnMouseClick()
     {
         if (UnityEngine.EventSystems.EventSystem.current != null &&
-                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
         if (WolfWorkStation.Instance.IsOnInteractive) return;
+
+        isMouseMoving = true;
 
         Vector2 mousePos = Mouse.current.position.ReadValue();
         Vector2 newPos = mainCam.ScreenToWorldPoint(mousePos);
@@ -162,9 +185,7 @@ public class PlayerController : Character
         Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
         Flip(moveDirection.x < 0);
 
-        isMouseMoving = true;
         ChangeState(StateType.Move);
-
         if (spine != null) spine.TestPlayRunSpine();
     }
 
@@ -203,7 +224,8 @@ public class PlayerController : Character
         base.TakeDamage(amount);
 
         OnDamaged?.Invoke();
-        isAllowDamaged = false;
+        isAllowDamaged = false; // 짧은 시간 동안 무적
+
         Invoke(nameof(InitAllowDamaged), damageDelay);
 
         if (isDead)
@@ -211,13 +233,17 @@ public class PlayerController : Character
             isGroggy = true;
             onPlayerStateUpdate?.Invoke(true);
             OnPlayerDead?.Invoke();
-            LockMovement();
+            LockMovement(); // 이동 및 공격 입력 비활성화
 
+            // 충돌 판정 비활성화
             if (playerCollider != null)
             {
                 playerCollider.enabled = false;
             }
-            rigid.linearVelocity = Vector2.zero;
+
+            rigid.linearVelocity = Vector2.zero; // 움직임 즉시 정지
+
+            // 부활 코루틴 시작
             StartCoroutine(RespawnCoroutine(groggyDuration));
         }
     }
@@ -282,6 +308,9 @@ public class PlayerController : Character
                 playerInput.Player2.Disable();
                 break;
         }
+
+        ChangeState(StateType.Idle);
+        if (spine != null) spine.TestPlayIdleSpine();
     }
 
     protected new void Move(Vector2 dir)
