@@ -68,7 +68,7 @@ public class Character : MonoBehaviour
     {
         if (info != null && info.isSpine && skeleton != null)
         {
-            skeleton.skeleton.ScaleX = isRight ? 1f : -1f;
+            skeleton.skeleton.ScaleX = isRight ? -1f : 1f;
         }
         else if (spriteRenderer != null)
         {
@@ -131,7 +131,7 @@ public class Character : MonoBehaviour
         }
 
         float speedMultiplier = statusEffectManager?.GetSpeedMultiplier() ?? 1.0f;
-        float finalSpeed = info.speed * speedMultiplier;
+        float finalSpeed = info.speed * speedMultiplier * Time.deltaTime;
 
         Vector2 newPosition = rigid.position + dir.normalized * finalSpeed * Time.fixedDeltaTime;
 
