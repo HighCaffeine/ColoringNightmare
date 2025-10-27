@@ -25,7 +25,15 @@ public class PlayerController : Character
     [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
 
     [Header("Weapon")]
+    [Header("Weapon")]
     [SerializeField] private WeaponController weaponController;
+
+    [Header("Skill")]
+    [SerializeField] private SkillController skillController;
+
+    [Header("NoneWeapon")]
+    [SerializeField] private EffectVisualData playerNoneEffect;
+    private EffectController effectController;
 
     [Header("Groggy")]
     [SerializeField] private float groggyDuration = 5f;
@@ -70,6 +78,10 @@ public class PlayerController : Character
                 OnCharacterDataLoaded(so);
             }
         });
+
+        playerCollider = GetComponent<BoxCollider2D>();
+        spine = GetComponent<SpineTest>();
+        effectController = GetComponent<EffectController>();
 
         playerInput = new PlayerInputActions();
         mouseHandler = GetComponent<PlayerMouseHandler>();
@@ -195,7 +207,24 @@ public class PlayerController : Character
 
         isAttackReady = false;
         ChangeState(StateType.Attack);
-        OnAttack?.Invoke();
+
+        if (weaponController != null && weaponController.IsEquip())
+        {
+            if (skillController != null)
+            {
+                SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
+                if (currentSkillData != null)
+                {
+                    skillController.UseSkill();
+                }
+            }
+        }
+        else
+        {
+            OnAttack?.Invoke();
+
+            if (effectController != null) effectController.NoneWeapon(playerNoneEffect);
+        }
     }
 
     public void ResetAttackCooldown()
