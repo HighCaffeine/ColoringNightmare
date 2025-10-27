@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class SpineTest : MonoBehaviour
 {
+    public enum SpineEvent
+    {
+        None,
+        AttackEffect,
+    }
+
     public enum AniName
     {
         attack1,
@@ -15,6 +21,7 @@ public class SpineTest : MonoBehaviour
     public SkeletonAnimation skeleton;
     public AniName spineAniName;
     public int currentTrack = 0;
+
     private Coroutine spineCoroutine;
 
     [Header("AttackEffect")]
@@ -33,7 +40,7 @@ public class SpineTest : MonoBehaviour
     {
         if (skeleton != null)
             skeleton.AnimationState.Event += HandleSpineEvent;
-        spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
+        TestPlayIdleSpine();
     }
 
     public void TestPlayAttackSpine()
@@ -51,8 +58,11 @@ public class SpineTest : MonoBehaviour
 
     public void TestPlayRunSpine()
     {
-        CheckCoroutine();
-        spineCoroutine = StartCoroutine(PlaySpine(AniName.walk, true));
+        if (skeleton.AnimationName != AniName.walk.ToString())
+        {
+            CheckCoroutine();
+            spineCoroutine = StartCoroutine(PlaySpine(AniName.walk, true));
+        }
     }
 
     public void TestPlayIdleSpine()
@@ -94,9 +104,27 @@ public class SpineTest : MonoBehaviour
 
     private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        if (e.Data.Name == "AttackEffect")
+        SpineEvent eventType;
+        try
         {
-            attackEffect?.Invoke();
+            eventType = (SpineEvent)System.Enum.Parse(typeof(SpineEvent), e.Data.Name);
+        }
+        catch
+        {
+            Debug.LogWarning($"Undefined Spine Event: '{e.Data.Name}'");
+            eventType = SpineEvent.None;
+        }
+
+        // enum 값을 기준으로 분기 처리
+        switch (eventType)
+        {
+            case SpineEvent.AttackEffect:
+                attackEffect?.Invoke();
+                break;
+
+            case SpineEvent.None:
+            default:
+                break;
         }
     }
 }
