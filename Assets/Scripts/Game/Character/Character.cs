@@ -131,7 +131,7 @@ public class Character : MonoBehaviour
         }
 
         float speedMultiplier = statusEffectManager?.GetSpeedMultiplier() ?? 1.0f;
-        float finalSpeed = info.speed * speedMultiplier * Time.deltaTime;
+        float finalSpeed = info.speed * speedMultiplier * Time.deltaTime * 50;
 
         Vector2 newPosition = rigid.position + dir.normalized * finalSpeed * Time.fixedDeltaTime;
 
@@ -143,6 +143,6 @@ public class Character : MonoBehaviour
 
         OnMoveAction?.Invoke(transform.position);
 
-        if (dir.x != 0) Flip(dir.x > 0);
+        if (dir.x != 0) Flip(dir.x < 0);
     }
 }
