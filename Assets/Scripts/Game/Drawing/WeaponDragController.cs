@@ -15,8 +15,19 @@ public class WeaponDragController : MonoBehaviour
     private bool isAllowWeaponControl;
     private Vector2 defaultPos;
 
-    public void DisallowWeaponControl() { isAllowWeaponControl = false; if (weaponObj != null) weaponObj.transform.position = defaultPos; }
-    public void AllowWeaponControl() { isAllowWeaponControl = true; }
+    public void DisallowWeaponControl()
+    {
+        isAllowWeaponControl = false;
+        if (weaponObj != null)
+        {
+            weaponObj.transform.position = defaultPos;
+        }
+    }
+
+    public void AllowWeaponControl()
+    {
+        isAllowWeaponControl = true;
+    }
 
     private void Awake()
     {
@@ -71,7 +82,7 @@ public class WeaponDragController : MonoBehaviour
                 isAllowWeaponControl = false;
                 targetWeaponController.SetupWeapon(weaponObj);
                 OnAreaExit?.Invoke();
-                weaponObj = null; // 무기 전달 후 참조를 비웁니다.
+                weaponObj = null;
             }
         }
         else
