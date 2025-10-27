@@ -35,7 +35,6 @@ public class Weapon : MonoBehaviour
         if (currentDurability <= 0)
         {
             OnWeaponBroken?.Invoke();
-            EffectController.Instance.SetVisualData(null);
             DestroyWeapon();
             return 0;
         }
