@@ -1,27 +1,22 @@
 using UnityEngine;
 using System.Collections;
-using System;
 
 public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonsterData>,
     OnReturnPool<DetectMonsterBaseController>
 {
-    OnReturnPoolEvent<DetectMonsterBaseController> OnReturnPoolEvent;
+    private OnReturnPoolEvent<DetectMonsterBaseController> OnReturnPoolEvent;
 
     [Header("Detect Settings")]
-    public float detectionRange = 7f;
-    [SerializeField] private Transform targetPlayer;
+    [Tooltip("플레이어를 감지하는 시야 범위")]
+    private Transform targetPlayer;
+
     private float detectInterval = 0.1f;
     private float detectTimer = 0f;
-    private Vector2? lastKnownPlayerPos = null;
-
     private bool isDashing = false;
-    MonsterManager.OnPlayerIsDead onPlayerIsDead;
 
     public override void Setup(DetectMonsterData data)
     {
         base.Setup(data);
-        detectionRange = data.DetectRange;
-        onPlayerIsDead += MonsterManager.Instance.IsPlayerDead;
     }
 
     private void FixedUpdate()
@@ -39,65 +34,41 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             DetectPlayer();
         }
 
-        switch (state)
-        {
-            case StateType.Idle:
-                base.Move(Vector2.right);
-                break;
-            case StateType.Move:
-                ChaseOrSearch();
-                break;
-        }
-    }
-
-    private void ChaseOrSearch()
-    {
-        Vector2 targetPosition;
-
         if (targetPlayer != null)
         {
-            targetPosition = targetPlayer.position;
-            lastKnownPlayerPos = targetPosition;
-        }
-        else if (lastKnownPlayerPos.HasValue)
-        {
-            targetPosition = lastKnownPlayerPos.Value;
+            ChaseAndAttackPlayer();
         }
         else
         {
-            ChangeState(StateType.Idle);
-            return;
+            base.Move(Vector2.right);
         }
+    }
 
-        float distance = Vector2.Distance(transform.position, targetPosition);
+    private void ChaseAndAttackPlayer()
+    {
+        float distance = Vector2.Distance(transform.position, targetPlayer.position);
 
-        if (targetPlayer != null && distance <= monsterData.AttackRange)
+        if (distance <= monsterData.AttackRange)
         {
             StopMove();
             ChangeState(StateType.Attack);
-            return;
         }
-
-        if (targetPlayer == null && distance < 0.2f)
+        else
         {
-            lastKnownPlayerPos = null;
-            ChangeState(StateType.Idle);
-            return;
+            Vector2 dir = (targetPlayer.position - transform.position).normalized;
+            MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
         }
-
-        Vector2 dir = (targetPosition - (Vector2)transform.position).normalized;
-        MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
     }
 
     private void DetectPlayer()
     {
-        if (onPlayerIsDead?.Invoke() == true)
+        if (MonsterManager.Instance.IsPlayerDead())
         {
             targetPlayer = null;
             return;
         }
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, detectionRange, LayerMask.GetMask("Player"));
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, monsterData.DetectRange, LayerMask.GetMask("Player"));
         Transform potentialTarget = null;
         float closestDist = float.MaxValue;
 
@@ -114,22 +85,16 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             }
         }
         targetPlayer = potentialTarget;
-
-        if (targetPlayer != null && state == StateType.Idle)
-        {
-            ChangeState(StateType.Move);
-        }
     }
 
     protected override void Attack()
     {
-        base.Attack();
         if (isDashing) return;
 
         if (targetPlayer != null)
         {
             Vector2 dashDir = (targetPlayer.position - transform.position).normalized;
-            Flip(dashDir.x > 0);
+            Flip(dashDir.x < 0);
             StartCoroutine(DashTowardsTarget(dashDir));
         }
         else
@@ -141,6 +106,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private IEnumerator DashTowardsTarget(Vector2 dir)
     {
         isDashing = true;
+        state = StateType.Attack;
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, monsterData.DashSpeed * 0.2f, LayerMask.GetMask("Player"));
         if (hit.collider != null && hit.collider.CompareTag("Player1"))
@@ -153,24 +119,19 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         rigid.linearVelocity = Vector2.zero;
 
         yield return new WaitForSeconds(info.attackDelay);
-        isDashing = false;
 
-        ChangeState(StateType.Move);
+        isDashing = false;
+        ChangeState(StateType.Idle);
     }
 
     public void Init(OnReturnPoolEvent<DetectMonsterBaseController> onReturnPoolEvent)
     {
-        OnReturnPoolEvent = onReturnPoolEvent;
-        Flip(true);
-        lastKnownPlayerPos = null;
-        targetPlayer = null;
-        ChangeState(StateType.Idle);
+        this.OnReturnPoolEvent = onReturnPoolEvent;
     }
 
     protected override void Dead()
     {
         base.Dead();
-        StopAllCoroutines();
         OnReturnPoolEvent?.Invoke(this);
     }
 }

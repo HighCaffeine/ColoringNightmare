@@ -8,7 +8,8 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     OnReturnPoolEvent<WallMonsterBaseController<T>> OnReturnPoolEvent;
 
     [SerializeField] private SpriteRenderer spriteRender;
-    [SerializeField] private BoxCollider2D boxCollider;
+    //[SerializeField] private BoxCollider2D boxCollider;
+    [SerializeField] private PolygonCollider2D polygonCollider;
     [SerializeField] private Animator ani;
 
     protected T monsterData;
@@ -17,31 +18,49 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     protected bool isAttacking = false;
 
-    void UpdateCollider()
-    {
-        if (spriteRender == null) spriteRender = GetComponent<SpriteRenderer>();
-        if (boxCollider == null) boxCollider = GetComponent<BoxCollider2D>();
-        if (spriteRender.sprite == null) return;
+    // void UpdateCollider()
+    // {
+    //     if (spriteRender == null) spriteRender = GetComponent<SpriteRenderer>();
+    //     if (boxCollider == null) boxCollider = GetComponent<BoxCollider2D>();
+    //     if (spriteRender.sprite == null) return;
 
-        Bounds spriteBounds = spriteRender.sprite.bounds;
-        Vector3 scale = transform.localScale;
-        boxCollider.size = new Vector2(
-            spriteBounds.size.x * scale.x,
-            spriteBounds.size.y * scale.y
-        );
-        boxCollider.offset = spriteBounds.center;
-    }
+    //     Bounds spriteBounds = spriteRender.sprite.bounds;
+    //     Vector3 scale = transform.localScale;
+    //     boxCollider.size = new Vector2(
+    //         spriteBounds.size.x * scale.x,
+    //         spriteBounds.size.y * scale.y
+    //     );
+    //     boxCollider.offset = spriteBounds.center;
+    // }
 
     public virtual void Setup(T data)
     {
         spriteRender.sprite = data.sprite;
+        UpdatePolygonCollider();
+
         monsterData = data;
         info = data;
         currentHP = info.maxHp;
         state = StateType.Idle;
         transform.position = MonsterManager.Instance.GetCalibrationSpawnPos(transform, spriteRender);
-        UpdateCollider();
+        //UpdateCollider();
         Flip(true);
+    }
+
+    private void UpdatePolygonCollider()
+    {
+        if (polygonCollider == null || spriteRender.sprite == null) return;
+
+        polygonCollider.pathCount = 0;
+        polygonCollider.pathCount = spriteRender.sprite.GetPhysicsShapeCount();
+
+        System.Collections.Generic.List<Vector2> path = new System.Collections.Generic.List<Vector2>();
+        for (int i = 0; i < polygonCollider.pathCount; i++)
+        {
+            path.Clear();
+            spriteRender.sprite.GetPhysicsShape(i, path);
+            polygonCollider.SetPath(i, path.ToArray());
+        }
     }
 
     void Update()
