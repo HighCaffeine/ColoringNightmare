@@ -12,11 +12,14 @@ GameObject:
   - component: {fileID: 8310741301583053162}
   - component: {fileID: 1666748688821702420}
 <<<<<<< HEAD
+<<<<<<< HEAD
   - component: {fileID: 1372759188231672031}
   - component: {fileID: 1088152825922191544}
   - component: {fileID: 4343667238068896090}
 =======
 >>>>>>> 010a82a (effect)
+=======
+>>>>>>> 8990ec3e09d890b92299fa96ed0202253c7047e2
   m_Layer: 0
   m_Name: Effect_Player_YellowAttack01
   m_TagString: Untagged
@@ -4898,6 +4901,7 @@ ParticleSystemRenderer:
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!114 &1372759188231672031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4985,3 +4989,5 @@ BoxCollider2D:
   m_EdgeRadius: 0
 =======
 >>>>>>> 010a82a (effect)
+=======
+>>>>>>> 8990ec3e09d890b92299fa96ed0202253c7047e2
