@@ -1,6 +1,10 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
+<<<<<<< HEAD
 guid: bacb152f753a5f74b93e37be959d0c43
+=======
+guid: ef62351316364724bb4646f1af8bc177
+>>>>>>> 010a82a (effect)
 =======
 guid: ef62351316364724bb4646f1af8bc177
 >>>>>>> 010a82a (effect)
@@ -53,7 +57,11 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
 <<<<<<< HEAD
+<<<<<<< HEAD
   spritePixelsToUnits: 40
+=======
+  spritePixelsToUnits: 512
+>>>>>>> 010a82a (effect)
 =======
   spritePixelsToUnits: 512
 >>>>>>> 010a82a (effect)
@@ -121,8 +129,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: b66b406b10386cb469174bedfdeefd42
       internalID: 11241567
+=======
+      spriteID: 10cbb223670589d47801d9b84d921352
+      internalID: -510502260
+>>>>>>> 010a82a (effect)
 =======
       spriteID: 10cbb223670589d47801d9b84d921352
       internalID: -510502260
@@ -148,8 +161,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: ab77c43982cafb5488ea3486736d4660
       internalID: -559380891
+=======
+      spriteID: 9df1370ec0eb0c142884ca5492aafa14
+      internalID: 977644066
+>>>>>>> 010a82a (effect)
 =======
       spriteID: 9df1370ec0eb0c142884ca5492aafa14
       internalID: 977644066
@@ -175,8 +193,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: 91b22faedcc0a8c4ea2b940576556347
       internalID: 1754541929
+=======
+      spriteID: 649bf822b12d22f4683ee034fc643f61
+      internalID: -1074186780
+>>>>>>> 010a82a (effect)
 =======
       spriteID: 649bf822b12d22f4683ee034fc643f61
       internalID: -1074186780
@@ -202,8 +225,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: 4f84e402add76b7478c0bb549c244e2e
       internalID: 1909712612
+=======
+      spriteID: 5cd95dd1c8c29ac4b82b91dcaa45f555
+      internalID: 1886936976
+>>>>>>> 010a82a (effect)
 =======
       spriteID: 5cd95dd1c8c29ac4b82b91dcaa45f555
       internalID: 1886936976
@@ -229,8 +257,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: ad1eeab1fc767414c9bcff68b3262390
       internalID: 774412378
+=======
+      spriteID: d6f4c234b1c423748911ef986fbb6fcc
+      internalID: 1743530300
+>>>>>>> 010a82a (effect)
 =======
       spriteID: d6f4c234b1c423748911ef986fbb6fcc
       internalID: 1743530300
@@ -256,8 +289,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: 645f7f2822721af47ac842fbd49780f2
       internalID: 1173446802
+=======
+      spriteID: 5503345f1e1ec5b49a87ec6646742278
+      internalID: -624661535
+>>>>>>> 010a82a (effect)
 =======
       spriteID: 5503345f1e1ec5b49a87ec6646742278
       internalID: -624661535
@@ -283,8 +321,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: 9dfb62bc5e15937429f24d882817bba4
       internalID: 1635286088
+=======
+      spriteID: 36ba3fbe6380a6d49a0a2a1a3bda5164
+      internalID: -402800777
+>>>>>>> 010a82a (effect)
 =======
       spriteID: 36ba3fbe6380a6d49a0a2a1a3bda5164
       internalID: -402800777
@@ -310,8 +353,13 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
       spriteID: ce314a81d81aa4c43b327c51e92d663c
       internalID: 2063466920
+=======
+      spriteID: 64bbbcecb36316a469a192c6b472a2b9
+      internalID: -1682527184
+>>>>>>> 010a82a (effect)
 =======
       spriteID: 64bbbcecb36316a469a192c6b472a2b9
       internalID: -1682527184
@@ -325,7 +373,11 @@ TextureImporter:
     physicsShape: []
     bones: []
 <<<<<<< HEAD
+<<<<<<< HEAD
     spriteID: 36bc02e27cb12a245b4182b3109d851b
+=======
+    spriteID: 636804fbb9784944f9be88820750a98b
+>>>>>>> 010a82a (effect)
 =======
     spriteID: 636804fbb9784944f9be88820750a98b
 >>>>>>> 010a82a (effect)
@@ -339,6 +391,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
 <<<<<<< HEAD
+<<<<<<< HEAD
       blue_effct2_0: 11241567
       blue_effct2_1: -559380891
       blue_effct2_2: 1754541929
@@ -348,6 +401,8 @@ TextureImporter:
       blue_effct2_6: 1635286088
       blue_effct2_7: 2063466920
 =======
+=======
+>>>>>>> 010a82a (effect)
       blue_effct2_0: -510502260
       blue_effct2_1: 977644066
       blue_effct2_2: -1074186780
@@ -356,6 +411,9 @@ TextureImporter:
       blue_effct2_5: -624661535
       blue_effct2_6: -402800777
       blue_effct2_7: -1682527184
+<<<<<<< HEAD
+>>>>>>> 010a82a (effect)
+=======
 >>>>>>> 010a82a (effect)
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
