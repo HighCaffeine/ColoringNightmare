@@ -14,6 +14,12 @@ public class ColorMixer : GenericSingleton<ColorMixer>
     [SerializeField] private SpriteRenderer result;
 
 
+    private ColorType lastMixedColor1 = ColorType.None;
+    private ColorType lastMixedColor2 = ColorType.None;
+
+    public ColorType GetLastMixedColor1() => lastMixedColor1;
+    public ColorType GetLastMixedColor2() => lastMixedColor2;
+
     public class HSV
     {
         public float h { private set; get; }
@@ -93,6 +99,9 @@ public class ColorMixer : GenericSingleton<ColorMixer>
 
     public ColorType MixColor(ColorType c1, ColorType c2)
     {
+        lastMixedColor1 = c1;
+        lastMixedColor2 = c2;
+
         ColorType mixColor = MixColors(c1, c2);
         StartCoroutine(BlendTwoColors(c1, mixColor, blendDuration));
 

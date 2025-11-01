@@ -347,21 +347,43 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         obj.transform.localScale = Vector3.one * ratioFromSketchBook;
 
         //잉크 데이터 셋업
-        WeaponInkData weaponData = weaponInkDataList.Find(data => data.inkData.color == colorType);
+        WeaponInkData weaponDataAsset = weaponInkDataList.Find(data => data.inkData.color == colorType);
 
-        if (weaponData == null)
+        if (weaponDataAsset == null)
         {
             Debug.LogWarning($"'{colorType}' 색상의 무기 데이터가 없음. 기본 무기 데이터로 대체");
-            weaponData = defaultWeaponData;
+            weaponDataAsset = defaultWeaponData;
         }
 
-        if (weaponData != null)
+        if (weaponDataAsset != null && weaponDataAsset.skillLogic != null)
         {
-            weapon.SetupInkData(weaponData);
+            // 1. ColorMixer에서 조합에 사용된 두 색상을 가져옴
+            ColorMixer.ColorType c1 = ColorMixer.Instance.GetLastMixedColor1();
+            ColorMixer.ColorType c2 = ColorMixer.Instance.GetLastMixedColor2();
+
+            // 2. 원본 ScriptableObject 복제본 생성
+            WeaponInkData runtimeInkData = Instantiate(weaponDataAsset);
+            BaseSkillLogic runtimeSkillLogic = Instantiate(weaponDataAsset.skillLogic);
+
+            // 3. 복제된 스킬 로직에 색상 조합 적용
+            runtimeSkillLogic.ApplyColorModifier(c1, c2);
+
+            // 4. 복제된 잉크 데이터가 복제된 스킬 로직을 참조
+            runtimeInkData.skillLogic = runtimeSkillLogic;
+
+            // 5. Weapon 컴포넌트에 원본 대신 수정된 런타임 복제본 설정
+            weapon.SetupInkData(runtimeInkData);
         }
         else
         {
-            Debug.LogError("기본 무기 데이터가 지정되지 않음. 무기를 생성할 수 없음");
+            if (weaponDataAsset == null)
+            {
+                Debug.LogError("기본 무기 데이터가 지정되지 않음. 무기를 생성할 수 없음");
+            }
+            else if (weaponDataAsset.skillLogic == null)
+            {
+                Debug.LogError($"'{weaponDataAsset.name}'에 skillLogic이 지정되지 않음. 무기를 생성할 수 없음");
+            }
             Destroy(obj);
             return;
         }
