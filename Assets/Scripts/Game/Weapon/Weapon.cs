@@ -8,7 +8,7 @@ public class Weapon : MonoBehaviour
     private int damage;
 
     public UnityEngine.Events.UnityEvent OnWeaponBroken;
-    private SkillData skillData;
+    private BaseSkillLogic skillLogic;
 
     private EdgeCollider2D testCollider;
 
@@ -17,9 +17,17 @@ public class Weapon : MonoBehaviour
         inkData = weaponInkData;
         currentDurability = weaponInkData.durability;
         damage = weaponInkData.damage;
-        this.skillData = weaponInkData.skillData;
+
+        // [수정] skillData -> skillLogic
+        this.skillLogic = weaponInkData.skillLogic;
         testCollider = GetComponent<EdgeCollider2D>();
+
+        if (this.skillLogic != null)
+        {
+            this.damage = this.skillLogic.baseDamage;
+        }
     }
+
     public void SetActiveCollider(bool active)
     {
         if (testCollider != null)
@@ -27,7 +35,7 @@ public class Weapon : MonoBehaviour
     }
 
     public WeaponInkData GetInkData() { return inkData; }
-    public SkillData GetSKillData() { return skillData; }
+    public BaseSkillLogic GetSkillLogic() { return skillLogic; }
 
     public int DecreaseDurability()
     {
@@ -53,6 +61,7 @@ public class Weapon : MonoBehaviour
     {
         float time = 0.0f;
         float duration = 1.0f;
+
         Vector3 initialScale = transform.localScale;
         while (time < duration)
         {
@@ -61,7 +70,15 @@ public class Weapon : MonoBehaviour
             yield return null;
         }
         transform.localScale = Vector3.zero;
-        Destroy(gameObject);
+
+        if (transform.parent != null)
+        {
+            Destroy(transform.parent.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -71,12 +88,25 @@ public class Weapon : MonoBehaviour
             Character monster = other.GetComponent<Character>();
             if (monster != null)
             {
-                monster.TakeDamage(damage);
+                monster.TakeDamage(damage, skillLogic?.hitEffectVisualData);
+
                 if (inkData.passiveEffect != null && inkData.passiveEffect.effectType == PassiveEffectData.EffectType.Slow)
                 {
-                    monster.ApplyStatusEffect(new SlowEffect(0.5f, 2.0f));
+                    monster.ApplyStatusEffect(new SlowEffect(inkData.passiveEffect.effectValue1, inkData.passiveEffect.effectValue2));
                 }
             }
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (inkData != null)
+        {
+            if (inkData.skillLogic != null)
+            {
+                Destroy(inkData.skillLogic);
+            }
+            Destroy(inkData);
         }
     }
 

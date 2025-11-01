@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c1b7a3290b4a5348ba317d3bdfcd051, type: 3}
+  m_Name: DoubleHitSkill_Red
+  m_EditorClassIdentifier: 
+  colorType: 1
+  baseDamage: 1
+  cooldown: 0.5
+  visualData: {fileID: 11400000, guid: f54a9b0c203966340a92d768e3c54f82, type: 2}
+  hitEffectVisualData: {fileID: 11400000, guid: 5ff56fa1ff8965f40b7389dde9bba1d0, type: 2}
+  secondHitVisualData: {fileID: 11400000, guid: f54a9b0c203966340a92d768e3c54f82, type: 2}
+  hitboxDuration: 0.15

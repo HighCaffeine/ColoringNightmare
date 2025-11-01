@@ -2,15 +2,17 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private SkillData skillData;
+    private ProjectileSkill skillData;
+    private WeaponInkData inkData;
     private Vector3 direction;
     private int piercingCount;
 
     private Bounds moveAreaBounds;
 
-    public void Init(SkillData data, Vector3 dir)
+    public void InitFromSkill(ProjectileSkill data, WeaponInkData ink, Vector3 dir)
     {
         this.skillData = data;
+        this.inkData = ink;
         this.direction = dir.normalized;
         this.piercingCount = data.projectileParams.piercingCount;
 
@@ -50,9 +52,15 @@ public class Projectile : MonoBehaviour
             Character monster = other.GetComponent<Character>();
             if (monster != null)
             {
-                monster.TakeDamage(skillData.baseDamage);
+                monster.TakeDamage(skillData.baseDamage, skillData.hitEffectVisualData);
+
+                if (inkData != null && inkData.passiveEffect != null && inkData.passiveEffect.effectType == PassiveEffectData.EffectType.Slow)
+                {
+                    monster.ApplyStatusEffect(new SlowEffect(inkData.passiveEffect.effectValue1, inkData.passiveEffect.effectValue2));
+                }
 
                 piercingCount--;
+
                 if (piercingCount < 0)
                 {
                     Destroy(gameObject);

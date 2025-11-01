@@ -9,7 +9,9 @@ public class WeaponInkData : ScriptableObject
     public int durability;
     public int damage;
     public WeaponManager.WeaponType weaponType;
-    public SkillData skillData;
+
+    [Header("Skill Logic")]
+    public BaseSkillLogic skillLogic; // SkillData -> BaseSkillLogic
 
     [Header("Passive Effect")]
     public PassiveEffectData passiveEffect;

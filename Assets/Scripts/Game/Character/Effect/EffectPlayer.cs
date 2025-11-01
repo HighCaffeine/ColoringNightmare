@@ -12,7 +12,7 @@ public class EffectPlayer : MonoBehaviour
 
     public void Play(bool isRight, EffectVisualData data)
     {
-        //transform.localScale = new Vector3(isRight ? -1 : 1, 1, 1);
+        transform.localScale = new Vector3(isRight ? -1 : 1, 1, 1);
         StartCoroutine(PlayAnimation(data));
     }
 

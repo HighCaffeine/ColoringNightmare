@@ -13,9 +13,9 @@ public class WeaponController : MonoBehaviour
 
     public bool IsEquip() => weapon != null;
 
-    public SkillData GetEquippedWeaponSkillData()
+    public BaseSkillLogic GetEquippedWeaponSkillData()
     {
-        return weapon?.GetSKillData();
+        return weapon?.GetSkillLogic();
     }
 
     public Weapon GetEquippedWeapon()
@@ -31,7 +31,7 @@ public class WeaponController : MonoBehaviour
         this.weapon.transform.SetParent(weaponPivot, false);
         this.weapon.transform.localPosition = Vector3.zero;
         this.weapon.transform.localRotation = Quaternion.identity;
-        this.weapon.transform.localScale = Vector3.one;
+        //this.weapon.transform.localScale = Vector3.one;
 
         var boneFollower = weapon.gameObject.AddComponent<Spine.Unity.BoneFollower>();
         spriteRenderer = weapon.GetComponent<SpriteRenderer>();
@@ -44,7 +44,7 @@ public class WeaponController : MonoBehaviour
 
         if (skillController != null && this.weapon != null)
         {
-            skillController.SetCurrentSkill(this.weapon.GetSKillData());
+            skillController.SetCurrentSkill(this.weapon.GetSkillLogic());
         }
 
         CurrentColliderSetActive(false);
@@ -60,14 +60,12 @@ public class WeaponController : MonoBehaviour
     {
         StartCoroutine(HitboxCoroutine(duration));
     }
-
     private IEnumerator HitboxCoroutine(float duration)
     {
         CurrentColliderSetActive(true);
         yield return new WaitForSeconds(duration);
         CurrentColliderSetActive(false);
     }
-
     public void SubDurability()
     {
         if (weapon == null) return;

@@ -9,7 +9,7 @@ public interface IStatusEffect
     bool IsFinished { get; }
 }
 
-public class EffectController : GenericSingleton<EffectController>
+public class EffectController : MonoBehaviour
 {
     [Header("Effect Prefab")]
     [SerializeField] private GameObject effectPrefab;
@@ -53,7 +53,43 @@ public class EffectController : GenericSingleton<EffectController>
             if (particleSystem != null)
             {
                 var shape = particleSystem.shape;
-                shape.rotation = isFacingRight ? new Vector3(0, 90, 0) : new Vector3(0, -90, 0);
+                shape.rotation = isFacingRight ? new Vector3(shape.rotation.x, 90, shape.rotation.z) : new Vector3(shape.rotation.x, -90, shape.rotation.z);
+
+                particleSystem.Play();
+                var mainModule = particleSystem.main;
+                Destroy(particleSystem.gameObject, mainModule.duration + mainModule.startLifetime.constantMax);
+            }
+        }
+    }
+
+    public void PlayHitEffectAt(Vector3 spawnPosition, EffectVisualData specificVisualData, bool isFacingLeft)
+    {
+        if (specificVisualData == null)
+        {
+            return;
+        }
+
+        if (specificVisualData.visualType == EffectVisualType.SpriteAnimation)
+        {
+            if (effectPrefab == null) return;
+
+            GameObject effectInstance = Instantiate(effectPrefab, spawnPosition, Quaternion.identity, null);
+            var effectPlayer = effectInstance.GetComponent<EffectPlayer>();
+
+            if (effectPlayer != null)
+            {
+                effectPlayer.Play(isFacingLeft, specificVisualData);
+            }
+        }
+        else if (specificVisualData.visualType == EffectVisualType.ParticleSystem)
+        {
+            if (specificVisualData.prefab == null) return;
+
+            ParticleSystem particleSystem = Instantiate(specificVisualData.prefab, spawnPosition, Quaternion.identity, null).GetComponent<ParticleSystem>();
+            if (particleSystem != null)
+            {
+                var shape = particleSystem.shape;
+                shape.rotation = isFacingLeft ? new Vector3(0, 90, 0) : new Vector3(0, -90, 0);
 
                 particleSystem.Play();
                 var mainModule = particleSystem.main;
