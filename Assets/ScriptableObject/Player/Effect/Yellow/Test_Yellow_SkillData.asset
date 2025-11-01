@@ -17,7 +17,7 @@ MonoBehaviour:
   baseDamage: 1
   cooldown: 0.5
   skillDuration: 0
-  visualData: {fileID: 11400000, guid: b21e71de065b5a14f93022dbcccdbbc2, type: 2}
+  visualData: {fileID: 11400000, guid: b757d91cfc6e63548a12ba318129179b, type: 2}
   projectileParams:
     speed: 10
     lifeTime: 2
@@ -27,3 +27,4 @@ MonoBehaviour:
     slowRate: 0.5
     duration: 3
   doubleHitDelay: 0.1
+  secondHitVisualData: {fileID: 0}

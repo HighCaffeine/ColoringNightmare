@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: 3.Blue_PassiveEffectData
   m_EditorClassIdentifier: 
   effectType: 1
-  effectValue1: 0
-  effectValue2: 0
+  effectValue1: 0.5
+  effectValue2: 3
   effectPrefab: {fileID: 0}

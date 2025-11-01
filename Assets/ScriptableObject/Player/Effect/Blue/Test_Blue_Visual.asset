@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Test_Blue_Visual
   m_EditorClassIdentifier: 
   colorType: 3
-  visualType: 0
+  visualType: 1
   sprites:
   - {fileID: 11241567, guid: bacb152f753a5f74b93e37be959d0c43, type: 3}
   - {fileID: -559380891, guid: bacb152f753a5f74b93e37be959d0c43, type: 3}
@@ -24,4 +24,4 @@ MonoBehaviour:
   - {fileID: 1635286088, guid: bacb152f753a5f74b93e37be959d0c43, type: 3}
   - {fileID: 2063466920, guid: bacb152f753a5f74b93e37be959d0c43, type: 3}
   animationSpeed: 40
-  prefab: {fileID: 0}
+  prefab: {fileID: 1006221593686193336, guid: 54640d18b6abaa64489f22c80928e975, type: 3}
