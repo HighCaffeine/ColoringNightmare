@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 9129032917942855167}
   - component: {fileID: 289527619075374771}
   - component: {fileID: 8462696346841417619}
+  - component: {fileID: 1729551487400709984}
   m_Layer: 8
   m_Name: WallMonster
   m_TagString: Monster
@@ -53,9 +54,8 @@ MonoBehaviour:
   info: {fileID: 0}
   currentHP: 0
   skeleton: {fileID: 0}
-  effectPivot: {fileID: 0}
   spriteRender: {fileID: -7402758206057227813}
-  boxCollider: {fileID: 9129032917942855167}
+  polygonCollider: {fileID: 0}
   ani: {fileID: 207970469414436821}
 --- !u!95 &207970469414436821
 Animator:
@@ -237,3 +237,18 @@ MonoBehaviour:
   brightness: 1
   skeleton: {fileID: 0}
   spriteRenderer: {fileID: -7402758206057227813}
+--- !u!114 &1729551487400709984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748581799248991654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb94c7037c3197458fd1074ba5dca31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
+  effectPivot: {fileID: 7865639996380949444}
+  character: {fileID: 1784528325475878177}
