@@ -21,8 +21,8 @@ TagManager:
   - Player
   - Effect
   - IgnoreHit
-  - 
-  - 
+  - Player_Effect
+  - Monster_Effect
   - 
   - 
   - 

@@ -58,12 +58,11 @@ public class PlayerController : Character
     public float axisY { private set; get; }
     public int GetHP() { return currentHP; }
     public int GetMaxHP() { return info.maxHp; }
+    public bool IsAttacking { get; set; } = false;
 
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
     private SpineTest spine;
 
-    // 공격 가능 상태를 제어하는 변수
-    private bool isAttackReady = true;
 
     protected new void Awake()
     {
@@ -130,7 +129,7 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
-            if (isGroggy || isDead)
+            if (IsAttacking || isGroggy || isDead)
             {
                 StopMove();
                 return;
@@ -205,21 +204,19 @@ public class PlayerController : Character
 
     private void PerformAttack()
     {
-        if (isGroggy || !isAttackReady) return;
+        if (isGroggy || IsAttacking) return;
 
-        isAttackReady = false;
         ChangeState(StateType.Attack);
-
         OnAttack?.Invoke();
 
         if (weaponController != null && weaponController.IsEquip())
         {
             if (skillController != null)
             {
-                SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
-                if (currentSkillData != null)
+                BaseSkillLogic currentSkillLogic = weaponController.GetEquippedWeaponSkillData();
+                if (currentSkillLogic != null)
                 {
-                    skillController.SetCurrentSkill(currentSkillData);
+                    skillController.SetCurrentSkill(currentSkillLogic);
                     skillController.UseSkill();
                 }
             }
@@ -228,18 +225,11 @@ public class PlayerController : Character
         {
             effectController?.NoneWeapon(playerNoneEffect);
         }
-
-        Invoke(nameof(ResetAttackCooldown), info.attackDelay);
     }
 
     public void ResetAttackCooldown()
     {
-        isAttackReady = true;
-
-        // if (moveAction.ReadValue<Vector2>().magnitude < 0.1f)
-        // {
-        //     ChangeState(StateType.Idle);
-        // }
+        IsAttacking = false;
     }
 
     protected override void Attack()
@@ -354,6 +344,8 @@ public class PlayerController : Character
 
     protected new void Move(Vector2 dir)
     {
+        if (IsAttacking) return;
+
         input = moveAction.ReadValue<Vector2>();
         axisX = input.x;
         axisY = input.y;
