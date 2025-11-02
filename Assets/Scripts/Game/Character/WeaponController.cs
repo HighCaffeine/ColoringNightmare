@@ -11,6 +11,8 @@ public class WeaponController : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private SkillController skillController;
 
+    private GameObject weaponFollowerHolder; // 홀더 참조
+
     public bool IsEquip() => weapon != null;
 
     public BaseSkillLogic GetEquippedWeaponSkillData()
@@ -25,47 +27,81 @@ public class WeaponController : MonoBehaviour
 
     public void SetupWeapon(Weapon newWeapon)
     {
-        if (this.weapon) this.weapon.DestroyWeapon();
+        // 1. 기존 무기가 있다면 파괴
+        if (this.weapon != null && this.weapon.transform.parent != null)
+        {
+            Destroy(this.weapon.transform.parent.gameObject);
+        }
+        else if (this.weapon != null)
+        {
+            this.weapon.DestroyWeapon();
+        }
+
         this.weapon = newWeapon;
+        if (this.weapon == null) return;
 
-        this.weapon.transform.SetParent(weaponPivot, false);
-        this.weapon.transform.localPosition = Vector3.zero;
-        this.weapon.transform.localRotation = Quaternion.identity;
-        //this.weapon.transform.localScale = Vector3.one;
+        // 2. BoneFollower를 위한 새 부모 오브젝트(홀더) 생성
+        weaponFollowerHolder = new GameObject(newWeapon.name + "_Follower");
+        weaponFollowerHolder.transform.SetParent(weaponPivot, false);
+        weaponFollowerHolder.transform.localPosition = Vector3.zero;
+        weaponFollowerHolder.transform.localRotation = Quaternion.identity;
+        weaponFollowerHolder.transform.localScale = Vector3.one;
 
-        var boneFollower = weapon.gameObject.AddComponent<Spine.Unity.BoneFollower>();
-        spriteRenderer = weapon.GetComponent<SpriteRenderer>();
+        // 3. BoneFollower 컴포넌트를 홀더에 추가
+        var boneFollower = weaponFollowerHolder.AddComponent<Spine.Unity.BoneFollower>();
         boneFollower.SkeletonRenderer = skeletonAni;
         boneFollower.boneName = "sword";
         boneFollower.followBoneRotation = true;
         boneFollower.followLocalScale = false;
-        boneFollower.followSkeletonFlip = true;
-        spriteRenderer.sortingOrder = 0;
+        boneFollower.followSkeletonFlip = false;
 
+        // 4. Rigidbody Kinematic 설정
+        var weaponRigidBody = this.weapon.GetComponent<Rigidbody2D>();
+        if (weaponRigidBody != null)
+        {
+            weaponRigidBody.bodyType = RigidbodyType2D.Kinematic;
+        }
+
+        // 5. 무기를 '홀더'의 자식으로 설정
+        this.weapon.transform.SetParent(weaponFollowerHolder.transform, false);
+        this.weapon.transform.localPosition = Vector3.zero;
+        this.weapon.transform.localRotation = Quaternion.identity;
+
+        // 6. 스케일 계산 적용
+        float parentScaleX = weaponPivot.lossyScale.x;
+        float parentScaleY = weaponPivot.lossyScale.y;
+
+        if (parentScaleX != 0 && parentScaleY != 0)
+        {
+            float desiredRatio = this.weapon.relativeScaleRatio;
+
+            this.weapon.transform.localScale = new Vector3(
+                desiredRatio / Mathf.Abs(parentScaleX),
+                desiredRatio / Mathf.Abs(parentScaleY),
+                1f
+            );
+        }
+        else
+        {
+            this.weapon.transform.localScale = Vector3.one * this.weapon.relativeScaleRatio;
+        }
+
+        // 7. SpriteRenderer 설정
+        spriteRenderer = weapon.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = 0;
+        }
+
+        // 8. SkillController 설정
         if (skillController != null && this.weapon != null)
         {
             skillController.SetCurrentSkill(this.weapon.GetSkillLogic());
         }
 
-        CurrentColliderSetActive(false);
+        Flip(skeletonAni.skeleton.ScaleX < 0);
     }
 
-    public void CurrentColliderSetActive(bool activate)
-    {
-        if (weapon != null)
-            weapon.SetActiveCollider(activate);
-    }
-
-    public void ActivateHitboxForDuration(float duration)
-    {
-        StartCoroutine(HitboxCoroutine(duration));
-    }
-    private IEnumerator HitboxCoroutine(float duration)
-    {
-        CurrentColliderSetActive(true);
-        yield return new WaitForSeconds(duration);
-        CurrentColliderSetActive(false);
-    }
     public void SubDurability()
     {
         if (weapon == null) return;
@@ -81,6 +117,10 @@ public class WeaponController : MonoBehaviour
 
     public void Flip(bool isRight)
     {
-        // BoneFollower의 followSkeletonFlip이 true이므로 별도 처리 불필요
+        if (weaponFollowerHolder != null)
+        {
+            float scaleY = isRight ? 1f : -1f;
+            weaponFollowerHolder.transform.localScale = new Vector3(-1, scaleY, 1);
+        }
     }
 }

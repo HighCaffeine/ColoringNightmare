@@ -154,6 +154,7 @@ public class PlayerController : Character
             {
                 Flip(input.x > 0);
                 if (weaponController != null) weaponController.Flip(input.x > 0);
+                if (effectController != null) effectController.Flip(input.x > 0);
             }
         }
         else if (playerType == PlayerType.Player2 && isMouseMoving)
@@ -352,11 +353,6 @@ public class PlayerController : Character
         if (input.magnitude > 0)
         {
             if (spine != null) spine.TestPlayRunSpine();
-        }
-        if (axisX != 0.0f)
-        {
-            Flip(axisX > 0);
-            if (weaponController != null) weaponController.Flip(axisX > 0);
         }
     }
 

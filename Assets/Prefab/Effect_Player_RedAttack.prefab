@@ -9794,8 +9794,8 @@ GameObject:
   - component: {fileID: 2262290339570664573}
   - component: {fileID: 2248186084197720060}
   - component: {fileID: 1322924986816166494}
-  - component: {fileID: 8300778735786777247}
   - component: {fileID: 6098922144595363328}
+  - component: {fileID: 5735264493858945615}
   m_Layer: 10
   m_Name: Effect_Player_RedAttack
   m_TagString: Untagged
@@ -14635,9 +14635,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02d90544fb20a3846a519c1bf54439e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 1
-  isDoubleHit: 1
---- !u!58 &8300778735786777247
+--- !u!50 &6098922144595363328
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5200874295711356006}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
+--- !u!58 &5735264493858945615
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14671,35 +14696,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.24, y: 0}
-  m_Radius: 1.2
---- !u!50 &6098922144595363328
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5200874295711356006}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Offset: {x: 0.38473606, y: -1399837}
+  m_Radius: 1.502649
 --- !u!1 &6052037428218014720
 GameObject:
   m_ObjectHideFlags: 0

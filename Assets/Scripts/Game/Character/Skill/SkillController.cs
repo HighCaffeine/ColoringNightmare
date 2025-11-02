@@ -18,25 +18,20 @@ public class SkillController : MonoBehaviour
         character = GetComponent<Character>();
     }
 
-    // SkillData -> BaseSkillLogic
     public void SetCurrentSkill(BaseSkillLogic skillData)
     {
         this.currentSkill = skillData;
     }
 
-    // PlayerController가 공격을 시작할 때 호출
     public void UseSkill()
     {
         if (currentSkill == null) return;
-
         currentSkill.ActivateSkill(this, character);
     }
 
-    // Spine 애니메이션 이벤트에서 호출
     public void OnAnimationHit()
     {
         if (currentSkill == null) return;
-
         currentSkill.OnAnimationHit(this);
     }
 
@@ -45,11 +40,15 @@ public class SkillController : MonoBehaviour
         return weaponController;
     }
 
-    public void PlayVisualEffect(EffectVisualData visualData)
+    public void PlayVisualEffect(EffectVisualData visualData, BaseSkillLogic skillLogic)
     {
         if (effectController != null)
         {
-            effectController.PlayEffect(visualData);
+            WeaponInkData inkData = GetWeaponController()?.GetEquippedWeapon()?.GetInkData();
+            Weapon currentWeapon = GetWeaponController()?.GetEquippedWeapon();
+            Vector3 weaponScale = (currentWeapon != null) ? currentWeapon.transform.localScale : Vector3.one;
+
+            effectController.PlayEffect(visualData, skillLogic, inkData, weaponScale);
         }
     }
 

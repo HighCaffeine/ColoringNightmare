@@ -14,6 +14,5 @@ public class BasicAttackSkill : BaseSkillLogic
     public override void OnAnimationHit(SkillController controller)
     {
         base.OnAnimationHit(controller);
-        controller.GetWeaponController()?.ActivateHitboxForDuration(hitboxDuration);
     }
 }

@@ -24,6 +24,9 @@ public class Character : MonoBehaviour
     private bool isDamageImmune = false;
     private Coroutine hitEffectCoroutine;
 
+    public bool FlipX() => spriteRenderer.flipX;
+    public bool IsExistsSprite() => spriteRenderer != null;
+
     protected virtual void Awake()
     {
         state = StateType.Idle;
@@ -120,7 +123,7 @@ public class Character : MonoBehaviour
             effectController.PlayHitEffectAt(hitPosition, hitEffect, isFacingLeft);
         }
 
-        // 2. [기존] 빨간색 점멸 효과
+        // 빨간색 점멸 효과
         Color hitColor = Color.red;
         Color originalColor = Color.white;
         float duration = 0.1f;

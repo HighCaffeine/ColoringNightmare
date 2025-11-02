@@ -12,13 +12,14 @@ public class Weapon : MonoBehaviour
 
     private EdgeCollider2D testCollider;
 
+    [HideInInspector]
+    public float relativeScaleRatio = 1f;
+
     public void SetupInkData(WeaponInkData weaponInkData)
     {
         inkData = weaponInkData;
         currentDurability = weaponInkData.durability;
         damage = weaponInkData.damage;
-
-        // [수정] skillData -> skillLogic
         this.skillLogic = weaponInkData.skillLogic;
         testCollider = GetComponent<EdgeCollider2D>();
 
@@ -61,7 +62,6 @@ public class Weapon : MonoBehaviour
     {
         float time = 0.0f;
         float duration = 1.0f;
-
         Vector3 initialScale = transform.localScale;
         while (time < duration)
         {
@@ -83,19 +83,6 @@ public class Weapon : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Monster"))
-        {
-            Character monster = other.GetComponent<Character>();
-            if (monster != null)
-            {
-                monster.TakeDamage(damage, skillLogic?.hitEffectVisualData);
-
-                if (inkData.passiveEffect != null && inkData.passiveEffect.effectType == PassiveEffectData.EffectType.Slow)
-                {
-                    monster.ApplyStatusEffect(new SlowEffect(inkData.passiveEffect.effectValue1, inkData.passiveEffect.effectValue2));
-                }
-            }
-        }
     }
 
     void OnDestroy()

@@ -344,8 +344,12 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         rigid.gravityScale = 0.0f;
 
         AddEdgeCollider(obj, points);
-        obj.transform.localScale = Vector3.one * ratioFromSketchBook;
+        obj.transform.localScale = Vector3.one;
 
+        if (weapon != null)
+        {
+            weapon.relativeScaleRatio = ratioFromSketchBook;
+        }
         //잉크 데이터 셋업
         WeaponInkData weaponDataAsset = weaponInkDataList.Find(data => data.inkData.color == colorType);
 

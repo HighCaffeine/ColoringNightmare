@@ -18,7 +18,6 @@ public class ProjectileSkill : BaseSkillLogic
     }
     public ProjectileParams projectileParams = new ProjectileParams();
 
-    // ProjectileSkill은 애니메이션 시작과 동시에 발사
     public override void ActivateSkill(SkillController controller, Character character)
     {
         GameObject projectilePrefab = controller.projectilePrefab;
@@ -26,7 +25,6 @@ public class ProjectileSkill : BaseSkillLogic
 
         if (projectilePrefab == null || character == null || effectPivot == null) return;
 
-        // 컨트롤러로부터 현재 무기의 InkData를 가져옴
         WeaponInkData inkData = controller.GetWeaponController()?.GetEquippedWeapon()?.GetInkData();
         if (inkData == null)
         {
@@ -45,27 +43,24 @@ public class ProjectileSkill : BaseSkillLogic
             projComponent.InitFromSkill(this, inkData, dir);
         }
 
+        controller.PlayVisualEffect(visualData, this);
         controller.GetWeaponController()?.SubDurability();
     }
 
     public override void OnAnimationHit(SkillController controller)
     {
-        controller.PlayVisualEffect(visualData);
     }
 
     public override void ApplyColorModifier(ColorMixer.ColorType c1, ColorMixer.ColorType c2)
     {
         base.ApplyColorModifier(c1, c2);
 
-        // 투사체 크기 추가 수정
         if (c1 == ColorMixer.ColorType.Black || c2 == ColorMixer.ColorType.Black)
         {
-            // 크기 20% 감소
             projectileParams.size *= 0.8f;
         }
         else if (c1 == ColorMixer.ColorType.White || c2 == ColorMixer.ColorType.White)
         {
-            // 크기 20% 증가
             projectileParams.size *= 2.0f;
         }
     }
