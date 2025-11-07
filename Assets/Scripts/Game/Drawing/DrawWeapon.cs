@@ -143,6 +143,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         this.colorType = colorType;
     }
 
+    public void TEST_UpdateLineColor()
+    {
+        lineColor = ColorMixer.Instance.GetColor(colorType);
+    }
+
     private void CreateNewLine(Vector3 startPos)
     {
         lastPointCount = points.Count;

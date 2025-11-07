@@ -83,12 +83,12 @@ public class ColorMixer : GenericSingleton<ColorMixer>
         { ColorType.Magenta         , new HSV(300, 100, 75) },
         { ColorType.Gray            , new HSV(0, 0, 50) },
 
-        { ColorType.DarkRed         , new HSV(0, 100, 50) },
-        { ColorType.LightRed        , new HSV(0, 50, 100) },
-        { ColorType.DarkYellow      , new HSV(60, 100, 50) },
-        { ColorType.LightYellow     , new HSV(60, 50, 100) },
-        { ColorType.DarkBlue        , new HSV(240, 100, 50) },
-        { ColorType.LightBlue       , new HSV(240, 50, 100) },
+        { ColorType.DarkRed         , new HSV(0, 100, 80) },
+        { ColorType.LightRed        , new HSV(0, 30, 100) },
+        { ColorType.DarkYellow      , new HSV(60, 100, 80) },
+        { ColorType.LightYellow     , new HSV(60, 30, 100) },
+        { ColorType.DarkBlue        , new HSV(240, 100, 80) },
+        { ColorType.LightBlue       , new HSV(240, 30, 100) },
     };
 
     public Color GetColor(ColorType colorType)

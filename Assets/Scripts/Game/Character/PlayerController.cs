@@ -108,6 +108,9 @@ public class PlayerController : Character
                 playerInput.Player2.Enable();
                 OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
                 playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
+
+                playerInput.Player2.Mouse.performed += callback => { WolfWorkStation.Instance.CheckAreaEnter(Mouse.current.position.ReadValue()); };
+
                 mainCam = Camera.main;
                 playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
                 moveAction = playerInput.FindAction("Move");
@@ -201,6 +204,11 @@ public class PlayerController : Character
 
         ChangeState(StateType.Move);
         if (spine != null) spine.TestPlayRunSpine();
+    }
+
+    private void OnMousePerformed()
+    {
+        //늑대 마우스 영역 체크
     }
 
     private void PerformAttack()

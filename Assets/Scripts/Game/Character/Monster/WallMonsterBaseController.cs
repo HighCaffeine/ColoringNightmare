@@ -101,11 +101,11 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.gameObject.CompareTag("Player1"))
+        if (other.gameObject.CompareTag("Player1"))
         {
-            PlayerController player = collision.transform.GetComponent<PlayerController>();
+            PlayerController player = other.transform.GetComponent<PlayerController>();
             if (player != null)
             {
                 player.TakeDamage(monsterData.dmg);
