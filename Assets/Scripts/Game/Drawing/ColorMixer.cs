@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class ColorMixer : GenericSingleton<ColorMixer>
 {
     public const int MaxColor = 2;
-
+    public static int MAX_INK_COUNT = 99;
 
     [Header("Blend Settings")]
     [SerializeField] private float blendDuration = 2f; // 혼합 완료까지 시간
