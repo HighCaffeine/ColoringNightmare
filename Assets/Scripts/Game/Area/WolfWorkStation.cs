@@ -8,7 +8,7 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
     private enum WorkStationType
     {
         None,
-        Palette, Sketch, Enhance,
+        Palette, Sketch, Design, Enhance,
     }
 
     [Header("Player")]
@@ -34,6 +34,11 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
     [SerializeField] private UnityEngine.Events.UnityEvent OnSketchOn;
     [SerializeField] private UnityEngine.Events.UnityEvent OnSketchOff;
 
+    [Header("Design Event")]
+    [SerializeField] private UnityEngine.Events.UnityEvent OnDesignOn;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnDesignOff;
+
+
     [Space(5f)]
     [Header("Enhance Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnEnhancePanelOn;
@@ -47,9 +52,13 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
     public void SetIsOnInteractive(bool isOnInteractive) { this.isOnInteractive = isOnInteractive; }
 
+    private bool sketchLock = true;
     public void SetPaletteType() { workStationType = WorkStationType.Palette; }
     public void SetEnhanceType() { workStationType = WorkStationType.Enhance; }
     public void SetSketchType() { workStationType = WorkStationType.Sketch; }
+    public void SetDesingType() { workStationType = WorkStationType.Design; }
+    public void SetSkechBookLock(bool isLock) { sketchLock = isLock; }
+    public bool IsSketchbookLocked() { return sketchLock; }
 
     private Coroutine moveCoroutine;
     public void OnMoveToInteractivePoint()
@@ -74,6 +83,7 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
                 targetPoint = palettePoint;
                 break;
             case WorkStationType.Sketch:
+            case WorkStationType.Design:
                 targetPoint = sketchPoint;
                 break;
             case WorkStationType.Enhance:
@@ -92,6 +102,9 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
         playerSpine?.TestPlayRunSpine();
 
+        bool isRight = targetPosition.x < playerController.transform.position.x;
+        playerController.Flip(isRight);
+
         while (Vector3.Distance(playerController.transform.position, targetPosition) > 0.01f)
         {
             playerController.transform.position = Vector3.MoveTowards(
@@ -104,21 +117,9 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
         playerController.transform.position = targetPosition;
         SetIsOnInteractive(true);
-
         playerSpine?.TestPlayIdleSpine();
 
-        switch (workStationType)
-        {
-            case WorkStationType.Palette:
-                OnPalettePanelOn?.Invoke();
-                break;
-            case WorkStationType.Sketch:
-                OnSketchOn?.Invoke();
-                break;
-            case WorkStationType.Enhance:
-                OnEnhancePanelOn?.Invoke();
-                break;
-        }
+        Interactive();
 
         playerController.GetPlayerInput()?.Player2.Enable();
     }
@@ -126,6 +127,7 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
     public void AllWorkStationOff()
     {
+        isOnInteractive = false;
         OnPalettePanelOff?.Invoke();
         OnSketchOff?.Invoke();
         OnEnhancePanelOff?.Invoke();
@@ -147,12 +149,17 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
                 else OnPalettePanelOff?.Invoke();
                 break;
             case WorkStationType.Sketch:
+                if (!sketchLock) return;
                 if (isOnInteractive) OnSketchOn?.Invoke();
                 else OnSketchOff?.Invoke();
                 break;
             case WorkStationType.Enhance:
                 if (isOnInteractive) OnEnhancePanelOn?.Invoke();
                 else OnEnhancePanelOff?.Invoke();
+                break;
+            case WorkStationType.Design:
+                if (isOnInteractive) OnDesignOn?.Invoke();
+                else OnDesignOff?.Invoke();
                 break;
         }
     }
