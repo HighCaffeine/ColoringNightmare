@@ -60,6 +60,7 @@ public class WeaponPatternSelector : MonoBehaviour
 
         selectedDesign = design;
         DrawWeapon.Instance.SetRefSprite(patterns[Devcat.ValueCastTo<int>.From(selectedDesign)]);
+        patterns[Devcat.ValueCastTo<int>.From(selectedDesign)].gameObject.SetActive(true);
 
         WolfWorkStation.Instance.SetSketchType();
         WolfWorkStation.Instance.Interactive();

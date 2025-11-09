@@ -149,7 +149,7 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
                 else OnPalettePanelOff?.Invoke();
                 break;
             case WorkStationType.Sketch:
-                if (!sketchLock) return;
+                if (sketchLock) return;
                 if (isOnInteractive) OnSketchOn?.Invoke();
                 else OnSketchOff?.Invoke();
                 break;

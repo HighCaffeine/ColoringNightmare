@@ -127,7 +127,7 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
     private void Mix()
     {
         selectedColors = 0;
-        resultColor = ColorMixer.Instance.MixColor(c1, c2);
+        resultColor = ColorMixer.Instance.MixColor(first, second);
     }
 
     // public void SelectColor()
