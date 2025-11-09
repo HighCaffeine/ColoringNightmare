@@ -107,12 +107,12 @@ public class PlayerController : Character
             case PlayerType.Player2:
                 playerInput.Player2.Enable();
                 //OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
-                playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
+                //playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
 
-                //playerInput.Player2.Mouse.performed += callback => { WolfWorkStation.Instance.CheckAreaEnter(Mouse.current.position.ReadValue()); };
+                //playerInput.Player2.Mouse.started += callback => { WolfWorkStation.Instance.CheckAreaEnter(Mouse.current.position.ReadValue()); };
 
                 mainCam = Camera.main;
-                playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
+                //playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
                 moveAction = playerInput.FindAction("Move");
                 if (mouseHandler)
                 {
@@ -204,6 +204,11 @@ public class PlayerController : Character
 
         ChangeState(StateType.Move);
         if (spine != null) spine.TestPlayRunSpine();
+    }
+
+    public new void Flip(bool isRight)
+    {
+        base.Flip(isRight);
     }
 
     private void OnMousePerformed()
