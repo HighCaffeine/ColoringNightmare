@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem; // PlayerInput을 제어하기 위해 추가
 
 [ExecuteAlways]
 public class WolfWorkStation : GenericSingleton<WolfWorkStation>
@@ -9,40 +11,37 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         Palette, Sketch, Enhance,
     }
 
-    [Header("Work Station Area")]
-    [SerializeField] private AreaData paletteArea;
-    [SerializeField] private AreaData sketchArea;
-    [SerializeField] private AreaData enhanceArea;
+    [Header("Player")]
+    [Tooltip("자동으로 이동시킬 플레이어 (Player2 - Wolf)")]
+    [SerializeField] private PlayerController playerController;
+
+    [Header("Work Station Interactive Point")]
+    [SerializeField] private Transform palettePoint;
+    [SerializeField] private Transform sketchPoint;
+    [SerializeField] private Transform enhancePoint;
+
+    [Header("Movement Settings")]
+    [Tooltip("상호작용 지점으로 자동 이동하는 속도")]
+    [SerializeField] private float autoMoveSpeed = 5f; // 플레이어의 자체 속도와 별개로 이 스크립트에서 사용할 속도
 
     [Space(5f)]
     [Header("Palette Event")]
-    [SerializeField] private UnityEngine.Events.UnityEvent OnPaletteEnter;
-    [SerializeField] private UnityEngine.Events.UnityEvent OnPaletteExit;
     [SerializeField] private UnityEngine.Events.UnityEvent OnPalettePanelOn;
     [SerializeField] private UnityEngine.Events.UnityEvent OnPalettePanelOff;
 
     [Space(5f)]
     [Header("Sketch Event")]
-    [SerializeField] private UnityEngine.Events.UnityEvent OnSketchEnter;
-    [SerializeField] private UnityEngine.Events.UnityEvent OnSketchExit;
     [SerializeField] private UnityEngine.Events.UnityEvent OnSketchOn;
     [SerializeField] private UnityEngine.Events.UnityEvent OnSketchOff;
 
     [Space(5f)]
     [Header("Enhance Event")]
-    [SerializeField] private UnityEngine.Events.UnityEvent OnEnhanceEnter;
-    [SerializeField] private UnityEngine.Events.UnityEvent OnEnhanceExit;
-
     [SerializeField] private UnityEngine.Events.UnityEvent OnEnhancePanelOn;
     [SerializeField] private UnityEngine.Events.UnityEvent OnEnhancePanelOff;
 
-    // 영역별 캐릭터 상태
-    private bool isInPalette = false;
-    private bool isInSketch = false;
-    private bool isInEnhance = false;
-
     private WorkStationType workStationType = WorkStationType.None;
     private bool isOnInteractive = false;
+    private SpineTest playerSpine; // 플레이어의 스파인 제어를 위한 변수
 
     public bool IsOnInteractive => isOnInteractive;
 
@@ -52,24 +51,78 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
     public void SetEnhanceType() { workStationType = WorkStationType.Enhance; }
     public void SetSketchType() { workStationType = WorkStationType.Sketch; }
 
-    void OnDrawGizmos()
+    private Coroutine moveCoroutine;
+    public void OnMoveToInteractivePoint()
     {
-        if (paletteArea != null)
+        if (playerController == null)
         {
-            Gizmos.color = Color.black;
-            Gizmos.DrawWireCube(paletteArea.pos + paletteArea.offset, paletteArea.size);
+            return;
         }
-        if (sketchArea != null)
-        {
-            Gizmos.color = Color.black;
-            Gizmos.DrawWireCube(sketchArea.pos + sketchArea.offset, sketchArea.size);
-        }
-        if (enhanceArea != null)
-        {
-            Gizmos.color = Color.black;
-            Gizmos.DrawWireCube(enhanceArea.pos + enhanceArea.offset, enhanceArea.size);
-        }
+
+        if (playerSpine == null) playerSpine = playerController.GetComponent<SpineTest>();
+
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        moveCoroutine = StartCoroutine(MoveToInteractivePoint());
     }
+
+    private IEnumerator MoveToInteractivePoint()
+    {
+        Transform targetPoint = null;
+        switch (workStationType)
+        {
+            case WorkStationType.Palette:
+                targetPoint = palettePoint;
+                break;
+            case WorkStationType.Sketch:
+                targetPoint = sketchPoint;
+                break;
+            case WorkStationType.Enhance:
+                targetPoint = enhancePoint;
+                break;
+        }
+
+        if (targetPoint == null)
+        {
+            yield break;
+        }
+
+        Vector3 targetPosition = targetPoint.position;
+
+        playerController.GetPlayerInput()?.Player2.Disable();
+
+        playerSpine?.TestPlayRunSpine();
+
+        while (Vector3.Distance(playerController.transform.position, targetPosition) > 0.01f)
+        {
+            playerController.transform.position = Vector3.MoveTowards(
+                playerController.transform.position,
+                targetPosition,
+                autoMoveSpeed * Time.deltaTime);
+
+            yield return null;
+        }
+
+        playerController.transform.position = targetPosition;
+        SetIsOnInteractive(true);
+
+        playerSpine?.TestPlayIdleSpine();
+
+        switch (workStationType)
+        {
+            case WorkStationType.Palette:
+                OnPalettePanelOn?.Invoke();
+                break;
+            case WorkStationType.Sketch:
+                OnSketchOn?.Invoke();
+                break;
+            case WorkStationType.Enhance:
+                OnEnhancePanelOn?.Invoke();
+                break;
+        }
+
+        playerController.GetPlayerInput()?.Player2.Enable();
+    }
+
 
     public void AllWorkStationOff()
     {
@@ -102,73 +155,5 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
                 else OnEnhancePanelOff?.Invoke();
                 break;
         }
-    }
-
-    public void CheckAreaEnter(Vector2 pos)
-    {
-        // Palette Area
-        if (paletteArea != null)
-        {
-            bool nowIn = IsInsideArea(pos, paletteArea);
-
-            if (nowIn && !isInPalette)
-            {
-                workStationType = WorkStationType.Palette;
-                isInPalette = true;
-                OnPaletteEnter.Invoke();
-            }
-            else if (!nowIn && isInPalette)
-            {
-                workStationType = WorkStationType.Palette;
-                isInPalette = false;
-                OnPaletteExit.Invoke();
-            }
-        }
-
-        // Sketch Area
-        if (sketchArea != null)
-        {
-            bool nowIn = IsInsideArea(pos, sketchArea);
-
-            if (nowIn && !isInSketch)
-            {
-                workStationType = WorkStationType.Sketch;
-                isInSketch = true;
-                OnSketchEnter.Invoke();
-            }
-            else if (!nowIn && isInSketch)
-            {
-                workStationType = WorkStationType.None;
-                isInSketch = false;
-                OnSketchExit.Invoke();
-            }
-        }
-
-        // Enhance Area
-        if (enhanceArea != null)
-        {
-            bool nowIn = IsInsideArea(pos, enhanceArea);
-
-            if (nowIn && !isInEnhance)
-            {
-                workStationType = WorkStationType.Enhance;
-                isInEnhance = true;
-                OnEnhanceEnter.Invoke();
-            }
-            else if (!nowIn && isInEnhance)
-            {
-                workStationType = WorkStationType.None;
-                isInEnhance = false;
-                OnEnhanceExit.Invoke();
-            }
-        }
-    }
-
-    private bool IsInsideArea(Vector2 pos, AreaData area)
-    {
-        Vector2 center = area.pos + area.offset;
-        Vector2 halfSize = area.size * 0.5f;
-
-        return pos.x >= center.x - halfSize.x && pos.x <= center.x + halfSize.x && pos.y >= center.y - halfSize.y && pos.y <= center.y + halfSize.y;
     }
 }

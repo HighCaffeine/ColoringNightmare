@@ -106,10 +106,10 @@ public class PlayerController : Character
                 break;
             case PlayerType.Player2:
                 playerInput.Player2.Enable();
-                OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
+                //OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
                 playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
 
-                playerInput.Player2.Mouse.performed += callback => { WolfWorkStation.Instance.CheckAreaEnter(Mouse.current.position.ReadValue()); };
+                //playerInput.Player2.Mouse.performed += callback => { WolfWorkStation.Instance.CheckAreaEnter(Mouse.current.position.ReadValue()); };
 
                 mainCam = Camera.main;
                 playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
