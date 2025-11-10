@@ -96,13 +96,14 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     public void SpawnMonster(MonsterData data, Vector2 pos)
     {
         if (data == null) Debug.LogError("[SpawnMonster] data is null");
-
+        Character monster = null;
         switch (data.Type)
         {
             case MonsterType.Wall:
                 var wall = GetWallMonster(pos);
                 wall.Setup(data);
                 ColorTest(wall.transform, data.ColorType);
+                monster = wall;
                 break;
 
             case MonsterType.Detect:
@@ -112,6 +113,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
                 var detect = GetDetectMonster(pos);
                 detect.Setup(detectData);
                 ColorTest(detect.transform, data.ColorType);
+                monster = detect;
                 break;
 
             case MonsterType.Boss:
@@ -121,7 +123,38 @@ public class MonsterManager : GenericSingleton<MonsterManager>
                 var boss = GetBoss(pos);
                 boss.Setup(bossData);
                 ColorTest(boss.transform, data.ColorType);
+                monster = boss;
                 break;
+        }
+
+        if (monster != null)
+        {
+            SetSortingOrderByYPos(monster, data.isSpine);
+        }
+    }
+
+    private void SetSortingOrderByYPos(Character monster, bool isSpine)
+    {
+        int newSortingOrder = 10 + Mathf.RoundToInt(monster.transform.position.y * -100f);
+
+        if (isSpine)
+        {
+            if (monster.skeleton != null)
+            {
+                var meshRenderer = monster.skeleton.GetComponent<MeshRenderer>();
+                if (meshRenderer != null)
+                {
+                    meshRenderer.sortingOrder = newSortingOrder;
+                }
+            }
+        }
+        else
+        {
+            var spriteRenderer = monster.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sortingOrder = newSortingOrder;
+            }
         }
     }
 
@@ -132,13 +165,13 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         m.SetColorEnum(colorType);
     }
 
-    public Vector2 GetCalibrationSpawnPos(Transform monster, SpriteRenderer render)
+    public Vector2 GetCalibrationSpawnPos(Transform monster, Collider2D collider)
     {
         Vector2 result = Vector2.zero;
 
-        if (render != null)
+        if (collider != null)
         {
-            Vector2 monsterHalfSize = render.bounds.extents;
+            Vector2 monsterHalfSize = collider.bounds.extents;
             Bounds area = monsterMoveArea.GetBounds();
 
             float caliX = Mathf.Clamp(monster.position.x, area.min.x + monsterHalfSize.x, area.max.x - monsterHalfSize.x);

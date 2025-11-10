@@ -7,9 +7,6 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 {
     OnReturnPoolEvent<WallMonsterBaseController<T>> OnReturnPoolEvent;
 
-    [SerializeField] private SpriteRenderer spriteRender;
-    //[SerializeField] private BoxCollider2D boxCollider;
-    [SerializeField] private PolygonCollider2D polygonCollider;
     [SerializeField] private Animator ani;
 
     protected T monsterData;
@@ -18,47 +15,44 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     protected bool isAttacking = false;
 
-    // void UpdateCollider()
-    // {
-    //     if (spriteRender == null) spriteRender = GetComponent<SpriteRenderer>();
-    //     if (boxCollider == null) boxCollider = GetComponent<BoxCollider2D>();
-    //     if (spriteRender.sprite == null) return;
-
-    //     Bounds spriteBounds = spriteRender.sprite.bounds;
-    //     Vector3 scale = transform.localScale;
-    //     boxCollider.size = new Vector2(
-    //         spriteBounds.size.x * scale.x,
-    //         spriteBounds.size.y * scale.y
-    //     );
-    //     boxCollider.offset = spriteBounds.center;
-    // }
+    private float damageCooldown = 1.0f;
+    private float lastDamageTime = -1.0f;
 
     public virtual void Setup(T data)
     {
-        spriteRender.sprite = data.sprite;
-        UpdatePolygonCollider();
-
+        if (!data.isSpine)
+        {
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = data.sprite;
+                UpdatePolygonCollider();
+            }
+        }
         monsterData = data;
         info = data;
         currentHP = info.maxHp;
         state = StateType.Idle;
-        transform.position = MonsterManager.Instance.GetCalibrationSpawnPos(transform, spriteRender);
-        //UpdateCollider();
-        Flip(true);
+
+        transform.position = MonsterManager.Instance.GetCalibrationSpawnPos(transform, characterCollider);
+
+        Flip(false);
     }
 
     private void UpdatePolygonCollider()
     {
-        if (polygonCollider == null || spriteRender.sprite == null) return;
+        if (characterCollider == null || spriteRenderer == null || spriteRenderer.sprite == null) return;
+
+        PolygonCollider2D polygonCollider = characterCollider as PolygonCollider2D;
+        if (polygonCollider == null) return;
 
         polygonCollider.pathCount = 0;
-        polygonCollider.pathCount = spriteRender.sprite.GetPhysicsShapeCount();
+        polygonCollider.pathCount = spriteRenderer.sprite.GetPhysicsShapeCount();
 
         System.Collections.Generic.List<Vector2> path = new System.Collections.Generic.List<Vector2>();
         for (int i = 0; i < polygonCollider.pathCount; i++)
         {
             path.Clear();
-            spriteRender.sprite.GetPhysicsShape(i, path);
+            spriteRenderer.sprite.GetPhysicsShape(i, path);
             polygonCollider.SetPath(i, path.ToArray());
         }
     }
@@ -91,23 +85,37 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     {
         MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
 
-        Vector2 spriteHalfSize = Vector2.zero;
-        if (spriteRender != null) spriteHalfSize = spriteRender.bounds.extents;
+        if (skeleton != null && skeleton.AnimationName != "animation")
+        {
+            skeleton.AnimationState.SetAnimation(0, "animation", true);
+        }
+
+        Vector2 spriteHalfSize = (characterCollider != null) ? characterCollider.bounds.extents : Vector2.zero;
 
         var bounds = MonsterManager.Instance.GetAreaBound();
         if (transform.position.x + spriteHalfSize.x >= bounds.max.x - 0.1f)
         {
+            if (skeleton != null && skeleton.AnimationName != "animation")
+            {
+                skeleton.AnimationState.ClearTrack(0);
+            }
             StartCoroutine(SelfDestructCoroutine(2f));
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionStay2D(Collision2D collision)
     {
-        if (other.gameObject.CompareTag("Player1"))
+        if (Time.time < lastDamageTime + damageCooldown)
         {
-            PlayerController player = other.transform.GetComponent<PlayerController>();
+            return;
+        }
+
+        if (collision.gameObject.CompareTag("Player1"))
+        {
+            PlayerController player = collision.transform.GetComponent<PlayerController>();
             if (player != null)
             {
+                lastDamageTime = Time.time;
                 player.TakeDamage(monsterData.dmg);
             }
         }

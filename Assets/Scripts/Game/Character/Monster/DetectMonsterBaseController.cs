@@ -14,6 +14,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private float detectTimer = 0f;
     private bool isDashing = false;
 
+    // 돌진 공격을 위한 변수
+    [Header("Lunge Settings")]
+    [SerializeField] private float lungeDuration = 0.15f; // 목표 지점까지 돌진하는 시간
+    [SerializeField] private float lungePause = 0.1f;     // 최대 거리에서 잠시 멈추는 시간
+    [SerializeField] private float returnDuration = 0.25f; // 원래 위치로 돌아오는 시간
+
     public override void Setup(DetectMonsterData data)
     {
         base.Setup(data);
@@ -93,9 +99,13 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
         if (targetPlayer != null)
         {
-            Vector2 dashDir = (targetPlayer.position - transform.position).normalized;
+            Vector2 targetPosition = targetPlayer.position;
+            Vector2 startPosition = transform.position;
+            Vector2 dashDir = (targetPosition - startPosition).normalized;
+
             Flip(dashDir.x < 0);
-            StartCoroutine(DashTowardsTarget(dashDir));
+
+            StartCoroutine(LungeAndReturn(startPosition, targetPosition, dashDir));
         }
         else
         {
@@ -103,7 +113,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
     }
 
-    private IEnumerator DashTowardsTarget(Vector2 dir)
+    private IEnumerator LungeAndReturn(Vector2 startPos, Vector2 targetPos, Vector2 dir)
     {
         isDashing = true;
         state = StateType.Attack;
@@ -114,15 +124,37 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             hit.collider.GetComponent<Character>()?.TakeDamage(monsterData.dmg);
         }
 
-        rigid.linearVelocity = dir * monsterData.DashSpeed;
-        yield return new WaitForSeconds(0.2f);
-        rigid.linearVelocity = Vector2.zero;
+        float elapsed = 0f;
+        while (elapsed < lungeDuration)
+        {
+            elapsed += Time.fixedDeltaTime;
+            float t = elapsed / lungeDuration;
+            Vector2 newPos = Vector2.Lerp(startPos, targetPos, t);
+            rigid.MovePosition(newPos);
+            yield return new WaitForFixedUpdate();
+        }
+        rigid.MovePosition(targetPos);
+
+        yield return new WaitForSeconds(lungePause);
+
+        elapsed = 0f;
+        Vector2 lungeEndPos = transform.position;
+        while (elapsed < returnDuration)
+        {
+            elapsed += Time.fixedDeltaTime;
+            float t = elapsed / returnDuration;
+            Vector2 newPos = Vector2.Lerp(lungeEndPos, startPos, t);
+            rigid.MovePosition(newPos);
+            yield return new WaitForFixedUpdate();
+        }
+        rigid.MovePosition(startPos);
 
         yield return new WaitForSeconds(info.attackDelay);
 
         isDashing = false;
         ChangeState(StateType.Idle);
     }
+
 
     public void Init(OnReturnPoolEvent<DetectMonsterBaseController> onReturnPoolEvent)
     {
