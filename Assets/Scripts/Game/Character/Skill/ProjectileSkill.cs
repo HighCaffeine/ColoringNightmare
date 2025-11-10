@@ -43,7 +43,7 @@ public class ProjectileSkill : BaseSkillLogic
             projComponent.InitFromSkill(this, inkData, dir);
         }
 
-        controller.PlayVisualEffect(visualData, this);
+        //controller.PlayVisualEffect(visualData, this);
         controller.GetWeaponController()?.SubDurability();
     }
 

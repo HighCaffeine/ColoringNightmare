@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: _TestGroup 2
   m_EditorClassIdentifier: 
   groupID: 0
-  monsterCode: 1
+  monsterCode: 0
   spawnCount: 20
   spawnInterval: 0.02
   spawnPointIndex: 4
