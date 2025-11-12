@@ -62,6 +62,7 @@ public class PlayerController : Character
 
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
     private SpineTest spine;
+    private MeshRenderer meshRenderer;
 
 
     protected new void Awake()
@@ -69,6 +70,7 @@ public class PlayerController : Character
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
         spine = GetComponent<SpineTest>();
+        meshRenderer = GetComponent<MeshRenderer>();
 
         SODataLoader.Instance.LoadSO<CharacterData>(addressableName.ToString(), so =>
         {
@@ -150,6 +152,9 @@ public class PlayerController : Character
                 ChangeState(StateType.Idle);
                 if (spine != null) spine.TestPlayIdleSpine();
             }
+
+            int newSortingOrder = 11 + Mathf.RoundToInt(transform.position.y * -100f);
+            meshRenderer.sortingOrder = newSortingOrder;
 
             MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
 

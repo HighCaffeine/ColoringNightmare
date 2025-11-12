@@ -103,16 +103,17 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
         }
     }
 
-    void OnCollisionStay2D(Collision2D collision)
+
+    void OnTriggerStay2D(Collider2D other)
     {
         if (Time.time < lastDamageTime + damageCooldown)
         {
             return;
         }
 
-        if (collision.gameObject.CompareTag("Player1"))
+        if (other.gameObject.CompareTag("Player1"))
         {
-            PlayerController player = collision.transform.GetComponent<PlayerController>();
+            PlayerController player = other.transform.GetComponent<PlayerController>();
             if (player != null)
             {
                 lastDamageTime = Time.time;
