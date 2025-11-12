@@ -60,8 +60,26 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
     private void SelectColor(ColorMixer.ColorType colorType)
     {
+        if (!syringers[Devcat.ValueCastTo<int>.From(colorType)].IsAllowUse())
+        {
+            Debug.Log($"[Palette Select Fail] {colorType} :  zero amount");
+            return;
+        }
+
         if (selectedColors == 0)
         {
+
+            if (colorType == ColorMixer.ColorType.Black)
+            {
+                lockColor = true;
+                OnLockColorEvent?.Invoke();
+            }
+            else
+            {
+                lockBlack = true;
+                OnLockBlackEvent?.Invoke();
+            }
+
             color1Render.gameObject.SetActive(true);
             //color1Render.color = ColorMixer.Instance.GetColor(colorType);
 
@@ -73,6 +91,7 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
         }
         else if (selectedColors == 1)
         {
+
             color2Render.gameObject.SetActive(true);
             //color2Render.color = ColorMixer.Instance.GetColor(colorType);
 
@@ -85,6 +104,14 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
             Invoke(nameof(OffPanel), 0.5f);
         }
     }
+    [Header("Black, Red, Yellow, Blue")]
+    [SerializeField] private List<SyringeController> syringers;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnInitLockEvent;
+
+    [SerializeField] private List<UnityEngine.Events.UnityEvent> OnLockColorEvent;
+    private bool lockColor = false;
+    [SerializeField] private UnityEngine.Events.UnityEvent OnLockBlackEvent;
+    private bool lockBlack = false;
 
     private int color1Index = -1;
     private int color2Index = -1;
@@ -102,6 +129,8 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
         Debug.Log($"off panel : {c1}, {c2}");
 
+        syringers[Devcat.ValueCastTo<int>.From(c1)].UseInk();
+        syringers[Devcat.ValueCastTo<int>.From(c2)].UseInk();
         RailController.Instance.StartDuckSequence(c1, c2);
         Init();
     }
@@ -113,6 +142,22 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
         c1 = ColorMixer.ColorType.None;
         c2 = ColorMixer.ColorType.None;
+
+        OnInitLockEvent?.Invoke();
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == 0)
+            {
+                if (!syringers[Devcat.ValueCastTo<int>.From(ColorMixer.ColorType.Black)].IsAllowUse()) OnLockBlackEvent?.Invoke();
+            }
+
+            int index = Devcat.ValueCastTo<int>.From(ColorMixer.ColorType.Black + i);
+            if (!syringers[index].IsAllowUse()) OnLockColorEvent[index]?.Invoke();
+        }
+
+        lockColor = false;
+        lockBlack = false;
 
         color1Index = -1;
         color2Index = -1;
