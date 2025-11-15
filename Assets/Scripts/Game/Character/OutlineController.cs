@@ -3,40 +3,65 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class OutlineController : MonoBehaviour
 {
-    private SpriteRenderer outlineRenderer;
     private SpriteRenderer mainRenderer;
+    private Material instancedMaterial;
+    private bool isOutlineActive;
+
+    [Header("아웃라인 머티리얼")]
+    [SerializeField] private Material outlineMaterialBase;
 
     [Header("아웃라인 설정")]
-    public Color outlineColor = Color.black;
-    [Range(1.0f, 1.2f)]
-    public float outlineThickness = 1.05f;
+    //public Color outlineColor = Color.black;
+
+    [Range(0f, 3f)]
+    //public float outlineThickness = 0.2f;
+
+    private const string PROP_COLOR = "_OutLineColor";
+    private const string PROP_THICKNESS = "_OutLineThickness";
 
     void Awake()
     {
         mainRenderer = GetComponent<SpriteRenderer>();
-        CreateOutline();
-    }
 
-    void CreateOutline()
-    {
-        // 아웃라인 스프라이트 생성
-        GameObject outlineObject = new GameObject("Outline");
-        outlineObject.transform.parent = transform;
+        if (outlineMaterialBase == null)
+        {
+            return;
+        }
 
-        outlineRenderer = outlineObject.AddComponent<SpriteRenderer>();
-
-        // 원본 스프라이트의 속성 복사
-        outlineRenderer.sprite = mainRenderer.sprite;
-        outlineRenderer.color = outlineColor;
-        outlineRenderer.transform.localScale = transform.localScale * outlineThickness;
-        outlineObject.transform.localPosition = Vector3.zero;
-
-        // 렌더링 순서 설정
-        outlineRenderer.sortingLayerID = mainRenderer.sortingLayerID;
-        outlineRenderer.sortingOrder = mainRenderer.sortingOrder - 1;
+        instancedMaterial = new Material(outlineMaterialBase);
+        mainRenderer.material = instancedMaterial;
 
         SetOutLineObj(false);
     }
 
-    public void SetOutLineObj(bool active) { outlineRenderer.gameObject.SetActive(active); }
+    void Update()
+    {
+        if (instancedMaterial != null)
+        {
+            ApplyMaterialProperties();
+        }
+    }
+
+    private void ApplyMaterialProperties()
+    {
+        if (instancedMaterial == null) return;
+
+        //instancedMaterial.SetColor(PROP_COLOR, outlineColor);
+        //float currentThickness = isOutlineActive ? outlineThickness : 0.0f;
+        //instancedMaterial.SetFloat(PROP_THICKNESS, currentThickness);
+    }
+
+    public void SetOutLineObj(bool active)
+    {
+        isOutlineActive = active;
+        ApplyMaterialProperties();
+    }
+
+    void OnDestroy()
+    {
+        if (instancedMaterial != null)
+        {
+            Destroy(instancedMaterial);
+        }
+    }
 }
