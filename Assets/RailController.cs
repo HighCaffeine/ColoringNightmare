@@ -16,15 +16,18 @@ public class RailController : GenericSingleton<RailController>
 
     private int ducksFinished = 0;
 
-    public void StartDuckSequence(ColorMixer.ColorType c1, ColorMixer.ColorType c2)
+    public void StartDuckSequence(ColorMixer.ColorType c1, ColorMixer.ColorType c2,
+                                    UnityEngine.Events.UnityEvent c1Event, UnityEngine.Events.UnityEvent c2Event)
     {
-        StartCoroutine(StartDuckCoroutine(c1, c2));
+        StartCoroutine(StartDuckCoroutine(c1, c2, c1Event, c2Event));
     }
 
-    private IEnumerator StartDuckCoroutine(ColorMixer.ColorType c1, ColorMixer.ColorType c2)
+    private IEnumerator StartDuckCoroutine(ColorMixer.ColorType c1, ColorMixer.ColorType c2,
+                                    UnityEngine.Events.UnityEvent c1Event, UnityEngine.Events.UnityEvent c2Event)
     {
         ducksFinished = 0;
 
+        c1Event?.Invoke();
         // 오리 활성화 및 색상 설정
         color1Duck.gameObject.SetActive(true);
         color1Duck.transform.position = spawnPoint[Devcat.ValueCastTo<int>.From(c1)].position;
@@ -32,7 +35,7 @@ public class RailController : GenericSingleton<RailController>
 
         color1Duck.StartMoving(railPoints, c1);
         if (c1 == c2) yield return new WaitForSeconds(1f);    //조금 텀
-
+        c2Event?.Invoke();
         color2Duck.gameObject.SetActive(true);
         color2Duck.transform.position = spawnPoint[Devcat.ValueCastTo<int>.From(c2)].position;
         color2Duck.SetColor(ColorMixer.Instance.GetColor(c2));
