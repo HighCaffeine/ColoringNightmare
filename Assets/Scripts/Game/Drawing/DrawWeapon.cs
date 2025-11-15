@@ -358,20 +358,24 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         //잉크 데이터 셋업
         WeaponInkData weaponDataAsset = weaponInkDataList.Find(data => data.inkData.color == colorType);
 
-        if (weaponDataAsset == null)
-        {
-            Debug.LogWarning($"'{colorType}' 색상의 무기 데이터가 없음. 기본 무기 데이터로 대체");
-            weaponDataAsset = defaultWeaponData;
-        }
-
-        if (weaponDataAsset != null && weaponDataAsset.skillLogic != null)
+        if (weaponDataAsset != null)
         {
             // ColorMixer에서 조합에 사용된 두 색상을 가져옴
             ColorMixer.ColorType c1 = ColorMixer.Instance.GetLastMixedColor1();
             ColorMixer.ColorType c2 = ColorMixer.Instance.GetLastMixedColor2();
 
             WeaponInkData runtimeInkData = Instantiate(weaponDataAsset);
-            BaseSkillLogic runtimeSkillLogic = Instantiate(weaponDataAsset.skillLogic);
+            BaseSkillLogic runtimeSkillLogic;
+
+            if (runtimeInkData.skillLogic == null)
+            {
+                Debug.LogWarning($"'{colorType}' 색상의 스킬 데이터가 없음. 기본 무기 데이터로 대체");
+                runtimeSkillLogic = defaultWeaponData.skillLogic;
+            }
+            else
+            {
+                runtimeSkillLogic = Instantiate(weaponDataAsset.skillLogic);
+            }
 
             // 스킬 로직에 색상 조합 적용
             runtimeSkillLogic.ApplyColorModifier(c1, c2);

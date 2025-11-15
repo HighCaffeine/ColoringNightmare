@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -7,6 +8,36 @@ public class CursorData
     public Texture2D texture;  // 커서 이미지
     public Vector2 hotspot;    // 클릭 위치
     public CursorMode cursorMode; // Auto / ForceSoftware
+}
+
+[System.Serializable]
+public class RailEvents
+{
+    public UnityEngine.Events.UnityEvent black;
+    public UnityEngine.Events.UnityEvent red;
+    public UnityEngine.Events.UnityEvent yellow;
+    public UnityEngine.Events.UnityEvent blue;
+
+    public UnityEngine.Events.UnityEvent this[ColorMixer.ColorType colorType]
+    {
+        get
+        {
+            switch (colorType)
+            {
+                case ColorMixer.ColorType.Black:
+                    return black;
+                case ColorMixer.ColorType.Red:
+                    return red;
+                case ColorMixer.ColorType.Yellow:
+                    return yellow;
+                case ColorMixer.ColorType.Blue:
+                    return blue;
+                default:
+                    Debug.LogError("정의되지 않은 색: " + colorType);
+                    return null;
+            }
+        }
+    }
 }
 
 public class MixerButtonController : GenericSingleton<MixerButtonController>
@@ -38,15 +69,16 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
     [SerializeField] private SpriteRenderer colorResultSprite;
 
-    [Header("black, red, yellow, blue, white")]
+    [Header("black, red, yellow, blue")]
     [SerializeField] private List<Sprite> color1Result;
     [SerializeField] private UnityEngine.UI.Image color1Render;
     [SerializeField] private List<Sprite> color2Result;
     [SerializeField] private UnityEngine.UI.Image color2Render;
 
 
-    [Header("Lane Event (black, red, yellow, blue, white)")]
-    [SerializeField] private List<UnityEngine.Events.UnityEvent> laneEvents;
+    [Header("Rail Spine Event (black, red, yellow, blue)")]
+    [SerializeField] private RailEvents railEvents;
+    public float RailSpineDuration => 0.5f;
 
     private int selectedColors = 0;
 
@@ -72,12 +104,17 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
             if (colorType == ColorMixer.ColorType.Black)
             {
                 lockColor = true;
-                OnLockColorEvent?.Invoke();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    int index = Devcat.ValueCastTo<int>.From(ColorMixer.ColorType.Red + i);
+                    OnLockColorEvent[ColorMixer.ColorType.Red + i]?.Invoke();
+                }
             }
             else
             {
                 lockBlack = true;
-                OnLockBlackEvent?.Invoke();
+                OnLockColorEvent[ColorMixer.ColorType.Black]?.Invoke();
             }
 
             color1Render.gameObject.SetActive(true);
@@ -108,9 +145,8 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
     [SerializeField] private List<SyringeController> syringers;
     [SerializeField] private UnityEngine.Events.UnityEvent OnInitLockEvent;
 
-    [SerializeField] private List<UnityEngine.Events.UnityEvent> OnLockColorEvent;
+    [SerializeField] private RailEvents OnLockColorEvent;
     private bool lockColor = false;
-    [SerializeField] private UnityEngine.Events.UnityEvent OnLockBlackEvent;
     private bool lockBlack = false;
 
     private int color1Index = -1;
@@ -131,7 +167,8 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
         syringers[Devcat.ValueCastTo<int>.From(c1)].UseInk();
         syringers[Devcat.ValueCastTo<int>.From(c2)].UseInk();
-        RailController.Instance.StartDuckSequence(c1, c2);
+        RailController.Instance.StartDuckSequence(c1, c2, railEvents[c1], railEvents[c2]);
+
         Init();
     }
 
@@ -147,13 +184,8 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
         for (int i = 0; i < 4; i++)
         {
-            if (i == 0)
-            {
-                if (!syringers[Devcat.ValueCastTo<int>.From(ColorMixer.ColorType.Black)].IsAllowUse()) OnLockBlackEvent?.Invoke();
-            }
-
             int index = Devcat.ValueCastTo<int>.From(ColorMixer.ColorType.Black + i);
-            if (!syringers[index].IsAllowUse()) OnLockColorEvent[index]?.Invoke();
+            if (!syringers[index].IsAllowUse()) OnLockColorEvent[ColorMixer.ColorType.Black + i]?.Invoke();
         }
 
         lockColor = false;
