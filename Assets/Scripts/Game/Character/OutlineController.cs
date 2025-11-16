@@ -4,6 +4,7 @@ using UnityEngine;
 public class OutlineController : MonoBehaviour
 {
     private SpriteRenderer mainRenderer;
+    private SpriteRenderer outlineRenderer; // ★ 아웃라인을 그릴 자식 렌더러
     private Material instancedMaterial;
     private bool isOutlineActive;
 
@@ -11,10 +12,12 @@ public class OutlineController : MonoBehaviour
     [SerializeField] private Material outlineMaterialBase;
 
     [Header("아웃라인 설정")]
-    //public Color outlineColor = Color.black;
+    [Tooltip("아웃라인 색상")]
+    public Color outlineColor = Color.HSVToRGB(45, 100, 100);
 
+    [Tooltip("아웃라인 두께")]
     [Range(0f, 3f)]
-    //public float outlineThickness = 0.2f;
+    public float outlineThickness = 3.0f;
 
     private const string PROP_COLOR = "_OutLineColor";
     private const string PROP_THICKNESS = "_OutLineThickness";
@@ -28,27 +31,43 @@ public class OutlineController : MonoBehaviour
             return;
         }
 
+        GameObject outlineObj = new GameObject("OutlineEffect");
+        outlineObj.transform.SetParent(this.transform);
+        outlineObj.transform.localPosition = Vector3.zero;
+        outlineObj.transform.localRotation = Quaternion.identity;
+        outlineObj.transform.localScale = Vector3.one;
+
+        outlineRenderer = outlineObj.AddComponent<SpriteRenderer>();
+
+        SyncRendererProperties();
+
         instancedMaterial = new Material(outlineMaterialBase);
-        mainRenderer.material = instancedMaterial;
+        outlineRenderer.material = instancedMaterial;
 
         SetOutLineObj(false);
     }
 
-    void Update()
+    private void SyncRendererProperties()
     {
-        if (instancedMaterial != null)
-        {
-            ApplyMaterialProperties();
-        }
+        if (mainRenderer == null || outlineRenderer == null) return;
+
+        outlineRenderer.sprite = mainRenderer.sprite;
+
+        outlineRenderer.sortingLayerID = mainRenderer.sortingLayerID;
+        outlineRenderer.sortingOrder = mainRenderer.sortingOrder - 1;
+
+        outlineRenderer.flipX = mainRenderer.flipX;
+        outlineRenderer.flipY = mainRenderer.flipY;
     }
 
     private void ApplyMaterialProperties()
     {
         if (instancedMaterial == null) return;
 
-        //instancedMaterial.SetColor(PROP_COLOR, outlineColor);
-        //float currentThickness = isOutlineActive ? outlineThickness : 0.0f;
-        //instancedMaterial.SetFloat(PROP_THICKNESS, currentThickness);
+        instancedMaterial.SetColor(PROP_COLOR, outlineColor);
+
+        float currentThickness = isOutlineActive ? outlineThickness : 0.0f;
+        instancedMaterial.SetFloat(PROP_THICKNESS, currentThickness);
     }
 
     public void SetOutLineObj(bool active)
