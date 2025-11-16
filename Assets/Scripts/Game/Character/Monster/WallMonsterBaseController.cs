@@ -150,6 +150,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     protected override void Dead()
     {
         base.Dead();
+        MonsterManager.Instance.NotifyMonsterDeath(this, monsterData);
         OnReturnPoolEvent?.Invoke(this);
     }
 

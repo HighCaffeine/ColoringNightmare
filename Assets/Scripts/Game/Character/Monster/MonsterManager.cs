@@ -59,6 +59,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         bossPool.SetPrefab(bossPrefab);
         bossPool.SetPoolCount(bossPoolCount);
         bossPool.Setup();
+
+        InitializeAcquireCallbacks();
     }
 
     // 풀에서 가져오기
@@ -181,6 +183,45 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         }
 
         return result;
+    }
+
+    private System.Collections.Generic.Dictionary<ItemType, System.Action<ItemData>> acquireCallbacks;
+
+    public void NotifyMonsterDeath(Character monster, MonsterData data)
+    {
+        HandleItemDrop(monster, data);
+    }
+
+    private void HandleItemDrop(Character monster, MonsterData data)
+    {
+        if (data.lootTable == null || data.lootTable.itemDropTable.Count == 0) return;
+
+        DropManager.Instance.ProcessLootTable(
+            data.lootTable,             // 몬스터의 드랍 아이템 목록
+            monster.transform.position, // 몬스터가 죽은 위치
+            acquireCallbacks            // 아이템 획득 시 실행될 이벤트 묶음
+        );
+    }
+
+    private void InitializeAcquireCallbacks()
+    {
+        acquireCallbacks = new System.Collections.Generic.Dictionary<ItemType, System.Action<ItemData>>
+        {
+            { ItemType.Ink, (itemData) =>
+            {
+                InkItem inkData = itemData as InkItem;
+
+                if (inkData != null)
+                {
+                    Debug.Log($"{inkData.colorType} 잉크 획득");
+                }
+            }},
+
+            { ItemType.Enhance, (itemData) =>
+            {
+                Debug.Log($"{itemData.itemName} 획득");
+            }}
+        };
     }
 
     [SerializeField] private bool isPlayerDead = false;

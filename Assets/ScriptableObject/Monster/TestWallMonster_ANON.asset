@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   sprite: {fileID: 0}
   characterName: Test_Monster2
-  maxHp: 19
+  maxHp: 1
   dmg: 1
   speed: 0.2
   attackDelay: 1
@@ -22,3 +22,4 @@ MonoBehaviour:
   colorType: 0
   type: 0
   pushForce: 3
+  lootTable: {fileID: 11400000, guid: 376cb170a1be4714d844b32afbdaa325, type: 2}
