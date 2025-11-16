@@ -4,7 +4,7 @@ using UnityEngine;
 public class OutlineController : MonoBehaviour
 {
     private SpriteRenderer mainRenderer;
-    private SpriteRenderer outlineRenderer; // ★ 아웃라인을 그릴 자식 렌더러
+    private SpriteRenderer outlineRenderer;
     private Material instancedMaterial;
     private bool isOutlineActive;
 
@@ -18,7 +18,7 @@ public class OutlineController : MonoBehaviour
     [Tooltip("아웃라인 두께")]
     [Range(0f, 3f)]
     public float outlineThickness = 3.0f;
-
+    private const string PROP_MAIN_TEX = "_MainTex";
     private const string PROP_COLOR = "_OutLineColor";
     private const string PROP_THICKNESS = "_OutLineThickness";
 
@@ -31,6 +31,9 @@ public class OutlineController : MonoBehaviour
             return;
         }
 
+        instancedMaterial = new Material(outlineMaterialBase);
+
+        // --- 아웃라인 오브젝트 생성 ---
         GameObject outlineObj = new GameObject("OutlineEffect");
         outlineObj.transform.SetParent(this.transform);
         outlineObj.transform.localPosition = Vector3.zero;
@@ -38,15 +41,11 @@ public class OutlineController : MonoBehaviour
         outlineObj.transform.localScale = Vector3.one;
 
         outlineRenderer = outlineObj.AddComponent<SpriteRenderer>();
-
-        SyncRendererProperties();
-
-        instancedMaterial = new Material(outlineMaterialBase);
         outlineRenderer.material = instancedMaterial;
 
+        SyncRendererProperties();
         SetOutLineObj(false);
     }
-
     private void SyncRendererProperties()
     {
         if (mainRenderer == null || outlineRenderer == null) return;
@@ -58,6 +57,11 @@ public class OutlineController : MonoBehaviour
 
         outlineRenderer.flipX = mainRenderer.flipX;
         outlineRenderer.flipY = mainRenderer.flipY;
+
+        if (instancedMaterial != null && mainRenderer.sprite != null)
+        {
+            instancedMaterial.SetTexture(PROP_MAIN_TEX, mainRenderer.sprite.texture);
+        }
     }
 
     private void ApplyMaterialProperties()
