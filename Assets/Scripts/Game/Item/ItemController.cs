@@ -24,6 +24,15 @@ public class ItemController : MonoBehaviour, OnReturnPool<ItemController>
 
         currentItem = itemData;
 
+        if (setCoroutine != null) StopCoroutine(setCoroutine);
+        setCoroutine = StartCoroutine(SetItemCoroutine());
+    }
+
+    private Coroutine setCoroutine;
+
+    private IEnumerator SetItemCoroutine()
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.5f));
         // 풀에서 나올 때 렌더러 활성화
         spriteRenderer.enabled = true;
         trailRenderer.enabled = true;
@@ -42,20 +51,20 @@ public class ItemController : MonoBehaviour, OnReturnPool<ItemController>
         OnReturnPoolEvent?.Invoke(this);
     }
 
-    private Coroutine coroutine;
+    private Coroutine moveCoroutine;
 
-    public void MoveToTarget(Transform targetTransform)
+    public void MoveToTarget(Vector3 targetPos)
     {
-        if (coroutine != null) StopCoroutine(coroutine);
-        coroutine = StartCoroutine(MoveToTargetCoroutine(targetTransform));
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        moveCoroutine = StartCoroutine(MoveToTargetCoroutine(targetPos));
     }
 
-    private IEnumerator MoveToTargetCoroutine(Transform targetTransform)
+    private IEnumerator MoveToTargetCoroutine(Vector3 targetPos)
     {
-        while (targetTransform != null)
-        {
-            Vector3 targetPos = targetTransform.position;
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.5f));
 
+        while (targetPos != Vector3.zero)
+        {
             float distance = Vector3.Distance(transform.position, targetPos);
 
             if (distance < 0.1f)
@@ -66,7 +75,7 @@ public class ItemController : MonoBehaviour, OnReturnPool<ItemController>
             transform.position = Vector3.MoveTowards(
                 transform.position,
                 targetPos,
-                Time.deltaTime * DropManager.ItemMoveSpeed
+                Time.deltaTime * DropManager.Instance.GetItemMoveSpeed()
             );
 
             yield return null;
