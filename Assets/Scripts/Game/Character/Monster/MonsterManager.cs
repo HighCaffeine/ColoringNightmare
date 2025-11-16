@@ -214,6 +214,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
                 if (inkData != null)
                 {
                     Debug.Log($"{inkData.colorType} 잉크 획득");
+                    MixerButtonController.Instance.AddInk(inkData.colorType);
                 }
             }},
 

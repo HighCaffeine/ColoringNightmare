@@ -152,6 +152,16 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
     private int color1Index = -1;
     private int color2Index = -1;
 
+    public void AddInk(ColorMixer.ColorType colorType)
+    {
+        syringers[Devcat.ValueCastTo<int>.From(colorType)].AddInk();
+    }
+
+    public void SubInk(ColorMixer.ColorType colorType)
+    {
+        syringers[Devcat.ValueCastTo<int>.From(colorType)].UseInk();
+    }
+
     private void OffPanel()
     {
         //SelectColor();
@@ -165,8 +175,8 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
         Debug.Log($"off panel : {c1}, {c2}");
 
-        syringers[Devcat.ValueCastTo<int>.From(c1)].UseInk();
-        syringers[Devcat.ValueCastTo<int>.From(c2)].UseInk();
+        SubInk(c1);
+        SubInk(c2);
         RailController.Instance.StartDuckSequence(c1, c2, railEvents[c1], railEvents[c2]);
 
         Init();
