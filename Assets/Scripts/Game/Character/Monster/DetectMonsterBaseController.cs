@@ -7,22 +7,26 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private OnReturnPoolEvent<DetectMonsterBaseController> OnReturnPoolEvent;
 
     [Header("Detect Settings")]
-    [Tooltip("플레이어를 감지하는 시야 범위")]
     private Transform targetPlayer;
+    private Vector2? lastKnownPosition; // 플레이어의 마지막 위치 기억
 
     private float detectInterval = 0.1f;
     private float detectTimer = 0f;
     private bool isDashing = false;
 
-    // 돌진 공격을 위한 변수
     [Header("Lunge Settings")]
-    [SerializeField] private float lungeDuration = 0.15f; // 목표 지점까지 돌진하는 시간
-    [SerializeField] private float lungePause = 0.1f;     // 최대 거리에서 잠시 멈추는 시간
-    [SerializeField] private float returnDuration = 0.25f; // 원래 위치로 돌아오는 시간
+    [SerializeField] private float lungeDuration = 0.15f;
+    [SerializeField] private float lungePause = 0.1f;
+    [SerializeField] private float returnDuration = 0.25f;
+
+    private const string ANIM_MOVE = "animation";
+    private const string ANIM_IDLE = "idle";
+    private const string ANIM_ATTACK = "Attack";
 
     public override void Setup(DetectMonsterData data)
     {
         base.Setup(data);
+        lastKnownPosition = null;
     }
 
     private void FixedUpdate()
@@ -44,6 +48,18 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         {
             ChaseAndAttackPlayer();
         }
+        else if (lastKnownPosition != null)
+        {
+            SetSpineAnimation(ANIM_MOVE, true);
+
+            Vector2 dir = (lastKnownPosition.Value - (Vector2)transform.position).normalized;
+            MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
+
+            if (Vector2.Distance(transform.position, lastKnownPosition.Value) < 0.1f)
+            {
+                lastKnownPosition = null;
+            }
+        }
         else
         {
             base.Move(Vector2.right);
@@ -56,11 +72,14 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
         if (distance <= monsterData.AttackRange)
         {
+            //SetSpineAnimation(ANIM_IDLE, true); // 정지 애니메이션
+            SetSpineAnimation(ANIM_MOVE, true);
             StopMove();
             ChangeState(StateType.Attack);
         }
         else
         {
+            SetSpineAnimation(ANIM_MOVE, true);
             Vector2 dir = (targetPlayer.position - transform.position).normalized;
             MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
         }
@@ -91,26 +110,42 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             }
         }
         targetPlayer = potentialTarget;
+
+        if (targetPlayer != null)
+        {
+            lastKnownPosition = targetPlayer.position;
+        }
     }
 
     protected override void Attack()
     {
         if (isDashing) return;
 
+        Vector2 targetPosition;
         if (targetPlayer != null)
         {
-            Vector2 targetPosition = targetPlayer.position;
-            Vector2 startPosition = transform.position;
-            Vector2 dashDir = (targetPosition - startPosition).normalized;
-
-            Flip(dashDir.x < 0);
-
-            StartCoroutine(LungeAndReturn(startPosition, targetPosition, dashDir));
+            targetPosition = targetPlayer.position;
+            lastKnownPosition = targetPosition;
+        }
+        else if (lastKnownPosition != null)
+        {
+            targetPosition = lastKnownPosition.Value;
         }
         else
         {
             ChangeState(StateType.Idle);
+            return;
         }
+
+        Vector2 startPosition = transform.position;
+        Vector2 dashDir = (targetPosition - startPosition).normalized;
+
+        Flip(dashDir.x < 0);
+
+        //SetSpineAnimation(ANIM_ATTACK, false);
+        SetSpineAnimation(ANIM_MOVE, true); // 이동 애니메이션
+
+        StartCoroutine(LungeAndReturn(startPosition, targetPosition, dashDir));
     }
 
     private IEnumerator LungeAndReturn(Vector2 startPos, Vector2 targetPos, Vector2 dir)
@@ -151,8 +186,23 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
         yield return new WaitForSeconds(info.attackDelay);
 
+        SetSpineAnimation(ANIM_IDLE, true);
+        //SetSpineAnimation(ANIM_MOVE, true); // 이동 애니메이션
+
         isDashing = false;
         ChangeState(StateType.Idle);
+    }
+
+
+    protected void SetSpineAnimation(string animName, bool loop)
+    {
+        if (skeleton != null && skeleton.skeletonDataAsset != null)
+        {
+            if (skeleton.AnimationName != animName)
+            {
+                skeleton.AnimationState.SetAnimation(0, animName, loop);
+            }
+        }
     }
 
 

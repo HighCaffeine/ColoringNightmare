@@ -16,57 +16,101 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     [SerializeField] private Transform monsterObjParent;
     [SerializeField] private AreaData monsterMoveArea;
 
-    [Header("Each Parent")]
+    [Header("Pool Parents")]
     [SerializeField] private Transform detectPoolParent;
     [SerializeField] private Transform wallPoolParent;
     [SerializeField] private Transform bossPoolParent;
 
     [Header("Prefabs")]
-    [SerializeField] private DetectMonsterBaseController detectPrefab;
-    [SerializeField] private WallMonsterBaseController<MonsterData> wallPrefab;
+    [Header("Detect Prefabs")]
+    [SerializeField] private DetectMonsterBaseController catNormalPrefab;
+    [SerializeField] private DetectMonsterBaseController catElitePrefab;
+    [SerializeField] private DetectMonsterBaseController rabbitNormalPrefab;
+    [SerializeField] private DetectMonsterBaseController rabbitElitePrefab;
+    [Header("Wall Prefabs")]
+    [SerializeField] private WallMonsterBaseController<MonsterData> bearNormalPrefab;
+    [SerializeField] private WallMonsterBaseController<MonsterData> bearElitePrefab;
+    [Header("Boss Prefab")]
     [SerializeField] private BossMonsterController bossPrefab;
 
     [Header("Pool Count")]
     [SerializeField] private int detectPoolCount = 10;
     [SerializeField] private int wallPoolCount = 5;
-    [SerializeField] private int bossPoolCount = 1; // 한 마리만 풀링
+    [SerializeField] private int bossPoolCount = 1;
 
-    private ObjectPooling<MonsterManager, DetectMonsterBaseController> detectPool;
-    private ObjectPooling<MonsterManager, WallMonsterBaseController<MonsterData>> wallPool;
+    private ObjectPooling<MonsterManager, DetectMonsterBaseController> catNormalPool;
+    private ObjectPooling<MonsterManager, DetectMonsterBaseController> catElitePool;
+    private ObjectPooling<MonsterManager, DetectMonsterBaseController> rabbitNormalPool;
+    private ObjectPooling<MonsterManager, DetectMonsterBaseController> rabbitElitePool;
+    private ObjectPooling<MonsterManager, WallMonsterBaseController<MonsterData>> bearNormalPool;
+    private ObjectPooling<MonsterManager, WallMonsterBaseController<MonsterData>> bearElitePool;
     private ObjectPooling<MonsterManager, BossMonsterController> bossPool;
 
     public Bounds GetAreaBound() => monsterMoveArea.GetBounds();
 
     protected new void Awake()
     {
-        // 탐지 몬스터 풀
-        detectPool = new ObjectPooling<MonsterManager, DetectMonsterBaseController>();
-        detectPool.SetParent(detectPoolParent);
-        detectPool.SetPrefab(detectPrefab);
-        detectPool.SetPoolCount(detectPoolCount);
-        detectPool.Setup();
+        base.Awake();
 
-        // 벽 몬스터 풀
-        wallPool = new ObjectPooling<MonsterManager, WallMonsterBaseController<MonsterData>>();
-        wallPool.SetParent(wallPoolParent);
-        wallPool.SetPrefab(wallPrefab);
-        wallPool.SetPoolCount(wallPoolCount);
-        wallPool.Setup();
+        catNormalPool = CreateDetectPool(catNormalPrefab, detectPoolCount);
+        catElitePool = CreateDetectPool(catElitePrefab, detectPoolCount);
+        rabbitNormalPool = CreateDetectPool(rabbitNormalPrefab, detectPoolCount);
+        rabbitElitePool = CreateDetectPool(rabbitElitePrefab, detectPoolCount);
 
-        // 보스 풀 (한 마리)
+        bearNormalPool = CreateWallPool(bearNormalPrefab, wallPoolCount);
+        bearElitePool = CreateWallPool(bearElitePrefab, wallPoolCount);
+
         bossPool = new ObjectPooling<MonsterManager, BossMonsterController>();
         bossPool.SetParent(bossPoolParent);
         bossPool.SetPrefab(bossPrefab);
         bossPool.SetPoolCount(bossPoolCount);
         bossPool.Setup();
-
-        InitializeAcquireCallbacks();
     }
 
-    // 풀에서 가져오기
-    public DetectMonsterBaseController GetDetectMonster(Vector2 pos)
+    private ObjectPooling<MonsterManager, DetectMonsterBaseController> CreateDetectPool(DetectMonsterBaseController prefab, int count)
     {
-        var monster = detectPool.GetPool();
+        var pool = new ObjectPooling<MonsterManager, DetectMonsterBaseController>();
+        pool.SetParent(detectPoolParent);
+        pool.SetPrefab(prefab);
+        pool.SetPoolCount(count);
+        pool.Setup();
+        return pool;
+    }
+
+    private ObjectPooling<MonsterManager, WallMonsterBaseController<MonsterData>> CreateWallPool(WallMonsterBaseController<MonsterData> prefab, int count)
+    {
+        var pool = new ObjectPooling<MonsterManager, WallMonsterBaseController<MonsterData>>();
+        pool.SetParent(wallPoolParent);
+        pool.SetPrefab(prefab);
+        pool.SetPoolCount(count);
+        pool.Setup();
+        return pool;
+    }
+
+    public Character GetMonsterFromPool(MonsterDataName monsterName, Vector2 pos)
+    {
+        Character monster = null;
+
+        switch (monsterName)
+        {
+            case MonsterDataName.CatNormal: monster = catNormalPool.GetPool(); break;
+            case MonsterDataName.CatElite: monster = catElitePool.GetPool(); break;
+            case MonsterDataName.RabbitNormal: monster = rabbitNormalPool.GetPool(); break;
+            case MonsterDataName.RabbitElite: monster = rabbitElitePool.GetPool(); break;
+            case MonsterDataName.BearNormal: monster = bearNormalPool.GetPool(); break;
+            case MonsterDataName.BearElite: monster = bearElitePool.GetPool(); break;
+            case MonsterDataName.TestBossData: monster = bossPool.GetPool(); break;
+            default:
+                Debug.LogError($"{monsterName}에 해당하는 풀링 없음.");
+                return null;
+        }
+
+        if (monster == null)
+        {
+            Debug.LogError($"{monsterName} pool loaded fail");
+            return null;
+        }
+
         monster.transform.position = pos;
         monster.gameObject.SetActive(true);
         monster.transform.SetParent(monsterObjParent);
@@ -74,60 +118,33 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         return monster;
     }
 
-    public WallMonsterBaseController<MonsterData> GetWallMonster(Vector2 pos)
-    {
-        var monster = wallPool.GetPool();
-        monster.transform.position = pos;
-        monster.gameObject.SetActive(true);
-        monster.transform.SetParent(monsterObjParent);
-
-        return monster;
-    }
-
-    public BossMonsterController GetBoss(Vector2 pos)
-    {
-        var boss = bossPool.GetPool();
-        boss.transform.position = pos;
-        boss.gameObject.SetActive(true);
-        boss.transform.SetParent(monsterObjParent);
-
-        return boss;
-    }
-
-    // 몬스터 스폰
     public void SpawnMonster(MonsterData data, Vector2 pos)
     {
-        if (data == null) Debug.LogError("[SpawnMonster] data is null");
-        Character monster = null;
+        if (data == null)
+        {
+            Debug.LogError("[SpawnMonster] data is null");
+            return;
+        }
+
+        Character monster = GetMonsterFromPool(data.monsterDataName, pos);
+        if (monster == null) return;
+
         switch (data.Type)
         {
             case MonsterType.Wall:
-                var wall = GetWallMonster(pos);
-                wall.Setup(data);
-                ColorTest(wall.transform, data.ColorType);
-                monster = wall;
+                (monster as WallMonsterBaseController<MonsterData>)?.Setup(data);
                 break;
 
             case MonsterType.Detect:
-                var detectData = data as DetectMonsterData;
-                if (detectData == null) return;
-
-                var detect = GetDetectMonster(pos);
-                detect.Setup(detectData);
-                ColorTest(detect.transform, data.ColorType);
-                monster = detect;
+                (monster as DetectMonsterBaseController)?.Setup(data as DetectMonsterData);
                 break;
 
             case MonsterType.Boss:
-                var bossData = data as BossMonsterData;
-                if (bossData == null) return;
-
-                var boss = GetBoss(pos);
-                boss.Setup(bossData);
-                ColorTest(boss.transform, data.ColorType);
-                monster = boss;
+                (monster as BossMonsterController)?.Setup(data as BossMonsterData);
                 break;
         }
+
+        ColorTest(monster.transform, data.ColorType);
 
         if (monster != null)
         {
@@ -135,57 +152,28 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         }
     }
 
-    private void SetSortingOrderByYPos(Character monster, bool isSpine)
-    {
-        int newSortingOrder = 10 + Mathf.RoundToInt(monster.transform.position.y * -100f);
-
-        if (isSpine)
-        {
-            if (monster.skeleton != null)
-            {
-                var meshRenderer = monster.skeleton.GetComponent<MeshRenderer>();
-                if (meshRenderer != null)
-                {
-                    meshRenderer.sortingOrder = newSortingOrder;
-                }
-            }
-        }
-        else
-        {
-            var spriteRenderer = monster.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.sortingOrder = newSortingOrder;
-            }
-        }
-    }
-
     private void ColorTest(Transform t, ColorMixer.ColorType colorType)
     {
         MonsterColorChanger m = t.GetComponent<MonsterColorChanger>();
-
         m.SetColorEnum(colorType);
     }
 
     public Vector2 GetCalibrationSpawnPos(Transform monster, Collider2D collider)
     {
         Vector2 result = Vector2.zero;
-
         if (collider != null)
         {
             Vector2 monsterHalfSize = collider.bounds.extents;
             Bounds area = monsterMoveArea.GetBounds();
-
             float caliX = Mathf.Clamp(monster.position.x, area.min.x + monsterHalfSize.x, area.max.x - monsterHalfSize.x);
             float caliY = Mathf.Clamp(monster.position.y, area.min.y + monsterHalfSize.y, area.max.y - monsterHalfSize.y);
-
             result = new Vector2(caliX, caliY);
         }
-
         return result;
     }
 
     private System.Collections.Generic.Dictionary<ItemType, System.Action<ItemData>> acquireCallbacks;
+
 
     public void NotifyMonsterDeath(Character monster, MonsterData data)
     {
@@ -229,18 +217,10 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     public bool IsPlayerDead() { return isPlayerDead; }
     public delegate bool OnPlayerIsDead();
 
-    //플레이어에게 줄 이벤트 함수
     public delegate void OnPlayerStateUpdate(bool isDead);
+    public void PlayerStateUpdate(bool isDead) { isPlayerDead = isDead; }
 
-    public void PlayerStateUpdate(bool isDead)
-    {
-        isPlayerDead = isDead;
-    }
-
-    public void SubWorldHpEvent()
-    {
-        OnSubWorldHP?.Invoke();
-    }
+    public void SubWorldHpEvent() { OnSubWorldHP?.Invoke(); }
 
     void OnDrawGizmos()
     {
@@ -248,6 +228,33 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         {
             Gizmos.color = Color.grey;
             Gizmos.DrawWireCube(monsterMoveArea.pos + monsterMoveArea.offset, monsterMoveArea.size);
+        }
+    }
+
+    private const int MONSTER_BASE_SORTING_ORDER = 10;
+
+    private void SetSortingOrderByYPos(Character monster, bool isSpine)
+    {
+        int newSortingOrder = MONSTER_BASE_SORTING_ORDER + Mathf.RoundToInt(monster.transform.position.y * -100f);
+
+        if (isSpine)
+        {
+            if (monster.skeleton != null)
+            {
+                var meshRenderer = monster.skeleton.GetComponent<MeshRenderer>();
+                if (meshRenderer != null)
+                {
+                    meshRenderer.sortingOrder = newSortingOrder;
+                }
+            }
+        }
+        else
+        {
+            var spriteRenderer = monster.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sortingOrder = newSortingOrder;
+            }
         }
     }
 }
