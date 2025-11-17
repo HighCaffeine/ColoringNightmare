@@ -17,5 +17,8 @@ MonoBehaviour:
   typeValue: 0
   monsterGroups:
   - {fileID: 11400000, guid: b84c5568fa25c3e45abe9ba817c4a3f7, type: 2}
-  - {fileID: 11400000, guid: b7de1797feebac143b2e0a81414c8b98, type: 2}
-  - {fileID: 11400000, guid: 3d89f3ee1cd21fa4391e8c18726b7637, type: 2}
+  - {fileID: 11400000, guid: 537f5fbdacc032b4799134cfa3be8880, type: 2}
+  - {fileID: 11400000, guid: fc052524bbfb696408dd45531a128076, type: 2}
+  - {fileID: 11400000, guid: 4b34c3f7e10adad479fdcc64cb5b0987, type: 2}
+  - {fileID: 11400000, guid: 1ea1efb700bd7e44aa2bab923e0ff644, type: 2}
+  - {fileID: 11400000, guid: 3f0fe8b8dc6b46f4f92c54f89191a95f, type: 2}
