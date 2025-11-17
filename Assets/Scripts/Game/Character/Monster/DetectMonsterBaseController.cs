@@ -73,7 +73,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     {
         if (isDead)
         {
-            Debug.Log($"{gameObject.name}: isDead = true");
             rigid.linearVelocity = Vector2.zero;
             return;
         }

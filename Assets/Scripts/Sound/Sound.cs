@@ -18,11 +18,14 @@ public class Sound : MonoBehaviour, OnReturnPool<Sound>,
 
     public void Play(AudioClip clip, float vol, SoundManager.SoundType type, bool isMainBGM, bool playNoOffBGM)
     {
+        audioSource.loop = false;
         audioSource.clip = clip;
         audioSource.volume = vol;
         audioSource.Play();
         this.type = type;
         this.isMainBGM = isMainBGM;
+
+        if (isMainBGM) audioSource.loop = true;
 
         StartCoroutine(Playing(playNoOffBGM));
     }
@@ -52,6 +55,7 @@ public class Sound : MonoBehaviour, OnReturnPool<Sound>,
     public void TestOnReturn()
     {
         OnReturnPool?.Invoke(this);
+        gameObject.SetActive(false);
     }
 
     public void SetVol()

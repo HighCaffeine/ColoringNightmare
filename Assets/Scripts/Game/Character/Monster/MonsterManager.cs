@@ -65,6 +65,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         bossPool.SetPrefab(bossPrefab);
         bossPool.SetPoolCount(bossPoolCount);
         bossPool.Setup();
+
+        InitializeAcquireCallbacks();
     }
 
     private ObjectPooling<MonsterManager, DetectMonsterBaseController> CreateDetectPool(DetectMonsterBaseController prefab, int count)

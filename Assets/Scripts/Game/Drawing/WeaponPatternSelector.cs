@@ -60,10 +60,26 @@ public class WeaponPatternSelector : MonoBehaviour
 
         selectedDesign = design;
         DrawWeapon.Instance.SetRefSprite(patterns[Devcat.ValueCastTo<int>.From(selectedDesign)]);
+
+        switch (design)
+        {
+            case Design.Sword:
+                DrawWeapon.Instance.SetWeaponType(WeaponManager.WeaponType.Sword);
+                break;
+            case Design.Spear:
+                DrawWeapon.Instance.SetWeaponType(WeaponManager.WeaponType.Spear);
+                break;
+            case Design.Axe:
+                DrawWeapon.Instance.SetWeaponType(WeaponManager.WeaponType.Axe);
+                break;
+        }
+
         patterns[Devcat.ValueCastTo<int>.From(selectedDesign)].gameObject.SetActive(true);
 
         WolfWorkStation.Instance.SetSketchType();
         WolfWorkStation.Instance.Interactive();
+
+
 
         Invoke(nameof(ClosePatternSelector), 0.5f);
     }

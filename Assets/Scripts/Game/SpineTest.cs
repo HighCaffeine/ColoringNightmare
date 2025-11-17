@@ -87,13 +87,13 @@ public class SpineTest : MonoBehaviour
                 break;
             case WeaponManager.WeaponType.Axe:
                 currentAttackAnimation = AniName.attack_axe2;
-                currentWalkAnimation = AniName.run_normal;
-                currentIdleAnimation = AniName.idle_normal;
+                currentWalkAnimation = AniName.run_axe;
+                currentIdleAnimation = AniName.idle_axe;
                 break;
             case WeaponManager.WeaponType.Spear:
                 currentAttackAnimation = AniName.attack_spear;
-                currentWalkAnimation = AniName.run_normal;
-                currentIdleAnimation = AniName.idle_normal;
+                currentWalkAnimation = AniName.run_spear;
+                currentIdleAnimation = AniName.idle_spear;
                 break;
             default:
                 currentAttackAnimation = AniName.attack1; // 기본값

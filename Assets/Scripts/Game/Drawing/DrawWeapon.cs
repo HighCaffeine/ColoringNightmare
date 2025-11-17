@@ -42,6 +42,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     private bool isCreated;
     private ColorMixer.ColorType colorType;
+    private WeaponManager.WeaponType weaponType;
     private int lastPointCount = 0;
     private bool isAllowDrawing = false;
 
@@ -212,9 +213,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         if (dice * 100.0f > similarityLimit)
         {
             SpawnDrawObj();
+            SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Weapon_Suc_Good.ToString(), false);
         }
         else
         {
+            SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Weapon_Fail.ToString(), false);
             Debug.Log("유사도가 낮아 무기를 생성하지 않습니다.");
         }
 
@@ -390,6 +393,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
             // 잉크 데이터가 복제된 스킬 로직을 참조
             runtimeInkData.skillLogic = runtimeSkillLogic;
+            runtimeInkData.weaponType = weaponType;
 
             // Weapon에 원본 대신 복사본 설정
             weapon.SetupInkData(runtimeInkData);
@@ -419,6 +423,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         // }
 
         colorType = ColorMixer.ColorType.None;
+    }
+
+    public void SetWeaponType(WeaponManager.WeaponType weaponType)
+    {
+        this.weaponType = weaponType;
     }
 
     private Texture2D RenderDrawingToTexture(List<GameObject> lines, Bounds bounds, int width, int height)

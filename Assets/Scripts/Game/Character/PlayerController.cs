@@ -243,6 +243,8 @@ public class PlayerController : Character
         ChangeState(StateType.Attack);
         OnAttack?.Invoke();
 
+        SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_Weapon_Attack_Yellow.ToString(), false);
+
         if (weaponController != null && weaponController.IsEquip())
         {
             if (skillController != null)

@@ -1,19 +1,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : ObjectPooling<SoundManager, Sound>
 {
     public enum BGM
     {
-        BGM_1,
+        BGM_Main_1,
+        BGM_Loading_1,
+        BGM_Game_1,
 
         Count,
     }
 
     public enum Effect
     {
-        Effect_1,
+        UI_Default,
+
+        //Weapon
+        SFX_Weapon_Attack_Yellow,
+        SFX_Weapon_Damaged_Yellow,
+
+        //WorkStation
+        SFX_WorkStation_Weapon_Fail,
+        SFX_WorkStation_Weapon_Suc_Good,
+        SFX_WorkStation_Weapon_Suc_Great,
+        SFX_WorkStation_Weapon_Suc_Perfect,
+
+        SFX_1,
 
         Count,
     }
@@ -35,9 +50,7 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
 
     public delegate void OnRegistrationSound(Sound sound);
     public delegate float OnChangeVolEvent(SoundType soundType);
-
     public delegate void OnEndBGMEvent(AudioSource audioSource);
-
 
     public enum SoundType
     {
@@ -52,7 +65,7 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
 
     private const string KEY_MASTER = "MasterVol";
     private const string KEY_BGM = "BgmVol";
-    private const string KEY_EFFECT = "EffectVol";
+    private const string KEY_SFX = "SFXVol";
 
     [SerializeField] private AudioClip[] bgms;
     [SerializeField] private AudioClip[] effects;
@@ -63,37 +76,83 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
 
     [SerializeField] private AudioMixer mixer;
 
+    // 씬별 BGM 매핑
+    private Dictionary<string, string> sceneBGMMap;
+
     private new void Awake()
     {
         base.Awake();
 
         DontDestroyOnLoad(this);
 
+        storageParent.gameObject.SetActive(true);
+
         playSoundList = new List<Sound>();
         nowPlaySource = gameObject.GetComponent<AudioSource>();
+
+        // 씬별 BGM 설정
+        InitializeSceneBGMMap();
+
+        // 씬 로드 이벤트 등록
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        // 이벤트 해제
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void InitializeSceneBGMMap()
+    {
+        sceneBGMMap = new Dictionary<string, string>
+        {
+            { "Main", BGM.BGM_Main_1.ToString() },  // 메인 화면 씬 이름
+            { "Game", BGM.BGM_Game_1.ToString() },  // 게임 씬 이름
+            { "Loading", BGM.BGM_Loading_1.ToString() },  // 게임 씬 이름
+            // 추가 씬들...
+        };
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 기존 BGM 중지 및 정리
+        StopAllBGM();
+
+        // 씬에 맞는 BGM 재생
+        if (sceneBGMMap.ContainsKey(scene.name))
+        {
+            string bgmName = sceneBGMMap[scene.name];
+            PlaySound(bgmName, true);
+        }
     }
 
     private void OnEnable()
     {
-        //TestGetSound(SoundType.Effect);
-
-        //bgmSource.clip = Resources.Load("BGM_Sukidakara",typeof(AudioClip)) as AudioClip;
-
-        //encrypt넣어서 할 듯
         masterVol = PlayerPrefs.HasKey(KEY_MASTER) ? PlayerPrefs.GetFloat(KEY_MASTER) : 1.0f;
         bgmVol = PlayerPrefs.HasKey(KEY_BGM) ? PlayerPrefs.GetFloat(KEY_BGM) : 1.0f;
-        effectVol = PlayerPrefs.HasKey(KEY_EFFECT) ? PlayerPrefs.GetFloat(KEY_EFFECT) : 1.0f;
-
-        //bgmSource.volume = bgmVol * masterVol;
-
-        //bgmSource.Play();
+        effectVol = PlayerPrefs.HasKey(KEY_SFX) ? PlayerPrefs.GetFloat(KEY_SFX) : 1.0f;
     }
 
     private new void Start()
     {
         base.Start();
 
-        PlaySound(BGM.BGM_1.ToString(), false);
+        // OnSceneLoaded에서 처리하므로 Start에서는 재생하지 않음
+        // 단, 씬 로드 이벤트보다 Start가 먼저 실행될 수 있으므로
+        // 현재 씬에 BGM이 없으면 기본 BGM 재생
+        if (playSoundList.Count == 0)
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            if (sceneBGMMap.ContainsKey(currentScene))
+            {
+                PlaySound(sceneBGMMap[currentScene], true);
+            }
+            else
+            {
+                PlaySound(BGM.BGM_Main_1.ToString(), true);
+            }
+        }
     }
 
     public void OnChangedVol(SoundType type, float value)
@@ -110,7 +169,7 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
                 break;
             case SoundType.Effect:
                 effectVol = value;
-                PlayerPrefs.SetFloat(KEY_EFFECT, value);
+                PlayerPrefs.SetFloat(KEY_SFX, value);
                 break;
         }
 
@@ -130,7 +189,6 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
     public float VolChangeEvent(SoundType type)
     {
         float value = SoundType.Effect == type ? effectVol : bgmVol;
-
         return masterVol * value;
     }
 
@@ -138,15 +196,21 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
     {
         AudioClip[] clips = (type == SoundType.Bgm) ? bgms : effects;
 
+        string nameWithoutExtension = name;
+        int dotIndex = name.LastIndexOf('.');
+        if (dotIndex > 0)
+        {
+            nameWithoutExtension = name.Substring(0, dotIndex);
+        }
+
         foreach (AudioClip clip in clips)
         {
-            if (clip.name == name)
+            if (clip.name == nameWithoutExtension)
             {
                 if (type == SoundType.Bgm)
                 {
                     PauseBGM();
 
-                    //playsoundlist 비워야 됨
                     if (!multiBGM)
                     {
                         nowPlaySource.clip = null;
@@ -157,15 +221,9 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
             }
         }
 
+        Debug.LogWarning($"SoundManager: AudioClip not found for name '{name}' (checked as '{nameWithoutExtension}')");
         return null;
     }
-
-    // public void PlayBGM(string name)
-    // {
-    //     nowPlaySource.clip = GetClip(SoundType.Bgm, name);
-
-    //     nowPlaySource.Play();
-    // }
 
     public void PauseBGM()
     {
@@ -177,21 +235,16 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         nowPlaySource.UnPause();
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="multiBGM">작업자 작업 시 작업 배경음을 틀고 </param>
     public void PlaySound(string name, bool isMainBGM, bool multiBGM = false)
     {
-        if (Instance == null)
+        if (Instance == null || playSoundList == null)
         {
             return;
         }
 
-        if (playSoundList == null)
+        if (!multiBGM && name.StartsWith("BGM"))
         {
-            return;
+            StopAllBGM();
         }
 
         Sound sound = GetPool();
@@ -199,7 +252,7 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         string[] soundType = name.Split('_');
         playSoundList.Add(sound);
 
-        SoundType type = soundType[0] == "Effect" ? SoundType.Effect : SoundType.Bgm;
+        SoundType type = soundType[0] == "SFX" ? SoundType.Effect : SoundType.Bgm;
 
         sound.Play(GetClip(type, name, multiBGM), masterVol * effectVol, type, isMainBGM, multiBGM);
 
@@ -211,13 +264,50 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         if (multiBGM)
         {
             nowPlaySource?.Pause();
-
             this.multiBGM = source;
         }
 
         if (soundType[0] == "BGM")
         {
             source.loop = true;
+        }
+    }
+
+    // 모든 BGM 중지 및 정리
+    private void StopAllBGM()
+    {
+        // nowPlaySource 정리
+        if (nowPlaySource != null)
+        {
+            nowPlaySource.Stop();
+            nowPlaySource.clip = null;
+        }
+
+        // playSoundList에서 BGM만 찾아서 정리
+        for (int i = playSoundList.Count - 1; i >= 0; i--)
+        {
+            Sound sound = playSoundList[i];
+            AudioSource source = sound.GetAudioSource();
+
+            // BGM인지 확인 (clip 이름이 BGM으로 시작하거나, loop가 true인 경우)
+            if (source != null && source.clip != null)
+            {
+                bool isBGM = source.clip.name.Contains("BGM") || source.loop;
+
+                if (isBGM)
+                {
+                    source.Stop();
+                    playSoundList.RemoveAt(i);
+                    sound.TestOnReturn(); // 풀로 반환
+                }
+            }
+        }
+
+        // multiBGM도 정리
+        if (multiBGM != null)
+        {
+            multiBGM.Stop();
+            multiBGM = null;
         }
     }
 
@@ -228,12 +318,11 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         nowPlaySource = audioSource;
     }
 
-    //배경음 대신에 따로 효과용으로 BGM을 틀경우 기존 BGM을 잠시 멈춤
-
     public void EndMultiAudio()
     {
         multiBGM?.Pause();
     }
+
     public void ReplayAudio()
     {
         if (nowPlaySource != null)

@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic; // List 사용
 using TMPro; // TextMeshProUGUI 사용
 
-/// <summary>
-/// [★신규★] 확률 구간별 데이터를 담을 구조체
-/// </summary>
 [System.Serializable]
 public struct SimilarityEffectData
 {
@@ -53,16 +50,11 @@ public class DrawSimilarityEffect : MonoBehaviour
 
         SimilarityEffectData currentTier = effectTiers[0];
 
-        effectText.text = $"제작 실패";
-
         foreach (var tier in effectTiers)
         {
-            if (diceValue >= tier.probabilityThreshold)
+            if (diceValue <= tier.probabilityThreshold)
             {
                 currentTier = tier;
-            }
-            else
-            {
                 break;
             }
         }
