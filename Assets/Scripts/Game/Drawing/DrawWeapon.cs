@@ -7,6 +7,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [Header("Drawing")]
     [SerializeField] private Material lineMaterial; // Sprites / Default 사용
     [SerializeField] private float lineWidth = 0.1f;
+    public float LineWidth { get { return lineWidth; } }
     [SerializeField] private float minPointDis = 0.02f; // 포인트간 최소 거리
     [SerializeField] private Color lineColor = Color.white;
     [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f; //채도
@@ -247,6 +248,8 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         this.refSprite = refSprite;
     }
 
+    [SerializeField] private DrawSimilarityEffect similarityEffect;
+
     public (float cosine, float jaccard, float dice) CalculateSimilarity()
     {
         if (refSprite == null || refSprite.sprite == null) return (0, 0, 0);
@@ -291,6 +294,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         if (similarityText != null)
             similarityText.text = string.Format($"Similarity - Cosine: {cosine * 100f:F3}, Jaccard: {jaccard * 100f:F3}, Dice: {dice * 100f:F3}");
+
+        if (similarityEffect != null)
+        {
+            similarityEffect.ShowEffect(dice); // dice는 0.0 ~ 1.0 사이의 값
+        }
 
         return (cosine, jaccard, dice);
     }
