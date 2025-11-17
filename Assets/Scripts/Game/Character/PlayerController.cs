@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Spine.Unity;
 
 public enum PlayerType
 {
@@ -38,6 +39,14 @@ public class PlayerController : Character
     [Header("Groggy")]
     [SerializeField] private float groggyDuration = 5f;
     [SerializeField] private float invincibilityDuration = 2f;
+
+    [Header("Groggy Spine Assets")]
+    [SerializeField] private SkeletonDataAsset groggySkeletonData;
+    [SerializeField] private Material groggyMaterial;
+
+    private SkeletonDataAsset normalSkeletonData;
+    private Material normalMaterial;
+
     private bool isGroggy = false;
     private BoxCollider2D playerCollider;
 
@@ -87,6 +96,12 @@ public class PlayerController : Character
         playerInput = new PlayerInputActions();
         mouseHandler = GetComponent<PlayerMouseHandler>();
         ActivePlayerInput();
+
+        if (skeleton != null)
+        {
+            normalSkeletonData = skeleton.skeletonDataAsset;
+            normalMaterial = meshRenderer.material;
+        }
     }
 
     private void ActivePlayerInput()
@@ -289,7 +304,17 @@ public class PlayerController : Character
                 playerCollider.enabled = false;
             }
 
-            rigid.linearVelocity = Vector2.zero; // 움직임 즉시 정지
+            rigid.linearVelocity = Vector2.zero;
+            if (skeleton != null && groggySkeletonData != null && meshRenderer != null && groggyMaterial != null)
+            {
+                skeleton.skeletonDataAsset = groggySkeletonData;
+                meshRenderer.material = groggyMaterial;
+                skeleton.Initialize(true);
+
+                skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy.ToString(), false, 0);
+                skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy2.ToString(), false, 0);
+                skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy3.ToString(), false, 0);
+            }
 
             // 부활 코루틴 시작
             StartCoroutine(RespawnCoroutine(groggyDuration));
@@ -322,6 +347,22 @@ public class PlayerController : Character
         isGroggy = false;
         currentHP = info.maxHp;
         OnPlayerRespawn?.Invoke();
+
+        if (skeleton != null && normalSkeletonData != null && meshRenderer != null && normalMaterial != null)
+        {
+            skeleton.Initialize(true);
+            skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy4.ToString(), false, 0);
+        }
+
+        yield return new WaitForSeconds(1.333f);
+
+        if (skeleton != null && normalSkeletonData != null && meshRenderer != null && normalMaterial != null)
+        {
+            skeleton.skeletonDataAsset = normalSkeletonData;
+            meshRenderer.material = normalMaterial;
+            skeleton.Initialize(true);
+            skeleton.AnimationState.SetAnimation(0, SpineTest.AniName.idle_normal.ToString(), true);
+        }
 
         ChangeState(StateType.Idle);
         UnlockMovement();

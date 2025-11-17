@@ -50,6 +50,11 @@ public class Weapon : MonoBehaviour
         return currentDurability;
     }
 
+    public WeaponManager.WeaponType GetWeaponType()
+    {
+        return (inkData != null) ? inkData.weaponType : WeaponManager.WeaponType.Sword;
+    }
+
     private Coroutine destroyCoroutine;
 
     public void DestroyWeapon()

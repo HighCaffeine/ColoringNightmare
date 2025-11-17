@@ -18,11 +18,23 @@ public enum WaveDataName
 public enum MonsterGroupName { Group1, Group2, Count };
 public enum MonsterDataName
 {
+    //기존 테스트용
     TestWallData,
     TestDetectData,
     TestDetectBNONData,
     TestDetectKillerData,
 
+    // Detect Monsters
+    CatNormal,
+    CatElite,
+    RabbitNormal,
+    RabbitElite,
+
+    // Wall Monsters
+    BearNormal,
+    BearElite,
+
+    // Boss
     TestBossData,
     Count
 };

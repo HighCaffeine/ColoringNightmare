@@ -10,6 +10,7 @@ public class WeaponController : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private SkillController skillController;
+    [SerializeField] private SpineTest spineTest;
 
     private GameObject weaponFollowerHolder; // 홀더 참조
 
@@ -38,7 +39,11 @@ public class WeaponController : MonoBehaviour
         }
 
         this.weapon = newWeapon;
-        if (this.weapon == null) return;
+        if (this.weapon == null)
+        {
+            spineTest?.ClearAttackAnimation();
+            return;
+        }
 
         // 2. BoneFollower를 위한 새 부모 오브젝트(홀더) 생성
         weaponFollowerHolder = new GameObject(newWeapon.name + "_Follower");
@@ -99,6 +104,12 @@ public class WeaponController : MonoBehaviour
             skillController.SetCurrentSkill(this.weapon.GetSkillLogic());
         }
 
+        if (spineTest != null)
+        {
+            WeaponManager.WeaponType type = this.weapon.GetWeaponType();
+            spineTest.SetAttackAnimationByWeaponType(type);
+        }
+
         Flip(skeletonAni.skeleton.ScaleX < 0);
     }
 
@@ -111,6 +122,11 @@ public class WeaponController : MonoBehaviour
             if (skillController != null)
             {
                 skillController.SetCurrentSkill(null);
+            }
+
+            if (spineTest != null)
+            {
+                spineTest.ClearAttackAnimation();
             }
         }
     }

@@ -13,9 +13,28 @@ public class SpineTest : MonoBehaviour
 
     public enum AniName
     {
+        //공용
         attack1,
         idle,
         walk,
+
+        //Sheep
+        idle_axe,
+        attack_axe2,
+        run_axe,
+
+        idle_spear,
+        attack_spear,
+        run_spear,
+
+        idle_normal,
+        attack_normal,
+        run_normal,
+
+        Groggy,
+        Groggy2,
+        Groggy3,
+        Groggy4,    //respawn
     }
 
     public SkeletonAnimation skeleton;
@@ -23,6 +42,15 @@ public class SpineTest : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private SkillController skillController;
     private PlayerController playerController;
+    private AniName CurrentAttackAnimation => (!isSheep) ? AniName.attack1 : currentAttackAnimation;
+    private AniName CurrentWalkAnimation => (!isSheep) ? AniName.walk : currentWalkAnimation;
+    private AniName CurrentIdleAnimation => (!isSheep) ? AniName.idle : currentIdleAnimation;
+
+    private AniName currentAttackAnimation = AniName.attack1;
+    private AniName currentWalkAnimation = AniName.run_normal;
+    private AniName currentIdleAnimation = AniName.idle_normal;
+
+    [SerializeField] private bool isSheep = false;
 
     void Awake()
     {
@@ -41,20 +69,49 @@ public class SpineTest : MonoBehaviour
         if (playerController.IsAttacking) return;
         playerController.IsAttacking = true;
 
-        PlaySpine(AniName.attack1, false, onComplete: () =>
+        PlaySpine(CurrentAttackAnimation, false, onComplete: () =>
         {
             playerController?.ResetAttackCooldown();
             TestPlayIdleSpine();
         });
     }
 
+    public void SetAttackAnimationByWeaponType(WeaponManager.WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponManager.WeaponType.Sword:
+                currentAttackAnimation = AniName.attack_normal;
+                currentWalkAnimation = AniName.run_normal;
+                currentIdleAnimation = AniName.idle_normal;
+                break;
+            case WeaponManager.WeaponType.Axe:
+                currentAttackAnimation = AniName.attack_axe2;
+                currentWalkAnimation = AniName.run_normal;
+                currentIdleAnimation = AniName.idle_normal;
+                break;
+            case WeaponManager.WeaponType.Spear:
+                currentAttackAnimation = AniName.attack_spear;
+                currentWalkAnimation = AniName.run_normal;
+                currentIdleAnimation = AniName.idle_normal;
+                break;
+            default:
+                currentAttackAnimation = AniName.attack1; // 기본값
+                break;
+        }
+    }
+    public void ClearAttackAnimation()
+    {
+        currentAttackAnimation = AniName.attack1;
+    }
+
     public void TestPlayRunSpine()
     {
         if (playerController.IsAttacking) return;
 
-        if (skeleton.AnimationName != AniName.walk.ToString())
+        if (skeleton.AnimationName != CurrentWalkAnimation.ToString())
         {
-            PlaySpine(AniName.walk, true);
+            PlaySpine(CurrentWalkAnimation, true);
         }
     }
 
@@ -62,9 +119,9 @@ public class SpineTest : MonoBehaviour
     {
         if (playerController.IsAttacking) return;
 
-        if (skeleton.AnimationName != AniName.idle.ToString())
+        if (skeleton.AnimationName != CurrentIdleAnimation.ToString())
         {
-            PlaySpine(AniName.idle, true);
+            PlaySpine(CurrentIdleAnimation, true);
         }
     }
 
