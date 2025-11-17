@@ -10,19 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1b3b4b945939a54ea0b23d3396115fb, type: 3}
-  m_Name: sheep2_groggy_SkeletonData
+  m_Name: sheep2GRoggy_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
   - {fileID: 11400000, guid: dbd023b13bb733746b504756df38420d, type: 2}
   scale: 0.01
-  skeletonJSON: {fileID: 4900000, guid: 5f020cf54b6d47348821ce462c4e19ca, type: 3}
+  skeletonJSON: {fileID: 4900000, guid: 50b400986fbf9ed479759712696f4a95, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
-    requiresBlendModeMaterials: 0
+    requiresBlendModeMaterials: 1
     applyAdditiveMaterial: 0
     additiveMaterials: []
     multiplyMaterials: []
-    screenMaterials: []
+    screenMaterials:
+    - pageName: sheep2.png
+      material: {fileID: 2100000, guid: e54071c2dff23a94b91ea5a9f837d49b, type: 2}
   skeletonDataModifiers: []
   fromAnimation: []
   toAnimation: []

@@ -21,6 +21,9 @@ MonoBehaviour:
   isSpine: 1
   colorType: 0
   type: 2
+  pushForce: 0
+  monsterDataName: 10
+  lootTable: {fileID: 0}
   attackRange: 3
   skillCooldown: 1
   phase: 1
