@@ -100,10 +100,10 @@ TextureImporter:
       name: UI_Palette_Interactive2_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 2
-        width: 81
-        height: 91
+        x: 14
+        y: 7
+        width: 89
+        height: 89
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -122,10 +122,10 @@ TextureImporter:
       name: UI_Palette_Interactive2_1
       rect:
         serializedVersion: 2
-        x: 90
-        y: 2
-        width: 77
-        height: 88
+        x: 63
+        y: 95
+        width: 8
+        height: 6
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,10 +144,10 @@ TextureImporter:
       name: UI_Palette_Interactive2_2
       rect:
         serializedVersion: 2
-        x: 176
-        y: 1
-        width: 75
-        height: 88
+        x: 110
+        y: 7
+        width: 77
+        height: 94
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,10 +166,10 @@ TextureImporter:
       name: UI_Palette_Interactive2_3
       rect:
         serializedVersion: 2
-        x: 214
-        y: 89
-        width: 6
-        height: 4
+        x: 234
+        y: 94
+        width: 8
+        height: 6
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -188,10 +188,10 @@ TextureImporter:
       name: UI_Palette_Interactive2_4
       rect:
         serializedVersion: 2
-        x: 298
-        y: 88
-        width: 7
-        height: 5
+        x: 196
+        y: 6
+        width: 75
+        height: 88
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -210,10 +210,10 @@ TextureImporter:
       name: UI_Palette_Interactive2_5
       rect:
         serializedVersion: 2
-        x: 266
-        y: 0
-        width: 69
-        height: 88
+        x: 294
+        y: 3
+        width: 72
+        height: 89
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -224,28 +224,6 @@ TextureImporter:
       bones: []
       spriteID: a62bf1b98c4e8414783951baccd39dd6
       internalID: -1469319507
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Palette_Interactive2_6
-      rect:
-        serializedVersion: 2
-        x: 348
-        y: 0
-        width: 72
-        height: 87
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 02c1ccd18ebf06843842b4a500b55034
-      internalID: -947094353
       vertices: []
       indices: 
       edges: []
@@ -270,7 +248,6 @@ TextureImporter:
       UI_Palette_Interactive2_3: -169776122
       UI_Palette_Interactive2_4: -1205338270
       UI_Palette_Interactive2_5: -1469319507
-      UI_Palette_Interactive2_6: -947094353
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

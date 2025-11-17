@@ -103,9 +103,9 @@ TextureImporter:
         x: 0
         y: 0
         width: 54
-        height: 101
+        height: 111
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,9 +125,9 @@ TextureImporter:
         x: 89
         y: 0
         width: 54
-        height: 101
+        height: 111
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -147,9 +147,9 @@ TextureImporter:
         x: 175
         y: 0
         width: 54
-        height: 101
+        height: 111
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -169,9 +169,9 @@ TextureImporter:
         x: 257
         y: 0
         width: 54
-        height: 101
+        height: 111
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -185,23 +185,23 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI_Palette_ColorPack_4
+      name: UI_Palette_ColorPack_6
       rect:
         serializedVersion: 2
-        x: 334
-        y: 0
-        width: 54
-        height: 101
+        x: 47
+        y: 102
+        width: 48
+        height: 9
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fbac8087fc63fbe4f8ac1a92e229448d
-      internalID: -1462997559
+      spriteID: 637ae0331de7b69418a7eab1a6cd82e1
+      internalID: -107547312
       vertices: []
       indices: 
       edges: []
@@ -225,6 +225,8 @@ TextureImporter:
       UI_Palette_ColorPack_2: -1823188388
       UI_Palette_ColorPack_3: -1246909125
       UI_Palette_ColorPack_4: -1462997559
+      UI_Palette_ColorPack_5: -2049620377
+      UI_Palette_ColorPack_6: -107547312
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
