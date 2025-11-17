@@ -46,7 +46,7 @@ public class SpineTest : MonoBehaviour
     private AniName CurrentWalkAnimation => (!isSheep) ? AniName.walk : currentWalkAnimation;
     private AniName CurrentIdleAnimation => (!isSheep) ? AniName.idle : currentIdleAnimation;
 
-    private AniName currentAttackAnimation = AniName.attack1;
+    private AniName currentAttackAnimation = AniName.attack_normal;
     private AniName currentWalkAnimation = AniName.run_normal;
     private AniName currentIdleAnimation = AniName.idle_normal;
 

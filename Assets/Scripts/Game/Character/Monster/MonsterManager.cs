@@ -180,6 +180,15 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         HandleItemDrop(monster, data);
     }
 
+    public void TestItemDrop(ItemDropTable itemDropTable, Vector3 pos)
+    {
+        DropManager.Instance.ProcessLootTable(
+                    itemDropTable,             // 몬스터의 드랍 아이템 목록
+                    pos, // 몬스터가 죽은 위치
+                    acquireCallbacks            // 아이템 획득 시 실행될 이벤트 묶음
+                );
+    }
+
     private void HandleItemDrop(Character monster, MonsterData data)
     {
         if (data.lootTable == null || data.lootTable.itemDropTable.Count == 0) return;

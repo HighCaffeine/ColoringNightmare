@@ -28,6 +28,8 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
                 UpdatePolygonCollider();
             }
         }
+
+
         monsterData = data;
         info = data;
         currentHP = info.maxHp;
@@ -58,6 +60,11 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     }
 
     void Update()
+    {
+        HandleUpdate();
+    }
+
+    protected virtual void HandleUpdate()
     {
         if (isDead) return;
 
