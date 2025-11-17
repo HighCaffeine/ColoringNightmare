@@ -25,18 +25,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 066b821b04a3d85439db8b2c6cfecba6
+    m_Address: RabbitElite
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1383695343365d54998f757782b4ec96
     m_Address: Assets/ScriptableObject/Ink/7.Magenta.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 168237ae1a0319a40b01405d298e950a
-    m_Address: Assets/ScriptableObject/Weapon/PassiveData/12.LightYellow_PassiveEffectData.asset
+  - m_GUID: 16402a9c6886c3b479faf5a314a40854
+    m_Address: RabbitNormal
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1bbfbaefb6b0017488e8b31215db48a6
-    m_Address: CatElite
+  - m_GUID: 168237ae1a0319a40b01405d298e950a
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/12.LightYellow_PassiveEffectData.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -115,6 +120,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51c865b08eb74154aab88af9bb7e36ea
+    m_Address: CatNormal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 53f2b8a3a8ab82d4b82a295bf08aa9b7
     m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/0.Black_Weapon.asset
     m_ReadOnly: 0
@@ -160,13 +170,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 70f7c25b8d17ee446aa3d25d6d402b24
-    m_Address: CatNormal
+  - m_GUID: 78e5436945c142840ada7a41be63b671
+    m_Address: Assets/ScriptableObject/Weapon/PassiveData/7.Magenta_PassiveEffectData.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 78e5436945c142840ada7a41be63b671
-    m_Address: Assets/ScriptableObject/Weapon/PassiveData/7.Magenta_PassiveEffectData.asset
+  - m_GUID: 7be53b7b29b614b42b81b8bd9d4de0df
+    m_Address: CatElite
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -230,11 +240,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c04c2e998b932eb43a03e955b9f3cdce
-    m_Address: RabbitNormal
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c38437e7b6fda4846b04bb9296de86be
     m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/8.Gray_Weapon.asset
     m_ReadOnly: 0
@@ -242,11 +247,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c5407c7b3ea401941a1a69b6284eff5e
     m_Address: Assets/ScriptableObject/Weapon/PassiveData/2.Yellow_PassiveEffectData.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c6742aa38ac55334e9e46e258f9939f4
-    m_Address: RabbitElite
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
