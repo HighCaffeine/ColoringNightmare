@@ -56,6 +56,7 @@ MonoBehaviour:
   currentHP: 0
   skeleton: {fileID: 7448877837003334415}
   ani: {fileID: 0}
+  lungeDistance: 3
   lungeDuration: 0.15
   lungePause: 0.1
   returnDuration: 0.25
@@ -162,6 +163,8 @@ MonoBehaviour:
   brightness: 1
   skeleton: {fileID: 7448877837003334415}
   spriteRenderer: {fileID: 0}
+  calibratedColor: {r: 0.9528302, g: 0.8494571, b: 0.8494571, a: 0}
+  validateMode: 0
 --- !u!114 &1589897626046190559
 MonoBehaviour:
   m_ObjectHideFlags: 0

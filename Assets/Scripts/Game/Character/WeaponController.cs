@@ -56,6 +56,7 @@ public class WeaponController : MonoBehaviour
         var boneFollower = weaponFollowerHolder.AddComponent<Spine.Unity.BoneFollower>();
         boneFollower.SkeletonRenderer = skeletonAni;
         boneFollower.boneName = "sword";
+        if (this.weapon.GetWeaponType() == WeaponManager.WeaponType.Spear) boneFollower.boneName = "sword2";
         boneFollower.followBoneRotation = true;
         boneFollower.followLocalScale = false;
         boneFollower.followSkeletonFlip = false;

@@ -255,6 +255,8 @@ MonoBehaviour:
   brightness: 1
   skeleton: {fileID: 9157412667983172476}
   spriteRenderer: {fileID: 0}
+  calibratedColor: {r: 1, g: 1, b: 1, a: 0}
+  validateMode: 0
 --- !u!114 &814863964784221924
 MonoBehaviour:
   m_ObjectHideFlags: 0

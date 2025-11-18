@@ -15,7 +15,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private bool isDashing = false;
 
     [Header("Lunge Settings")]
-    [SerializeField] private float lungeDistance = 3f; // 돌진 거리
+    [SerializeField] private float lungeDistance = 1.2f; // 돌진 거리
     [SerializeField] private float lungeDuration = 0.15f;
     [SerializeField] private float lungePause = 0.1f;
     [SerializeField] private float returnDuration = 0.25f;
@@ -202,7 +202,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     protected override void Attack()
     {
-        if (isDashing) return;
+        if (isDashing || MonsterManager.Instance.IsPlayerDead()) return;
 
         Vector2 targetPosition;
         if (targetPlayer != null)

@@ -1,6 +1,11 @@
 using Spine.Unity;
 using UnityEngine;
 
+public enum SwitchMode
+{
+    Calibrate, Skeleton,
+}
+
 [ExecuteAlways]
 public class MonsterColorChanger : MonoBehaviour
 {
@@ -14,13 +19,33 @@ public class MonsterColorChanger : MonoBehaviour
 
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    [Space(5f)]
+    [Header("Calibrate Color")]
+    [SerializeField] private Color calibratedColor;
+    [SerializeField] private SwitchMode validateMode = SwitchMode.Skeleton;
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
+
         if (skeleton == null || skeleton.skeleton == null) return;
-        SetColor();
+
+        switch (validateMode)
+        {
+            case SwitchMode.Calibrate:
+                SetCalibratedColor();
+                break;
+            case SwitchMode.Skeleton:
+                SetColor();
+                break;
+        }
     }
 #endif
+
+    private void Awake()
+    {
+        SetCalibratedColor();
+    }
 
     public void TestDeadEvent()
     {
@@ -100,5 +125,12 @@ public class MonsterColorChanger : MonoBehaviour
         skeleton.skeleton.R = newColor.r;
         skeleton.skeleton.G = newColor.g;
         skeleton.skeleton.B = newColor.b;
+    }
+
+    private void SetCalibratedColor()
+    {
+        skeleton.skeleton.R = calibratedColor.r;
+        skeleton.skeleton.G = calibratedColor.g;
+        skeleton.skeleton.B = calibratedColor.b;
     }
 }

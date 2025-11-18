@@ -197,6 +197,7 @@ public class PlayerSpineManager : MonoBehaviour
     // (Sword, Spear 공격 완료 시 호출되는 일반 콜백)
     private void OnAttackComplete()
     {
+        isFirst = true;
         playerController?.ResetAttackCooldown();
         TestPlayIdleSpine(); // 현재 무기에 맞는 Idle 재생
     }
@@ -290,11 +291,14 @@ public class PlayerSpineManager : MonoBehaviour
             }
         }
     }
+    private bool isFirst = true;
 
     private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
         if (e.Data.Name == SpineEventName.AttackEffect.ToString())
         {
+            if (!isFirst) return;
+            isFirst = false;
             skillController?.OnAnimationHit();
         }
     }
