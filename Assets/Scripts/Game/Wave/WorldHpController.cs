@@ -1,11 +1,14 @@
 using UnityEngine;
+using UnityEngine.UI; // Image 컴포넌트 사용을 위해 필요
+using TMPro;          // 텍스트 사용 (TextMeshPro 기준)
 
 public class WorldHpController : MonoBehaviour
 {
-    [SerializeField] private TMPro.TextMeshProUGUI txt;
+    [Header("UI Components")]
+    [SerializeField] private Image fillImage;
 
+    [Header("Settings")]
     [SerializeField] private int worldHP;
-
     [SerializeField] private UnityEngine.Events.UnityEvent OnGameOver;
 
     private int maxHP;
@@ -13,7 +16,7 @@ public class WorldHpController : MonoBehaviour
     void Awake()
     {
         maxHP = worldHP;
-        txt.text = string.Format($"HP : {worldHP}/{maxHP}");
+        UpdateUI();
     }
 
     public void SubHP()
@@ -22,10 +25,19 @@ public class WorldHpController : MonoBehaviour
 
         if (worldHP <= 0)
         {
-            OnGameOver?.Invoke();
             worldHP = 0;
+            OnGameOver?.Invoke();
         }
 
-        txt.text = string.Format($"HP : {worldHP}/{maxHP}");
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        if (fillImage != null)
+        {
+            float hpRatio = (float)worldHP / maxHP;
+            fillImage.fillAmount = Mathf.Lerp(0.1f, 1.0f, hpRatio);
+        }
     }
 }

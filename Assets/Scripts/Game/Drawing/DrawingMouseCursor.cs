@@ -111,9 +111,9 @@ public class DrawingMouseCursor : MonoBehaviour
 
     private void UpdateBrushOutlineFromWeapon()
     {
-        if (DrawWeapon.Instance == null) return;
+        if (DrawWeaponGPU.Instance == null) return;
 
-        float targetDiameter = DrawWeapon.Instance.LineWidth;
+        float targetDiameter = DrawWeaponGPU.Instance.LineWidth;
         float targetCenterRadius = (targetDiameter * 0.5f) - (outlineWidth * 0.5f);
 
         if (targetCenterRadius < 0.001f)

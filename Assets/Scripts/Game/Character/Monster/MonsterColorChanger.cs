@@ -27,26 +27,10 @@ public class MonsterColorChanger : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-
         if (skeleton == null || skeleton.skeleton == null) return;
-
-        switch (validateMode)
-        {
-            case SwitchMode.Calibrate:
-                SetCalibratedColor();
-                break;
-            case SwitchMode.Skeleton:
-                SetColor();
-                break;
-        }
+        SetColor();
     }
 #endif
-
-    private void Awake()
-    {
-        SetCalibratedColor();
-    }
-
     public void TestDeadEvent()
     {
         baseColorType = ColorMixer.ColorType.DarkRed;
@@ -125,12 +109,5 @@ public class MonsterColorChanger : MonoBehaviour
         skeleton.skeleton.R = newColor.r;
         skeleton.skeleton.G = newColor.g;
         skeleton.skeleton.B = newColor.b;
-    }
-
-    private void SetCalibratedColor()
-    {
-        skeleton.skeleton.R = calibratedColor.r;
-        skeleton.skeleton.G = calibratedColor.g;
-        skeleton.skeleton.B = calibratedColor.b;
     }
 }

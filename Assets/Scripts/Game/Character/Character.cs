@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Spine.Unity;
 
-public enum StateType { None = -1, Idle, Attack, Move, Dead, Skill, Count }
+public enum StateType { None = -1, Idle, Attack, Move, Dead, Skill, Groggy, Count }
 
 public class Character : MonoBehaviour
 {

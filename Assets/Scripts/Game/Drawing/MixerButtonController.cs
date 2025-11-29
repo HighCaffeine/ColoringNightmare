@@ -223,7 +223,7 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
     //     Mix();
     //     cursorIndex = Devcat.ValueCastTo<int>.From(resultColor);
 
-    //     DrawWeapon.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor), resultColor);
+    //     DrawWeaponGPU.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor), resultColor);
     //     ColorMixer.Instance.SetFirstColor(ColorMixer.ColorType.White);
 
     //     if (colorResultSprite != null) colorResultSprite.color = ColorMixer.Instance.GetColor(resultColor);
@@ -255,7 +255,7 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
     {
         cursorIndex = Devcat.ValueCastTo<int>.From(resultColor);
 
-        DrawWeapon.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor), resultColor);
+        DrawWeaponGPU.Instance.SetLineColor(ColorMixer.Instance.GetColor(resultColor), resultColor);
         ColorMixer.Instance.MixColor(first, second);
 
 

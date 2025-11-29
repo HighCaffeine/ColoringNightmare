@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Spine.Unity;
+using Unity.Burst;
 using UnityEngine;
 
 public class DrawWeapon : GenericSingleton<DrawWeapon>
@@ -231,8 +232,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         var lastLine = lineRenderers[lineRenderers.Count - 1];
         lineRenderers.RemoveAt(lineRenderers.Count - 1);
         // 게임 오브젝트 삭제
-        if (lastLine != null)
-            Destroy(lastLine.gameObject);
+        if (lastLine != null) Destroy(lastLine.gameObject);
     }
 
     private void InitLine()

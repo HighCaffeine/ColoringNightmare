@@ -13,6 +13,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private float detectInterval = 0.1f;
     private float detectTimer = 0f;
     private bool isDashing = false;
+    private bool hasAttackToken = false;
 
     [Header("Lunge Settings")]
     [SerializeField] private float lungeDistance = 1.2f; // 돌진 거리
@@ -37,6 +38,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         if (data == null)
         {
             return;
+        }
+
+        if (hasAttackToken)
+        {
+            MonsterManager.Instance.ReturnAttackToken();
+            hasAttackToken = false;
         }
 
         // DetectMonster는 Spine을 사용하므로 isSpine을 강제로 true로 설정
@@ -71,18 +78,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     private void FixedUpdate()
     {
-        if (isDead)
+        if (isDead || isDashing)
         {
-            rigid.linearVelocity = Vector2.zero;
+            if (isDead) rigid.linearVelocity = Vector2.zero;
             return;
         }
 
-        if (isDashing)
-        {
-            return;
-        }
-
-        // 플레이어 감지
         detectTimer += Time.fixedDeltaTime;
         if (detectTimer >= detectInterval)
         {
@@ -92,25 +93,59 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
         if (targetPlayer != null)
         {
+            // 1. 플레이어 발견: 추격 및 공격 시도
             ChaseAndAttackPlayer();
         }
         else if (lastKnownPosition != null)
         {
-            MoveToLastKnownPosition();
+            // 2. 플레이어 놓침: 마지막 위치로 이동
+            SetSpineAnimation(ANIM_MOVE, true);
+            Vector2 dir = (lastKnownPosition.Value - (Vector2)transform.position).normalized;
+            MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
+
+            if (Vector2.Distance(transform.position, lastKnownPosition.Value) < 0.1f)
+            {
+                lastKnownPosition = null;
+            }
         }
         else
         {
-            DefaultWallMonsterBehavior();
+            // 3. 타겟 없음: 순찰
+            base.Move(Vector2.right);
         }
     }
 
     private void ChaseAndAttackPlayer()
     {
-        SetSpineAnimation(ANIM_MOVE, true);
+        float distance = Vector2.Distance(transform.position, targetPlayer.position);
 
-        // 플레이어 감지 즉시 돌진 공격
-        StopMove();
-        Attack();
+        if (distance <= monsterData.AttackRange)
+        {
+            if (!hasAttackToken)
+            {
+                if (MonsterManager.Instance.TryRequestAttackToken())
+                {
+                    StopMove();
+                    hasAttackToken = true;
+                    ChangeState(StateType.Attack);
+                }
+                else
+                {
+                    DefaultWallMonsterBehavior();
+                }
+            }
+            else
+            {
+                StopMove();
+                ChangeState(StateType.Attack);
+            }
+        }
+        else
+        {
+            SetSpineAnimation(ANIM_MOVE, true);
+            Vector2 dir = (targetPlayer.position - transform.position).normalized;
+            MoveCharacter(MonsterManager.Instance.GetAreaBound(), dir, null);
+        }
     }
 
     private void MoveToLastKnownPosition()
@@ -168,6 +203,20 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         Dead();
     }
 
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (isDead || !hasAttackToken) return;
+
+        if (other.CompareTag("Player1"))
+        {
+            PlayerController player = other.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.TakeDamage(monsterData.dmg);
+            }
+        }
+    }
+
     private void DetectPlayer()
     {
         if (MonsterManager.Instance.IsPlayerDead())
@@ -203,6 +252,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     protected override void Attack()
     {
         if (isDashing || MonsterManager.Instance.IsPlayerDead()) return;
+
+        if (!hasAttackToken)
+        {
+            ChangeState(StateType.Idle);
+            return;
+        }
 
         Vector2 targetPosition;
         if (targetPlayer != null)
@@ -262,7 +317,14 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
         rigid.MovePosition(startPos);
 
+
         yield return new WaitForSeconds(info.attackDelay);
+
+        if (hasAttackToken)
+        {
+            MonsterManager.Instance.ReturnAttackToken();
+            hasAttackToken = false;
+        }
 
         SetSpineAnimation(ANIM_MOVE, true);
         isDashing = false;
@@ -287,6 +349,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     protected override void Dead()
     {
         base.Dead();
+        if (hasAttackToken)
+        {
+            MonsterManager.Instance.ReturnAttackToken();
+            hasAttackToken = false;
+        }
+
         OnReturnPoolEvent?.Invoke(this);
     }
 }

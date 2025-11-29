@@ -59,9 +59,9 @@ public class WeaponDragController : MonoBehaviour
     {
         if (!isAllowWeaponControl || weaponObj == null) return;
 
-        weaponObj.transform.position = DrawWeapon.Instance.GetMousePos();
+        weaponObj.transform.position = DrawWeaponGPU.Instance.GetMousePos();
 
-        if (targetArea.GetBounds().Contains(DrawWeapon.Instance.GetMousePos()))
+        if (targetArea.GetBounds().Contains(DrawWeaponGPU.Instance.GetMousePos()))
         {
             OnAreaEnter?.Invoke();
         }
@@ -75,7 +75,7 @@ public class WeaponDragController : MonoBehaviour
     {
         if (!isAllowWeaponControl || weaponObj == null) return;
 
-        if (targetArea.GetBounds().Contains(DrawWeapon.Instance.GetMousePos()))
+        if (targetArea.GetBounds().Contains(DrawWeaponGPU.Instance.GetMousePos()))
         {
             if (targetWeaponController != null)
             {

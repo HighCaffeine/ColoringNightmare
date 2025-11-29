@@ -47,7 +47,7 @@ public class WeaponPatternSelector : MonoBehaviour
             checkDesign?.gameObject.SetActive(false);
         }
 
-        DrawWeapon.Instance.SetRefSprite(null);
+        DrawWeaponGPU.Instance.SetRefSprite(null);
     }
 
     public void SetSword() { SelectWeaponDesign(Design.Sword); }
@@ -59,18 +59,18 @@ public class WeaponPatternSelector : MonoBehaviour
         if (selectedDesign == design) return;
 
         selectedDesign = design;
-        DrawWeapon.Instance.SetRefSprite(patterns[Devcat.ValueCastTo<int>.From(selectedDesign)]);
+        DrawWeaponGPU.Instance.SetRefSprite(patterns[Devcat.ValueCastTo<int>.From(selectedDesign)]);
 
         switch (design)
         {
             case Design.Sword:
-                DrawWeapon.Instance.SetWeaponType(WeaponManager.WeaponType.Sword);
+                DrawWeaponGPU.Instance.SetWeaponType(WeaponManager.WeaponType.Sword);
                 break;
             case Design.Spear:
-                DrawWeapon.Instance.SetWeaponType(WeaponManager.WeaponType.Spear);
+                DrawWeaponGPU.Instance.SetWeaponType(WeaponManager.WeaponType.Spear);
                 break;
             case Design.Axe:
-                DrawWeapon.Instance.SetWeaponType(WeaponManager.WeaponType.Axe);
+                DrawWeaponGPU.Instance.SetWeaponType(WeaponManager.WeaponType.Axe);
                 break;
         }
 

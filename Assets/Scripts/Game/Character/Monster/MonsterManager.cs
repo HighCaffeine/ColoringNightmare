@@ -46,6 +46,10 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     private ObjectPooling<MonsterManager, WallMonsterBaseController<MonsterData>> bearElitePool;
     private ObjectPooling<MonsterManager, BossMonsterController> bossPool;
 
+    [Tooltip("동시에 공격할 수 있는 최대 몬스터 수")]
+    [SerializeField] private int maxSimultaneousAttackers = 2;
+    private int currentAttackerCount = 0;
+
     public Bounds GetAreaBound() => monsterMoveArea.GetBounds();
 
     protected new void Awake()
@@ -267,5 +271,19 @@ public class MonsterManager : GenericSingleton<MonsterManager>
                 spriteRenderer.sortingOrder = newSortingOrder;
             }
         }
+    }
+
+    public bool TryRequestAttackToken()
+    {
+        if (currentAttackerCount < maxSimultaneousAttackers)
+        {
+            currentAttackerCount++;
+            return true;
+        }
+        return false;
+    }
+    public void ReturnAttackToken()
+    {
+        currentAttackerCount = Mathf.Max(0, currentAttackerCount - 1);
     }
 }
