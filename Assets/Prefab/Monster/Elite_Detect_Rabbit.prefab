@@ -56,10 +56,13 @@ MonoBehaviour:
   currentHP: 0
   skeleton: {fileID: 4671002383171002143}
   ani: {fileID: 0}
-  lungeDistance: 3
+  lungeDistance: 1
   lungeDuration: 0.15
   lungePause: 0.1
   returnDuration: 0.25
+  warningPrefab: {fileID: 5152362679918131031, guid: 6b8d4b0ddcb08984fba0580f8b4c0138, type: 3}
+  warningDuration: 0.5
+  warningWidth: 1
 --- !u!50 &2057853944286687935
 Rigidbody2D:
   serializedVersion: 5

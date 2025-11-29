@@ -18,8 +18,11 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     private float damageCooldown = 1.0f;
     private float lastDamageTime = -1.0f;
 
+    protected bool isSelfDestruct = false;
+
     public virtual void Setup(T data)
     {
+        isSelfDestruct = false;
         if (!data.isSpine)
         {
             if (spriteRenderer != null)
@@ -132,6 +135,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     private IEnumerator SelfDestructCoroutine(float delay)
     {
         yield return new WaitForSeconds(delay);
+        isSelfDestruct = false;
         if (ani != null) ani.SetTrigger("Explode");
         MonsterManager.Instance.SubWorldHpEvent();
         ChangeState(StateType.Dead);
@@ -157,7 +161,10 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     protected override void Dead()
     {
         base.Dead();
-        MonsterManager.Instance.NotifyMonsterDeath(this, monsterData);
+        if (!isSelfDestruct)
+        {
+            MonsterManager.Instance.NotifyMonsterDeath(this, monsterData);
+        }
         OnReturnPoolEvent?.Invoke(this);
     }
 

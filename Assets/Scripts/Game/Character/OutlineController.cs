@@ -8,7 +8,7 @@ public class OutlineController : MonoBehaviour
     private Material instancedMaterial;
     private bool isOutlineActive;
 
-    [Header("아웃라인 머티리얼")]
+    [Header("아웃라인 마테리얼")]
     [SerializeField] private Material outlineMaterialBase;
 
     [Header("아웃라인 설정")]
@@ -33,7 +33,6 @@ public class OutlineController : MonoBehaviour
 
         instancedMaterial = new Material(outlineMaterialBase);
 
-        // --- 아웃라인 오브젝트 생성 ---
         GameObject outlineObj = new GameObject("OutlineEffect");
         outlineObj.transform.SetParent(this.transform);
         outlineObj.transform.localPosition = Vector3.zero;

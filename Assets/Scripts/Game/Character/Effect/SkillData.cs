@@ -14,9 +14,8 @@ public class SkillData : ScriptableObject
     [Header("필요 시 지정")] public float skillDuration = 0f;
 
     [Header("시각 효과 매핑")]
-    public EffectVisualData visualData; // 첫 번째 또는 일반 공격용 이펙트
+    public EffectVisualData visualData;
 
-    // --- [노노] 관통형 투사체 설정 ---
     [Serializable]
     public class ProjectileParams
     {
@@ -31,7 +30,6 @@ public class SkillData : ScriptableObject
     }
     public ProjectileParams projectileParams = new ProjectileParams();
 
-    // --- [파파] 둔화 상태 이상 설정 ---
     [Serializable]
     public class StatusEffectParams
     {
@@ -42,7 +40,6 @@ public class SkillData : ScriptableObject
     }
     public StatusEffectParams statusEffectParams = new StatusEffectParams();
 
-    // --- [빨빨] 2연속 공격 설정 ---
     [Header("[빨빨] 2연속 공격 설정")]
     [Tooltip("첫 번째 공격 후 두 번째 공격까지의 시간차")]
     public float doubleHitDelay = 0.1f;

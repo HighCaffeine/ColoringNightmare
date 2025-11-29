@@ -75,6 +75,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3926cafa1ccfa9f4fa5ea34b0c1bb121
+    m_Address: Boss_Test_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c4d2c41be4af094eaa3b73bf7d215ed
     m_Address: Test_WaveData1
     m_ReadOnly: 0

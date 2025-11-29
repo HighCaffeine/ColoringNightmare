@@ -16,8 +16,8 @@ public enum WarningFillType
 [ExecuteAlways]
 public class WarningArea : MonoBehaviour
 {
-    [SerializeField] private Transform fillSprite;
-    [SerializeField] private Transform backgroundSprite;
+    [SerializeField] private SpriteRenderer fillSprite;
+    [SerializeField] private SpriteRenderer backgroundSprite;
 
     [Header("Settings")]
     [Tooltip("기본 채우기 방식")]
@@ -26,17 +26,22 @@ public class WarningArea : MonoBehaviour
     [Tooltip("애니메이션 속도 그래프 (기본: Linear / 추천: Ease In Out)")]
     [SerializeField] private AnimationCurve fillCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
+    [SerializeField] private Sprite areaShape;
+
     private void Awake()
     {
         if (fillSprite != null)
         {
-            fillSprite.localScale = Vector3.zero;
+            fillSprite.transform.localScale = Vector3.zero;
         }
     }
 
     public void Setup(float duration, WarningFillType fillType)
     {
-        if (fillSprite == null) return;
+        if (fillSprite == null || areaShape == null) return;
+        fillSprite.sprite = areaShape;
+        backgroundSprite.sprite = areaShape;
+
         StartCoroutine(FillRoutine(duration, fillType));
     }
 
@@ -116,7 +121,7 @@ public class WarningArea : MonoBehaviour
                 break;
         }
 
-        fillSprite.localScale = newScale;
-        fillSprite.localPosition = newPos;
+        fillSprite.transform.localScale = newScale;
+        fillSprite.transform.localPosition = newPos;
     }
 }

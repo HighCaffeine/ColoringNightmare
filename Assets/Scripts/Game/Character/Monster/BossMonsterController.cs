@@ -12,7 +12,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     [SerializeField] private AreaData p2Area; // 세로 패턴 구역 (가로 범위)
     [SerializeField] private AreaData p3Area; // 가로 패턴 구역 (세로 범위)
 
-    // [★신규★] 패턴에 사용할 프리팹 및 이펙트 연결
     [Header("Pattern Assets")]
     [Tooltip("사각형 경고 장판 (P2, P3용)")]
     [SerializeField] private GameObject warningBoxPrefab;
@@ -126,23 +125,19 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         SetSpineAnimation(ANIM_IDLE, true);
     }
 
-    // --- P1: 몬스터 소환 (원형 범위) ---
     private IEnumerator Pattern1_Summon()
     {
         SetSpineAnimation(ANIM_CAST, false);
         yield return new WaitForSeconds(bossData.castingDuration);
 
-        // 1. 위치 선정 및 예고
         Vector2 spawnPos = GetRandomPosInArea(p1Area);
 
-        // [★수정★] 원형(Circle) 프리팹 사용
         GameObject warning = Instantiate(warningCirclePrefab, spawnPos, Quaternion.identity);
-        warning.transform.localScale = Vector3.one * 3.0f; // 크기 조절
+        warning.transform.localScale = Vector3.one * 3.0f;
 
         WarningArea warningScript = warning.GetComponent<WarningArea>();
         if (warningScript != null)
         {
-            // 중앙에서 퍼지도록 설정
             warningScript.Setup(bossData.warningDuration, WarningFillType.CenterExpand);
         }
 
@@ -150,7 +145,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
         yield return new WaitForSeconds(bossData.warningDuration);
 
-        // 2. 공 낙하 연출
+        // 공 낙하
         if (p1BallPrefab != null)
         {
             Vector2 startPos = spawnPos + Vector2.up * 10f;
@@ -167,10 +162,9 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
             Destroy(ball);
         }
 
-        // 3. 폭발 및 데미지
+        // 폭발
         if (effectController != null && bossData.p1ExplosionEffect != null)
         {
-            // EffectController에 3번째 인자(isFacingLeft)는 false(오른쪽)으로 가정
             effectController.PlayHitEffectAt(spawnPos, bossData.p1ExplosionEffect, false);
         }
 
