@@ -1,53 +1,55 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UI;
-
-public enum PatternGrade { Normal, Rare, Epic, Legendary };
 
 public enum Design { Sword, Spear, Axe, Count }
 
-public class WeaponPatternSelector : MonoBehaviour
+[System.Serializable]
+public struct DesignPatternGroup
 {
-    [SerializeField] private SpriteRenderer[] patterns;
+    public Design type;
+    [Tooltip("이 타입에 해당하는 3개의 도안을 넣으세요")]
+    public List<SpriteRenderer> patterns;
+}
+
+public class WeaponPatternSelector : GenericSingleton<WeaponPatternSelector>
+{
+    [Header("Pattern Configuration")]
+    [SerializeField] private List<DesignPatternGroup> designPatterns;
 
     [SerializeField] private GameObject patternSelectionPanel;
     [SerializeField] private List<GameObject> checkDesigns;
 
     private Design selectedDesign = Design.Count;
+    private SpriteRenderer currentActivePattern; // 현재 활성화된 랜덤 도안
 
-    void Awake()
+    private new void Awake()
     {
+        base.Awake();
         Init();
         ClosePatternSelector();
     }
 
-    public void OpenPatternSelector()
-    {
-        patternSelectionPanel.SetActive(true);
-
-        Init();
-    }
-
-    public void ClosePatternSelector()
-    {
-        patternSelectionPanel.SetActive(false);
-    }
+    public void OpenPatternSelector() { patternSelectionPanel.SetActive(true); Init(); }
+    public void ClosePatternSelector() { patternSelectionPanel.SetActive(false); }
 
     public void Init()
     {
         selectedDesign = Design.Count;
+        currentActivePattern = null;
 
-        foreach (var patternRenderer in patterns)
+        foreach (var group in designPatterns)
         {
-            patternRenderer?.gameObject.SetActive(false);
+            if (group.patterns != null)
+            {
+                foreach (var p in group.patterns)
+                {
+                    if (p != null) p.gameObject.SetActive(false);
+                }
+            }
         }
 
-        foreach (var checkDesign in checkDesigns)
-        {
-            checkDesign?.gameObject.SetActive(false);
-        }
-
-        DrawWeaponGPU.Instance.SetRefSprite(null);
+        foreach (var c in checkDesigns) c?.gameObject.SetActive(false);
+        DrawWeapon.Instance.SetRefSprite(null);
     }
 
     public void SetSword() { SelectWeaponDesign(Design.Sword); }
@@ -58,29 +60,46 @@ public class WeaponPatternSelector : MonoBehaviour
     {
         if (selectedDesign == design) return;
 
-        selectedDesign = design;
-        DrawWeaponGPU.Instance.SetRefSprite(patterns[Devcat.ValueCastTo<int>.From(selectedDesign)]);
-
-        switch (design)
+        if (currentActivePattern != null)
         {
-            case Design.Sword:
-                DrawWeaponGPU.Instance.SetWeaponType(WeaponManager.WeaponType.Sword);
-                break;
-            case Design.Spear:
-                DrawWeaponGPU.Instance.SetWeaponType(WeaponManager.WeaponType.Spear);
-                break;
-            case Design.Axe:
-                DrawWeaponGPU.Instance.SetWeaponType(WeaponManager.WeaponType.Axe);
-                break;
+            currentActivePattern.gameObject.SetActive(false);
+            currentActivePattern = null;
         }
 
-        patterns[Devcat.ValueCastTo<int>.From(selectedDesign)].gameObject.SetActive(true);
+        if ((int)selectedDesign >= 0 && (int)selectedDesign < checkDesigns.Count)
+        {
+            checkDesigns[(int)selectedDesign].gameObject.SetActive(false);
+        }
 
-        WolfWorkStation.Instance.SetSketchType();
-        WolfWorkStation.Instance.Interactive();
+        selectedDesign = design;
 
+        DesignPatternGroup group = designPatterns.Find(x => x.type == design);
+        if (group.patterns != null && group.patterns.Count > 0)
+        {
+            int randomIndex = Random.Range(0, group.patterns.Count);
+            currentActivePattern = group.patterns[randomIndex];
 
+            if (currentActivePattern != null)
+            {
+                currentActivePattern.gameObject.SetActive(true);
+                DrawWeapon.Instance.SetRefSprite(currentActivePattern);
+            }
+        }
 
-        Invoke(nameof(ClosePatternSelector), 0.5f);
+        int index = (int)selectedDesign;
+        if (index >= 0 && index < checkDesigns.Count)
+        {
+            checkDesigns[index].gameObject.SetActive(true);
+        }
+    }
+
+    public WeaponManager.WeaponType GetSelectedWeaponType()
+    {
+        switch (selectedDesign)
+        {
+            case Design.Spear: return WeaponManager.WeaponType.Spear;
+            case Design.Axe: return WeaponManager.WeaponType.Axe;
+            default: return WeaponManager.WeaponType.Sword;
+        }
     }
 }

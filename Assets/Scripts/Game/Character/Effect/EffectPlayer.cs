@@ -76,11 +76,11 @@ public class EffectPlayer : MonoBehaviour
             if (monster != null)
             {
                 alreadyHit.Add(other);
-                monster.TakeDamage(skillData.baseDamage, skillData.hitEffectVisualData);
-
+                EffectVisualData hitEffect = (inkData != null) ? inkData.GetVisualData(WeaponManager.WeaponType.Sword).hitEffect : null;
+                monster.TakeDamage(skillData.baseDamage, hitEffect);
                 if (inkData != null && inkData.passiveEffect != null && inkData.passiveEffect.effectType == PassiveEffectData.EffectType.Slow)
                 {
-                    monster.ApplyStatusEffect(new SlowEffect(inkData.passiveEffect.effectValue1, inkData.passiveEffect.effectValue2));
+                    monster.ApplyStatusEffect(new SlowEffect(inkData.passiveEffect.effectValue1, inkData.passiveEffect.effectValue2, inkData.passiveEffect.statusColorType));
                 }
             }
         }

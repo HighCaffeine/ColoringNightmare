@@ -210,6 +210,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 971b237b8cfeb9e40b9cbeb270130eda
+    m_Address: Assets/ScriptableObject/Weapon/Sword/0.Black.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 97cf70a31b83c064cb87ada167aa9236
     m_Address: Assets/ScriptableObject/Weapon/WeaponInkData/2.Yellow_Weapon.asset
     m_ReadOnly: 0

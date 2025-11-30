@@ -88,6 +88,12 @@ public class Character : MonoBehaviour
         TakeDamage(amount, null);
     }
 
+    public void Heal(int amount)
+    {
+        currentHP += amount;
+        if (currentHP > info.maxHp) currentHP = info.maxHp;
+    }
+
     public virtual void TakeDamage(int amount, EffectVisualData hitEffect)
     {
         if (isDamageImmune || isDead) return;

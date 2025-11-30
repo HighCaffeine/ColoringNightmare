@@ -1,11 +1,6 @@
 using Spine.Unity;
 using UnityEngine;
 
-public enum SwitchMode
-{
-    Calibrate, Skeleton,
-}
-
 [ExecuteAlways]
 public class MonsterColorChanger : MonoBehaviour
 {
@@ -14,100 +9,62 @@ public class MonsterColorChanger : MonoBehaviour
     [SerializeField, Range(0, 1)] private float brightness = 1f;
 
     [SerializeField] private SkeletonAnimation skeleton;
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private ColorMixer.ColorType defaultColor = ColorMixer.ColorType.White;
 
-    [SerializeField] private SpriteRenderer spriteRenderer;
-
-    [Space(5f)]
-    [Header("Calibrate Color")]
-    [SerializeField] private Color calibratedColor;
-    [SerializeField] private SwitchMode validateMode = SwitchMode.Skeleton;
-
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (skeleton == null || skeleton.skeleton == null) return;
-        SetColor();
-    }
-#endif
-    public void TestDeadEvent()
-    {
-        baseColorType = ColorMixer.ColorType.DarkRed;
-        SetColor();
-    }
-
-    public void ReviveEvent()
-    {
-        baseColorType = ColorMixer.ColorType.Black;
-        SetColor();
-    }
+    private ColorMixer.ColorType currentStatusColor = ColorMixer.ColorType.None;
 
     public void SetColorEnum(ColorMixer.ColorType colorType)
     {
         this.baseColorType = colorType;
-        if (spriteRenderer != null)
-        {
-            NoneSpine();
-        }
-        else
-        {
-            SetColor();
-        }
+        UpdateColor();
+    }
+
+    public void SetStatusColor(ColorMixer.ColorType colorType)
+    {
+        currentStatusColor = colorType;
+        UpdateColor();
+    }
+
+    public void RemoveStatusColor()
+    {
+        currentStatusColor = ColorMixer.ColorType.None;
+        UpdateColor();
+    }
+
+    private void UpdateColor()
+    {
+        if (spriteRenderer != null) NoneSpine();
+        else SetColor();
+    }
+
+    private Color GetTargetColor()
+    {
+        ColorMixer.ColorType targetType = (currentStatusColor != ColorMixer.ColorType.None)
+                                        ? currentStatusColor
+                                        : baseColorType;
+
+        if (targetType == ColorMixer.ColorType.Black) targetType = defaultColor;
+
+        ColorMixer.HSV hsv = ColorMixer.Instance.GetHSV(targetType);
+        return Color.HSVToRGB(hsv.h, hsv.s * saturation, hsv.v * brightness);
     }
 
     private void NoneSpine()
     {
-        ColorMixer.HSV baseHsv;
-        if (baseColorType == ColorMixer.ColorType.Black)
-        {
-            baseHsv = ColorMixer.Instance.GetHSV(defaultColor);
-        }
-        else
-        {
-            baseHsv = ColorMixer.Instance.GetHSV(baseColorType);
-        }
-        float finalH = baseHsv.h;
-        float finalS = baseHsv.s * saturation;
-        float finalV = baseHsv.v * brightness;
-
-        // if (baseColorType == ColorMixer.ColorType.White)
-        // {
-        //     spriteRenderer.color.a = 1.5f;
-        // }
-
-        Color newColor = Color.HSVToRGB(finalH, finalS, finalV);
-        spriteRenderer.color = newColor;
+        spriteRenderer.color = GetTargetColor();
     }
 
     private void SetColor()
     {
         if (skeleton == null || skeleton.skeleton == null) return;
-        ColorMixer.HSV baseHsv;
 
-        if (baseColorType == ColorMixer.ColorType.Black)
-        {
-            baseHsv = ColorMixer.Instance.GetHSV(defaultColor);
-        }
-        else
-        {
-            baseHsv = ColorMixer.Instance.GetHSV(baseColorType);
-        }
-
-        float finalH = baseHsv.h;
-        float finalS = baseHsv.s * saturation;
-        float finalV = baseHsv.v * brightness;
-        skeleton.skeleton.A = 1.0f;
-
-        if (baseColorType == ColorMixer.ColorType.White)
-        {
-            skeleton.skeleton.A = 1.5f;
-        }
-
-        Color newColor = Color.HSVToRGB(finalH, finalS, finalV);
+        Color newColor = GetTargetColor();
 
         skeleton.skeleton.R = newColor.r;
         skeleton.skeleton.G = newColor.g;
         skeleton.skeleton.B = newColor.b;
+        skeleton.skeleton.A = (baseColorType == ColorMixer.ColorType.White) ? 1.5f : 1.0f;
     }
 }

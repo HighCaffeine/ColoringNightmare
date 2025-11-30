@@ -3,34 +3,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DoubleHitSkill", menuName = "Skill/DoubleHitSkill")]
 public class DoubleHitSkill : BaseSkillLogic
 {
-    [Header("2연타 전용 설정")]
-    [Tooltip("2연타 공격의 두 번째 타격에 사용할 시각 효과")]
-    public EffectVisualData secondHitVisualData;
-
-    [Tooltip("히트박스 활성화 시간")]
-    public float hitboxDuration = 0.15f;
-
     private int hitCount = 0;
 
-    public override void ActivateSkill(SkillController controller, Character character)
+    public override void ActivateSkill(SkillController controller, Character character, Weapon weapon)
     {
         hitCount = 0;
     }
-
-    public override void OnAnimationHit(SkillController controller)
+    public override void OnAnimationHit(SkillController controller, Weapon weapon)
     {
-        if (hitCount == 0)
+        if (hitCount == 0 && weapon != null)
         {
-            controller.PlayVisualEffect(visualData, this);
+            controller.PlayVisualEffect(weapon.GetAttackEffect(), this);
             controller.GetWeaponController()?.SubDurability();
         }
-        else
-        {
-            var effectToPlay = secondHitVisualData != null ? secondHitVisualData : visualData;
-            controller.PlayVisualEffect(effectToPlay, this);
-            controller.GetWeaponController()?.SubDurability();
-        }
-
+        controller.EnableHitbox();
         hitCount++;
     }
 }

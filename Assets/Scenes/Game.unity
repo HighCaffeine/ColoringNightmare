@@ -2013,7 +2013,7 @@ SpriteRenderer:
   m_Size: {x: 6.2, y: 6.54}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &177538855 stripped
@@ -4457,6 +4457,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   weaponPivot: {fileID: 319180209}
   skeletonAni: {fileID: 319180220}
+  player: {fileID: 0}
   skillController: {fileID: 319180213}
   spineTest: {fileID: 319180217}
 --- !u!114 &319180216
@@ -4894,10 +4895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ae240b4024bb2e4081011c681cca815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patterns:
-  - {fileID: 1823467083}
-  - {fileID: 459300657}
-  - {fileID: 445510905}
+  designPatterns: []
   patternSelectionPanel: {fileID: 329578052}
   checkDesigns:
   - {fileID: 17247149}
@@ -7282,7 +7280,7 @@ SpriteRenderer:
   m_Size: {x: 1.88, y: 3.94}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &455327770
@@ -7448,7 +7446,7 @@ SpriteRenderer:
   m_Size: {x: 1.2, y: 4.27}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &462089337
@@ -17143,6 +17141,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   weaponPivot: {fileID: 1206501478}
   skeletonAni: {fileID: 1206501475}
+  player: {fileID: 0}
   skillController: {fileID: 0}
   spineTest: {fileID: 0}
 --- !u!114 &1206501472
@@ -22285,6 +22284,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   weaponPivot: {fileID: 825676002}
   skeletonAni: {fileID: 0}
+  player: {fileID: 0}
   skillController: {fileID: 0}
   spineTest: {fileID: 0}
 --- !u!114 &1590202361
@@ -26568,6 +26568,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   weaponPivot: {fileID: 1814418392}
   skeletonAni: {fileID: 1814418403}
+  player: {fileID: 0}
   skillController: {fileID: 1814418396}
   spineTest: {fileID: 1814418400}
 --- !u!114 &1814418399
@@ -27099,7 +27100,7 @@ SpriteRenderer:
   m_Size: {x: 1.87, y: 3.85}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!224 &1834638085 stripped
@@ -32922,7 +32923,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8633160163332350454}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 463931c68ea42a141bdb6b23972c722c, type: 3}
   m_Name: 
@@ -34811,7 +34812,7 @@ MonoBehaviour:
   p2CymbalPrefab: {fileID: 5051101873344556629, guid: 1c170b5f6ddc1c943aa7adb39075c33a, type: 3}
   p3BoxPrefab: {fileID: 5051101873344556629, guid: 1c170b5f6ddc1c943aa7adb39075c33a, type: 3}
   p3FistPrefab: {fileID: 5051101873344556629, guid: 1c170b5f6ddc1c943aa7adb39075c33a, type: 3}
-  invincibleHitEffect: {fileID: 0}
+  invincibleHitEffect: {fileID: 11400000, guid: f54a9b0c203966340a92d768e3c54f82, type: 2}
 --- !u!114 &9003938266784944479
 MonoBehaviour:
   m_ObjectHideFlags: 0

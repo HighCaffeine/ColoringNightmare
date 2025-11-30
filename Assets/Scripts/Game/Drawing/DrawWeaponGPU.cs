@@ -157,8 +157,6 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
             {
                 checkTimer = 0f;
                 RequestRealtimeSimilarity();
-
-                Debug.Log($"Dice Score : {currentDiceScore}");
             }
         }
     }
@@ -310,9 +308,6 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
     }
 
     // 비동기 유사도 체크 함수
-    //TODO
-    //isrefcached 체크해봐야 할 거 같음 async 요청이 안됨
-
     private void RequestRealtimeSimilarity()
     {
         if (!isRefCached || refSprite == null)
@@ -474,7 +469,7 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
 
     private void SpawnDrawObj()
     {
-        // 월드 경계값 계산 - 선 굵기, padding 값
+        // 월드 경계값 계산
         Bounds b = CalculateBound(points, lineWidth);
         float padUnits = paddingPixels / (float)pixelPerUnit;
         b.Expand(new Vector3(padUnits * 2.0f, padUnits * 2.0f, 0.0f));
@@ -483,42 +478,50 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
         int textureW = Mathf.Clamp(Mathf.CeilToInt(b.size.x * pixelPerUnit), TextureMinSize, TextureMaxSize);
         int textureH = Mathf.Clamp(Mathf.CeilToInt(b.size.y * pixelPerUnit), TextureMinSize, TextureMaxSize);
 
-        // Texture2D로 변경
-        Texture2D texture = RenderDrawingToTexture(lineRenderers, b, textureW, textureH);
+        // Texture2D 생성 (RenderTexture 활용)
+        var render = RenderTexture.GetTemporary(textureW, textureH, 0, RenderTextureFormat.ARGB32);
+        render.wrapMode = TextureWrapMode.Clamp;
+        render.filterMode = FilterMode.Bilinear;
+
+        targetCamera.targetTexture = render;
+        targetCamera.orthographicSize = b.size.y * 0.5f;
+        targetCamera.aspect = (float)textureW / textureH;
+        targetCamera.transform.position = new Vector3(b.center.x, b.center.y, -10f);
+        targetCamera.transform.rotation = Quaternion.identity;
+        targetCamera.Render();
+
+        RenderTexture prev = RenderTexture.active;
+        RenderTexture.active = render;
+
+        var texture = new Texture2D(textureW, textureH, TextureFormat.ARGB32, false);
+        texture.ReadPixels(new Rect(0.0f, 0.0f, textureW, textureH), 0, 0, false);
+        texture.Apply();
+
+        RenderTexture.active = prev;
+        targetCamera.targetTexture = null;
+        RenderTexture.ReleaseTemporary(render);
 
         // Sprite 생성
         Rect r = new Rect(0, 0, textureW, textureH);
 
-        // world -> pixel scale : (texture 픽 수) / (b.size in world units)
-        // b.size.x 이 0 이 되는 극단 상황 방지
+        // world -> pixel scale
         float worldToPixelX = (b.size.x > 0.0001f) ? (textureW / b.size.x) : pixelPerUnit;
         float worldToPixelY = (b.size.y > 0.0001f) ? (textureH / b.size.y) : pixelPerUnit;
 
-        // ref pivot 의 월드 위치 (SpriteRenderer.transform.position은 Sprite의 pivot 위치임)
+        // Pivot 계산
         Vector3 refPivotWorld = refSprite.transform.position;
-
-        // 텍스처에서의 왼쪽하단 월드 좌표 = b.center - 0.5 * b.size
         Vector2 textureWorldMin = new Vector2(b.center.x - b.size.x * 0.5f, b.center.y - b.size.y * 0.5f);
-
-        // ref pivot이 텍스처 내 어느 픽셀에 대응하는지 계산
         float pivotPixelX = (refPivotWorld.x - textureWorldMin.x) * worldToPixelX;
         float pivotPixelY = (refPivotWorld.y - textureWorldMin.y) * worldToPixelY;
-
-        // 정규화
-        float normPX = Mathf.Clamp01(pivotPixelX / (float)textureW);
-        float normPY = Mathf.Clamp01(pivotPixelY / (float)textureH);
-        Vector2 normalizedPivot = new Vector2(normPX, normPY);
+        Vector2 normalizedPivot = new Vector2(Mathf.Clamp01(pivotPixelX / (float)textureW), Mathf.Clamp01(pivotPixelY / (float)textureH));
 
         var s = Sprite.Create(texture, r, normalizedPivot, pixelPerUnit, 0, SpriteMeshType.Tight);
 
         // 오브젝트화
         var obj = new GameObject("DrawedObject");
         var spriteRender = obj.AddComponent<SpriteRenderer>();
-        var weapon = obj.AddComponent<Weapon>();
-        obj.tag = "Weapon";
-
-        spriteRender.sortingOrder = 100;
         spriteRender.sprite = s;
+        spriteRender.sortingOrder = 100;
         obj.transform.position = refPivotWorld;
 
         // Physics 적용
@@ -526,18 +529,19 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
         rigid.gravityScale = 0.0f;
 
         AddEdgeCollider(obj, points);
-        obj.transform.localScale = Vector3.one;
+        obj.transform.localScale = Vector3.one; // 초기 스케일 1
 
-        if (weapon != null)
-        {
-            weapon.relativeScaleRatio = ratioFromSketchBook;
-        }
-        // 잉크 데이터 셋업
+        // Weapon 컴포넌트 추가 및 데이터 설정
+        var weapon = obj.AddComponent<Weapon>();
+        obj.tag = "Weapon";
+        weapon.relativeScaleRatio = ratioFromSketchBook; // 배율 저장
+
+        // --- [잉크 및 무기 데이터 셋업] ---
         WeaponInkData weaponDataAsset = weaponInkDataList.Find(data => data.inkData.color == colorType);
 
         if (weaponDataAsset != null)
         {
-            // ColorMixer에서 조합에 사용된 두 색상을 가져옴
+            // ColorMixer에서 조합된 색상 가져옴
             ColorMixer.ColorType c1 = ColorMixer.Instance.GetLastMixedColor1();
             ColorMixer.ColorType c2 = ColorMixer.Instance.GetLastMixedColor2();
 
@@ -546,23 +550,30 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
 
             if (runtimeInkData.skillLogic == null)
             {
-                Debug.LogWarning($"'{colorType}' 색상의 스킬 데이터가 없음. 기본 무기 데이터로 대체");
-                runtimeSkillLogic = defaultWeaponData.skillLogic;
+                if (defaultWeaponData != null && defaultWeaponData.skillLogic != null)
+                {
+                    runtimeSkillLogic = Instantiate(defaultWeaponData.skillLogic);
+                }
+                else
+                {
+                    runtimeSkillLogic = null;
+                    Debug.LogError("기본 무기 데이터의 스킬 로직도 없습니다.");
+                }
             }
             else
             {
                 runtimeSkillLogic = Instantiate(weaponDataAsset.skillLogic);
             }
 
-            // 스킬 로직에 색상 조합 적용
-            runtimeSkillLogic.ApplyColorModifier(c1, c2);
+            if (runtimeSkillLogic != null)
+            {
+                // 스킬 로직에 색상 조합 적용
+                runtimeSkillLogic.ApplyColorModifier(c1, c2);
+                // 잉크 데이터가 복제된 스킬 로직을 참조
+                runtimeInkData.skillLogic = runtimeSkillLogic;
+            }
 
-            // 잉크 데이터가 복제된 스킬 로직을 참조
-            runtimeInkData.skillLogic = runtimeSkillLogic;
-            runtimeInkData.weaponType = weaponType;
-
-            // Weapon에 원본 대신 복사본 설정
-            weapon.SetupInkData(runtimeInkData);
+            weapon.Initialize(runtimeInkData, this.weaponType);
 
             if (WeaponStorageController.Instance != null)
             {
@@ -573,46 +584,14 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
         {
             if (weaponDataAsset == null)
             {
-                Debug.LogError("기본 무기 데이터가 지정되지 않음. 무기를 생성할 수 없음");
+                Debug.LogError("해당 색상의 무기 데이터가 지정되지 않음. 무기를 생성할 수 없음");
             }
-            else if (weaponDataAsset.skillLogic == null)
-            {
-                Debug.LogError($"{weaponDataAsset.name}에 skillLogic이 지정되지 않음. 무기를 생성할 수 없음");
-            }
-
             Destroy(obj);
             return;
         }
 
-        // if (weaponStorage != null)
-        // {
-        //     weaponStorage.StoreWeapon(obj);
-        // }
-
+        // 색상 초기화
         colorType = ColorMixer.ColorType.None;
-    }
-
-    private Texture2D RenderDrawingToTexture(List<GameObject> lines, Bounds bounds, int width, int height)
-    {
-        var render = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
-
-        targetCamera.targetTexture = render;
-        targetCamera.orthographicSize = bounds.size.y * 0.5f;
-        targetCamera.aspect = (float)width / height;
-        targetCamera.transform.position = new Vector3(bounds.center.x, bounds.center.y, -10f);
-        targetCamera.Render();
-
-        RenderTexture prev = RenderTexture.active;
-        RenderTexture.active = render;
-
-        var evalTexture = new Texture2D(width, height, TextureFormat.ARGB32, false);
-        evalTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
-        evalTexture.Apply();
-
-        RenderTexture.active = prev;
-        RenderTexture.ReleaseTemporary(render);
-
-        return evalTexture;
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)
@@ -630,17 +609,15 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
         }
 
         float expansion = width * 0.5f;
-
-        Bounds b = new Bounds();
-        b.min = new Vector3(minX - expansion, minY - expansion, 0);
-        b.max = new Vector3(maxX + expansion, maxY + expansion, 0);
-
-        return b;
+        return new Bounds
+        {
+            min = new Vector3(minX - expansion, minY - expansion, 0),
+            max = new Vector3(maxX + expansion, maxY + expansion, 0)
+        };
     }
 
     private void AddEdgeCollider(GameObject obj, List<Vector3> points)
     {
-        // Douglas Peucker 다각형 근사화 알고리즘.
         List<Vector2> simplified = SimplifyPath(points, 0.1f);
         Vector3 origin = obj.transform.position;
         List<Vector2> localPoints = new List<Vector2>();
@@ -651,29 +628,24 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
         }
 
         var edge = obj.AddComponent<EdgeCollider2D>();
-
         edge.points = localPoints.ToArray();
         edge.isTrigger = true;
         edge.edgeRadius = lineWidth * 0.5f;
+        edge.enabled = false;
     }
 
-    // Douglas Peucker 다각형 근사화 알고리즘.
-    // 시작 점과 끝점부터 안쪽 점까지 거리를 계산 tolerance보다 크면 가능한 지점
     private List<Vector2> SimplifyPath(List<Vector3> points, float tolerance)
     {
         if (points.Count <= 2) return points.ConvertAll(p => (Vector2)p);
 
         int d = 0;
         float maxDistance = 0f;
-
         Vector2 start = points[0];
-        Vector2 end = points[points.Count - 1];
+        Vector2 end = points[^1];
 
-        // 가장 먼 점을 찾음
         for (int i = 1; i < points.Count - 1; i++)
         {
             float distance = PerpendicularDistance(points[i], start, end);
-
             if (distance > maxDistance)
             {
                 maxDistance = distance;
@@ -681,42 +653,30 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
             }
         }
 
-        // 임계값 범위내
         if (maxDistance > tolerance)
         {
-            // 시작 - 끝 지점을 구함
-            // 시작 중간 / 중간 끝 두 구역으로 나눠서 재귀 반복
             List<Vector2> results1 = SimplifyPath(points.GetRange(0, d + 1), tolerance);
             List<Vector2> results2 = SimplifyPath(points.GetRange(d, points.Count - d), tolerance);
-
-            results1.RemoveAt(results1.Count - 1);
-            results1.AddRange(results2);
-
-            return results1;
+            List<Vector2> combinedResults = new List<Vector2>();
+            combinedResults.AddRange(results1);
+            combinedResults.AddRange(results2);
+            return combinedResults;
         }
-        else // 임계값 벗어남
+        else
         {
-            // 여기 부분에 존재하는 중간 점들은 모두 제거
             return new List<Vector2> { start, end };
         }
     }
 
-    // 점과 선분 사이의 수직 거리 계산
     private float PerpendicularDistance(Vector3 point, Vector2 lineStart, Vector2 lineEnd)
     {
-        // 방향 벡터
         float dx = lineEnd.x - lineStart.x;
         float dy = lineEnd.y - lineStart.y;
         float lenSq = dx * dx + dy * dy;
-
-        // 예외처리
         if (lenSq == 0) return Vector2.Distance(point, lineStart);
 
-        // 방향 벡터랑 point에서 linestart로 향하는 벡터를 내적, 길이 제곱으로 정규화
         float t = Mathf.Clamp01(((point.x - lineStart.x) * dx + (point.y - lineStart.y) * dy) / lenSq);
-        // 실제 좌표 구함
-        Vector2 projection = lineStart + t * new Vector2(dx, dy);
-        // 거리 도출
+        Vector2 projection = new Vector2(lineStart.x + t * dx, lineStart.y + t * dy);
         return Vector2.Distance(point, projection);
     }
 }

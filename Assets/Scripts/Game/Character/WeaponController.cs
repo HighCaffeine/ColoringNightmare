@@ -8,6 +8,8 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
     private SpriteRenderer spriteRenderer;
 
+    [SerializeField] private Character player;
+
     [Header("Dependencies")]
     [SerializeField] private SkillController skillController;
     [SerializeField] private SpineTest spineTest;
@@ -68,7 +70,7 @@ public class WeaponController : MonoBehaviour
             weaponRigidBody.bodyType = RigidbodyType2D.Kinematic;
         }
 
-        // 5. 무기를 '홀더'의 자식으로 설정
+        // 5. 무기를 홀더의 자식으로 설정
         this.weapon.transform.SetParent(weaponFollowerHolder.transform, false);
         this.weapon.transform.localPosition = Vector3.zero;
         this.weapon.transform.localRotation = Quaternion.identity;
@@ -76,6 +78,8 @@ public class WeaponController : MonoBehaviour
         // 6. 스케일 계산 적용
         float parentScaleX = weaponPivot.lossyScale.x;
         float parentScaleY = weaponPivot.lossyScale.y;
+
+        weapon.Equip(player);
 
         if (parentScaleX != 0 && parentScaleY != 0)
         {
@@ -140,4 +144,7 @@ public class WeaponController : MonoBehaviour
             weaponFollowerHolder.transform.localScale = new Vector3(-1, scaleY, 1);
         }
     }
+
+    public void EnableHitbox() => weapon?.EnableHitbox();
+    public void DisableHitbox() => weapon?.DisableHitbox();
 }

@@ -12,11 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7216fdeddaece1a4f9677daf1bdc5fa4, type: 3}
   m_Name: SlowAttackSkill_Blue
   m_EditorClassIdentifier: 
-  colorType: 0
+  colorType: 3
   baseDamage: 1
   cooldown: 0.5
-  visualData: {fileID: 11400000, guid: c0dc701d23b5b2b4dbf5369d76a599f3, type: 2}
-  hitEffectVisualData: {fileID: 11400000, guid: d990f3126f997dd4084d2a3cb330c65f, type: 2}
-  hitboxDuration: 0.15
   slowRate: 0.5
   duration: 3

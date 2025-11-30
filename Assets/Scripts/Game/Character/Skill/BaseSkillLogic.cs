@@ -1,27 +1,21 @@
 using UnityEngine;
 
-// 모든 스킬 ScriptableObject의 기본 클래스
 public abstract class BaseSkillLogic : ScriptableObject
 {
-    [Header("공통 스킬 정보")]
     public ColorMixer.ColorType colorType;
     public int baseDamage = 1;
     public float cooldown = 0.5f;
 
-    [Header("공통 시각 효과")]
-    [Tooltip("스킬을 시전할 때 시전자 위치에 표시할 이펙트")]
-    public EffectVisualData visualData;
+    public abstract void ActivateSkill(SkillController controller, Character character, Weapon weapon);
 
-    [Header("피격 효과")]
-    [Tooltip("이 스킬이 적에게 적중했을 때 적 위치에 표시할 이펙트")]
-    public EffectVisualData hitEffectVisualData;
-
-    public abstract void ActivateSkill(SkillController controller, Character character);
-
-    public virtual void OnAnimationHit(SkillController controller)
+    public virtual void OnAnimationHit(SkillController controller, Weapon weapon)
     {
-        controller.PlayVisualEffect(visualData, this);
+        if (weapon != null)
+        {
+            controller.PlayVisualEffect(weapon.GetAttackEffect(), this);
+        }
         controller.GetWeaponController()?.SubDurability();
+        controller.EnableHitbox();
     }
 
     public virtual void ApplyColorModifier(ColorMixer.ColorType c1, ColorMixer.ColorType c2)

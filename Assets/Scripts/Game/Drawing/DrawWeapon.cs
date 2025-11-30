@@ -393,10 +393,10 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
             // 잉크 데이터가 복제된 스킬 로직을 참조
             runtimeInkData.skillLogic = runtimeSkillLogic;
-            runtimeInkData.weaponType = weaponType;
+            //runtimeInkData.weaponType = weaponType;
 
             // Weapon에 원본 대신 복사본 설정
-            weapon.SetupInkData(runtimeInkData);
+            //weapon.SetupInkData(runtimeInkData);
 
             if (WeaponStorageController.Instance != null)
             {

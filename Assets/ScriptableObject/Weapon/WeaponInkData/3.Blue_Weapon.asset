@@ -15,6 +15,15 @@ MonoBehaviour:
   inkData: {fileID: 11400000, guid: 8dfb0cd4edfe1f343801033b82a2a039, type: 2}
   durability: 13
   damage: 4
-  weaponType: 0
   skillLogic: {fileID: 11400000, guid: a949ad397fede014789382e1bdc24130, type: 2}
+  visualEffects:
+  - weaponType: 0
+    attackEffect: {fileID: 11400000, guid: bcc0b2bb42ec206499cb0c2032e9c9cd, type: 2}
+    hitEffect: {fileID: 11400000, guid: 91a588ed9fc8ad147a8459ff84682098, type: 2}
+  - weaponType: 1
+    attackEffect: {fileID: 11400000, guid: a26984cc13659f14ab35ab68770853f4, type: 2}
+    hitEffect: {fileID: 11400000, guid: 91a588ed9fc8ad147a8459ff84682098, type: 2}
+  - weaponType: 2
+    attackEffect: {fileID: 11400000, guid: e7ca3292c40ff624ca80f51a24cb5784, type: 2}
+    hitEffect: {fileID: 11400000, guid: 91a588ed9fc8ad147a8459ff84682098, type: 2}
   passiveEffect: {fileID: 11400000, guid: 8bb6a6befbeb6b243974ea08a04098eb, type: 2}
