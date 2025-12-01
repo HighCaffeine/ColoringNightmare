@@ -248,6 +248,8 @@ public class PlayerController : Character
 
         if (weaponController != null && weaponController.IsEquip())
         {
+            weaponController.EnableHitbox();
+
             if (skillController != null)
             {
                 BaseSkillLogic currentSkillLogic = weaponController.GetEquippedWeaponSkillData();
@@ -267,6 +269,7 @@ public class PlayerController : Character
     public void ResetAttackCooldown()
     {
         IsAttacking = false;
+        weaponController.DisableHitbox();
     }
 
     protected override void Attack()
@@ -337,6 +340,7 @@ public class PlayerController : Character
         {
             case PlayerType.Player1:
                 playerInput.Player1.Enable();
+                ResetAttackCooldown();
                 break;
             case PlayerType.Player2:
                 playerInput.Player2.Enable();

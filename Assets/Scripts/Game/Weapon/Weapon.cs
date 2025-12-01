@@ -8,7 +8,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] private WeaponInkData inkData;
     [SerializeField] private int currentDurability;
     private int damage;
-    private WeaponManager.WeaponType currentWeaponType; // [★신규★] 무기 타입
+    private WeaponManager.WeaponType currentWeaponType;
 
     private BaseSkillLogic skillLogic;
     private EdgeCollider2D testCollider;
