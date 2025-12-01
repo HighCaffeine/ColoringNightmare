@@ -11,6 +11,7 @@ public class VisualSimilarity : MonoBehaviour
 
     public void UpdateFillAmount(float amount)
     {
+        Debug.Log($"{amount}");
         targetFillImage.fillAmount = amount;
     }
 }
