@@ -96,7 +96,14 @@ public class SpineTest : MonoBehaviour
                 currentIdleAnimation = AniName.idle_spear;
                 break;
             default:
-                currentAttackAnimation = AniName.attack1; // 기본값
+                if (isSheep)
+                {
+                    currentAttackAnimation = AniName.attack_normal; // 기본값
+                }
+                else
+                {
+                    currentAttackAnimation = AniName.attack1; // 기본값
+                }
                 break;
         }
     }

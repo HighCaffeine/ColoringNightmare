@@ -49,7 +49,7 @@ public class WeaponPatternSelector : GenericSingleton<WeaponPatternSelector>
         }
 
         foreach (var c in checkDesigns) c?.gameObject.SetActive(false);
-        DrawWeapon.Instance.SetRefSprite(null);
+        DrawWeaponGPU.Instance.SetRefSprite(null);
     }
 
     public void SetSword() { SelectWeaponDesign(Design.Sword); }
@@ -82,7 +82,7 @@ public class WeaponPatternSelector : GenericSingleton<WeaponPatternSelector>
             if (currentActivePattern != null)
             {
                 currentActivePattern.gameObject.SetActive(true);
-                DrawWeapon.Instance.SetRefSprite(currentActivePattern);
+                DrawWeaponGPU.Instance.SetRefSprite(currentActivePattern);
             }
         }
 
