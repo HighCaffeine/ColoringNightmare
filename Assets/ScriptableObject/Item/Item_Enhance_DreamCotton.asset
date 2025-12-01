@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Item_Enhance_DreamCotton
   m_EditorClassIdentifier: 
   itemType: 1
-  itemImage: {fileID: 21300000, guid: 2779bdd99b94e264f96a8aea26d07574, type: 3}
+  itemImage: {fileID: 921142772, guid: f8d4f0a14b3396f4ba4cd82d917b798b, type: 3}
   itemName: DreamCotton

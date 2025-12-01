@@ -124,6 +124,13 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         return monster;
     }
 
+    public void SpawnItemsFromTable(ItemDropTable table, Vector3 spawnPos)
+    {
+        if (table == null) return;
+
+        DropManager.Instance.ProcessLootTable(table, spawnPos, acquireCallbacks);
+    }
+
     [ContextMenu("TEST_SpawnBoss")]
     public void TEST_SpawnBoss()
     {

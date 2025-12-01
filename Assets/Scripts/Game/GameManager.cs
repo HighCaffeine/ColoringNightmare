@@ -38,4 +38,9 @@ public class GameManager : GenericSingleton<GameManager>
     {
         ResetTimeScale();
     }
+
+    public void Exit()
+    {
+        SceneController.Instance.GoToScene(SceneName.Menu.ToString());
+    }
 }
