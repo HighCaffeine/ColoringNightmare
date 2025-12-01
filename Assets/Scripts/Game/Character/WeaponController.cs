@@ -57,8 +57,14 @@ public class WeaponController : MonoBehaviour
         // 3. BoneFollower 컴포넌트를 홀더에 추가
         var boneFollower = weaponFollowerHolder.AddComponent<Spine.Unity.BoneFollower>();
         boneFollower.SkeletonRenderer = skeletonAni;
-        boneFollower.boneName = "sword";
-        if (this.weapon.GetWeaponType() == WeaponManager.WeaponType.Spear) boneFollower.boneName = "sword2";
+        if (this.weapon.GetWeaponType() == WeaponManager.WeaponType.Sword)
+        {
+            boneFollower.boneName = "sword";
+        }
+        else
+        {
+            boneFollower.boneName = "sword2";
+        }
         boneFollower.followBoneRotation = true;
         boneFollower.followLocalScale = false;
         boneFollower.followSkeletonFlip = false;

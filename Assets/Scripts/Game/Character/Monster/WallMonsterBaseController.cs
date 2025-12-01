@@ -135,7 +135,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     private IEnumerator SelfDestructCoroutine(float delay)
     {
         yield return new WaitForSeconds(delay);
-        isSelfDestruct = false;
+        isSelfDestruct = true;
         if (ani != null) ani.SetTrigger("Explode");
         MonsterManager.Instance.SubWorldHpEvent();
         ChangeState(StateType.Dead);
