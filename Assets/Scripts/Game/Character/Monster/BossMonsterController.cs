@@ -235,8 +235,8 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);
         bool isLeft = false;
 
-        float startX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
-        float endX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
+        float startX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
+        float endX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
         Vector2 startPos = new Vector2(startX, randomY);
         Vector2 endPos = new Vector2(endX, randomY);
         Vector2 centerPos = new Vector2(p3Area.pos.x, randomY);
@@ -247,7 +247,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         WarningArea warningScript = warning.GetComponent<WarningArea>();
         if (warningScript != null)
         {
-            warningScript.Setup(bossData.warningDuration, WarningFillType.Horizontal);
+            warningScript.Setup(bossData.warningDuration, WarningFillType.LeftToRight);
         }
 
         Destroy(warning, bossData.warningDuration);
