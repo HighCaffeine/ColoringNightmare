@@ -15,8 +15,8 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 
     protected bool isAttacking = false;
 
-    private float damageCooldown = 1.0f;
-    private float lastDamageTime = -1.0f;
+    protected float damageCooldown = 1.0f;
+    protected float lastDamageTime = -1.0f;
 
     protected bool isSelfDestruct = false;
 
@@ -33,7 +33,8 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
         }
 
 
-        monsterData = data;
+        monsterData = Instantiate(data);
+
         info = data;
         currentHP = info.maxHp;
         state = StateType.Idle;

@@ -109,7 +109,7 @@ public class SpineTest : MonoBehaviour
     }
     public void ClearAttackAnimation()
     {
-        currentAttackAnimation = AniName.attack1;
+        currentAttackAnimation = AniName.attack_normal;
     }
 
     public void TestPlayRunSpine()

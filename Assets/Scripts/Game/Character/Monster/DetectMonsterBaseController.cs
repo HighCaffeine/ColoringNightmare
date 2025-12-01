@@ -300,7 +300,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (isDead || !hasAttackToken) return;
+        if (isDead) return;
+
+        if (Time.time < lastDamageTime + damageCooldown)
+        {
+            return;
+        }
 
         if (other.CompareTag("Player1"))
         {
