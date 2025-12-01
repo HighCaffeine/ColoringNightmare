@@ -4,39 +4,58 @@ using TMPro;
 public class DreamCottonEnhance : MonoBehaviour
 {
     [Header("Player Reference")]
-    [SerializeField] private PlayerController player; // 강화할 대상
+    [SerializeField] private PlayerController player;
 
-    [Header("Upgrade Settings")]
-    [SerializeField] private int hpUpgradeAmount = 10;
-    [SerializeField] private float speedUpgradeAmount = 0.5f;
-    [SerializeField] private int damageUpgradeAmount = 1;
+    [Header("Upgrade Stats")]
+    [SerializeField] private int hpUpgradeAmount = 10;      // 최대 체력 증가량
+    [SerializeField] private float speedUpgradeAmount = 0.5f; // 이동 속도 증가량
+    [SerializeField] private int damageUpgradeAmount = 1;     // 공격력 증가량
 
-    public void UpgradeMaxHP()
+    [SerializeField] private TextMeshProUGUI statText;
+
+    private void Start()
+    {
+        UpdateStatUI();
+    }
+
+    public void OnClickUpgradeMaxHP()
     {
         if (player == null || player.info == null) return;
 
-        // 데이터 직접 수정 (주의: 게임 끄면 저장됨. 런타임 복제본 쓰는 게 좋음)
         player.info.maxHp += hpUpgradeAmount;
 
-        // 현재 체력도 같이 채워줄지 결정
-        // player.Heal(hpUpgradeAmount); 
-
-        Debug.Log($"Max HP Upgraded! Now: {player.info.maxHp}");
+        Debug.Log($"[DreamCotton] Max HP Upgraded: {player.info.maxHp}");
+        UpdateStatUI();
     }
 
-    public void UpgradeMoveSpeed()
+    public void OnClickUpgradeSpeed()
     {
         if (player == null || player.info == null) return;
 
         player.info.speed += speedUpgradeAmount;
-        Debug.Log($"Speed Upgraded! Now: {player.info.speed}");
+
+        Debug.Log($"[DreamCotton] Speed Upgraded: {player.info.speed}");
+        UpdateStatUI();
     }
 
-    public void UpgradeDamage()
+    public void OnClickUpgradeDamage()
     {
         if (player == null || player.info == null) return;
 
         player.info.dmg += damageUpgradeAmount;
-        Debug.Log($"Damage Upgraded! Now: {player.info.dmg}");
+
+        Debug.Log($"[DreamCotton] Damage Upgraded: {player.info.dmg}");
+        UpdateStatUI();
+    }
+
+    private void UpdateStatUI()
+    {
+        if (statText != null && player != null && player.info != null)
+        {
+            statText.text = $"HP: {player.info.maxHp}\nATK: {player.info.dmg}\nSPD: {player.info.speed:F1}";
+        }
+
+        var hpController = player.GetComponent<PlayerHPController>();
+        if (hpController != null) hpController.UpdateHpGauge();
     }
 }

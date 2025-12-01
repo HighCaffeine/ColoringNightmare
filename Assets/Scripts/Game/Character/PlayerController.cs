@@ -85,7 +85,8 @@ public class PlayerController : Character
         {
             if (so != null)
             {
-                OnCharacterDataLoaded(so);
+                CharacterData cloneData = Instantiate(so);
+                OnCharacterDataLoaded(cloneData);
             }
         });
 
