@@ -28,8 +28,8 @@ MonoBehaviour:
   groggyDuration: 12
   fixedDamageRatio: 0.08
   p1Weight: 0
-  p2Weight: 100
-  p3Weight: 0
+  p2Weight: 0
+  p3Weight: 100
   idleDurationMin: 1
   idleDurationMax: 3
   warningDuration: 1.5

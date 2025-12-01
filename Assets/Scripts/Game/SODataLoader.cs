@@ -25,17 +25,17 @@ public enum MonsterDataName
     TestDetectKillerData,
 
     // Detect Monsters
-    CatNormal,
-    CatElite,
-    RabbitNormal,
-    RabbitElite,
+    CatNormal = 4,
+    CatElite = 5,
+    RabbitNormal = 6,
+    RabbitElite = 7,
 
     // Wall Monsters
-    BearNormal,
-    BearElite,
+    BearNormal = 8,
+    BearElite = 9,
 
     // Boss
-    Boss_Test_Data,
+    Boss_Test_Data = 10,
     Count
 };
 

@@ -34,7 +34,9 @@ public class RailController : GenericSingleton<RailController>
         color1Duck.SetColor(ColorMixer.Instance.GetColor(c1));
 
         color1Duck.StartMoving(railPoints, c1);
-        if (c1 == c2) yield return new WaitForSeconds(1f);    //조금 텀
+
+        yield return new WaitForSeconds(0.2f);    //조금 텀
+
         c2Event?.Invoke();
         color2Duck.gameObject.SetActive(true);
         color2Duck.transform.position = spawnPoint[Devcat.ValueCastTo<int>.From(c2)].position;

@@ -94,6 +94,7 @@ public class WeaponPatternSelector : GenericSingleton<WeaponPatternSelector>
 
         ClosePatternSelector();
 
+        WolfWorkStation.Instance.SetSketchType();
         WolfWorkStation.Instance.SetIsOnInteractive(true);
         WolfWorkStation.Instance.Interactive();
     }
