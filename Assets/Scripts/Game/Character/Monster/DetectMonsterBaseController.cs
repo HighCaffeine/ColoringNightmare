@@ -314,7 +314,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     protected void SetSpineAnimation(string animName, bool loop)
     {
-        if (animName == ANIM_IDLE)
+        if (animName == ANIM_IDLE || animName == ANIM_ATTACK)
         {
             skeleton.AnimationState.ClearTrack(0);
             return;

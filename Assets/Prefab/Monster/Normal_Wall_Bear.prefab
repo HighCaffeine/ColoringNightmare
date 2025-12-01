@@ -232,7 +232,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681505824455887605}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 463931c68ea42a141bdb6b23972c722c, type: 3}
   m_Name: 
@@ -255,8 +255,6 @@ MonoBehaviour:
   brightness: 1
   skeleton: {fileID: 9157412667983172476}
   spriteRenderer: {fileID: 0}
-  calibratedColor: {r: 1, g: 1, b: 1, a: 0}
-  validateMode: 0
 --- !u!114 &814863964784221924
 MonoBehaviour:
   m_ObjectHideFlags: 0

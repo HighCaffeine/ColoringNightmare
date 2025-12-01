@@ -91,6 +91,11 @@ public class WeaponPatternSelector : GenericSingleton<WeaponPatternSelector>
         {
             checkDesigns[index].gameObject.SetActive(true);
         }
+
+        ClosePatternSelector();
+
+        WolfWorkStation.Instance.SetIsOnInteractive(true);
+        WolfWorkStation.Instance.Interactive();
     }
 
     public WeaponManager.WeaponType GetSelectedWeaponType()

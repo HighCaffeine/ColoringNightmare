@@ -12,9 +12,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     [SerializeField] private AreaData p2Area; // 세로 패턴 구역
     [SerializeField] private AreaData p3Area; // 가로 패턴 구역
 
-    // [★삭제★] 중복되는 프리팹/이펙트 변수들을 모두 제거했습니다.
-    // 이제 bossData 안의 변수를 직접 사용합니다.
-
     // 애니메이션 상수
     private const string ANIM_IDLE = "idle";
     private const string ANIM_CAST = "cast";
@@ -109,7 +106,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
         Vector2 spawnPos = GetRandomPosInArea(p1Area);
 
-        // [★수정★] bossData의 프리팹 사용
         GameObject warning = Instantiate(bossData.warningCirclePrefab, spawnPos, Quaternion.identity);
         warning.transform.localScale = Vector3.one * 3.0f;
 
@@ -174,7 +170,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         Vector2 topPos = new Vector2(randomX, p2Area.pos.y + yOffset);
         Vector2 bottomPos = new Vector2(randomX, p2Area.pos.y - yOffset);
 
-        // [★수정★] bossData의 프리팹 사용
         GameObject warningTop = Instantiate(bossData.warningBoxPrefab, topPos, Quaternion.identity);
         warningTop.transform.localScale = new Vector3(2f, p2Area.size.y * 0.5f, 1f);
 
@@ -238,7 +233,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         yield return new WaitForSeconds(bossData.castingDuration);
 
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);
-        bool isLeft = Random.value > 0.5f;
+        bool isLeft = false;
 
         float startX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
         float endX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
@@ -246,7 +241,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         Vector2 endPos = new Vector2(endX, randomY);
         Vector2 centerPos = new Vector2(p3Area.pos.x, randomY);
 
-        // [★수정★] bossData의 프리팹 사용
         GameObject warning = Instantiate(bossData.warningBoxPrefab, centerPos, Quaternion.identity);
         warning.transform.localScale = new Vector3(p3Area.size.x, 2f, 1);
 
