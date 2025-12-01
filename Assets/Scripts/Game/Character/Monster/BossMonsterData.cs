@@ -8,7 +8,7 @@ public class BossMonsterData : MonsterData
     [Header("Boss Gimmick")]
     public int groggyCoinMax = 2;
     public float groggyDuration = 12.0f;
-    [Range(0f, 1f)] public float fixedDamageRatio = 0.08f; // 8%
+    [Range(0f, 1f)] public float fixedDamageRatio = 0.08f;
 
     [Header("Pattern Weights")]
     public int p1Weight = 50;
@@ -16,30 +16,33 @@ public class BossMonsterData : MonsterData
     public int p3Weight = 25;
 
     [Header("Pattern Timings")]
-    public float idleDurationMin = 1.0f;
+    public float idleDurationMin = 1.5f;
     public float idleDurationMax = 3.0f;
     public float warningDuration = 1.5f;
     public float castingDuration = 1.0f;
 
-    [Header("Pattern 1: Summon")]
-    public GameObject p1WarningPrefab;          // 원형 장판
-    public GameObject p1ProjectilePrefab;       // 떨어지는 공
-    public EffectVisualData p1ExplosionEffect;  // 폭발 이펙트
+    [Space(10f)]
+    [Header("--- Assets (Prefabs & Effects) ---")]
+
+    [Header("Common Assets")]
+    public GameObject warningBoxPrefab;
+    public GameObject warningCirclePrefab;
+    public EffectVisualData invincibleHitEffect;
+
+    [Header("P1 Assets (Summon)")]
+    public GameObject p1BallPrefab;
+    public List<MonsterData> p1SummonMonsters;
+    public EffectVisualData p1ExplosionEffect;
     public float p1ExplosionRadius = 2.0f;
-    public List<MonsterData> summonList;        // 소환할 몬스터 목록
 
-    [Header("Pattern 2: Vertical (Cymbals)")]
-    public GameObject p2WarningPrefab;          // 세로 장판
-    public GameObject p2ObjectPrefab;           // 심벌즈 오브젝트
+    [Header("P2 Assets (Vertical)")]
+    public GameObject p2CymbalPrefab;
     public float p2TravelSpeed = 10.0f;
-    public float p2DamageWidth = 1.5f;
+    public float p2DamageWidth = 1.0f;
 
-    [Header("Pattern 3: Horizontal (Punch)")]
-    public GameObject p3WarningPrefab;          // 가로 장판
-    public GameObject p3ObjectPrefab;           // 상자/주먹 오브젝트
+    [Header("P3 Assets (Horizontal)")]
+    public GameObject p3BoxPrefab;
+    public GameObject p3FistPrefab;
     public float p3PunchSpeed = 15.0f;
-    public float p3DamageHeight = 1.5f;
-
-    [Header("Effects")]
-    public EffectVisualData invincibleHitEffect; // 무적 상태 피격 이펙트 (잔상 등)
+    public float p3DamageHeight = 1.0f;
 }

@@ -35,7 +35,7 @@ public enum MonsterDataName
     BearElite,
 
     // Boss
-    TestBossData,
+    Boss_Test_Data,
     Count
 };
 

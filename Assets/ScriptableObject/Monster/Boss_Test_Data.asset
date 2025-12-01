@@ -34,18 +34,20 @@ MonoBehaviour:
   idleDurationMax: 3
   warningDuration: 1.5
   castingDuration: 1
-  p1WarningPrefab: {fileID: 0}
-  p1ProjectilePrefab: {fileID: 0}
-  p1ExplosionEffect: {fileID: 0}
+  warningBoxPrefab: {fileID: 5152362679918131031, guid: 6b8d4b0ddcb08984fba0580f8b4c0138, type: 3}
+  warningCirclePrefab: {fileID: 5152362679918131031, guid: 6f266f62b53390741a82a545778dd631, type: 3}
+  invincibleHitEffect: {fileID: 11400000, guid: 0d6cc63e20635184387111bd7fd9d7ea, type: 2}
+  p1BallPrefab: {fileID: 6958675942149771495, guid: 5d8b3c3f6f09b3d4ebfdc3c6bcc63a31, type: 3}
+  p1SummonMonsters:
+  - {fileID: 11400000, guid: 16402a9c6886c3b479faf5a314a40854, type: 2}
+  - {fileID: 11400000, guid: 323ba4308d8e2bf42baa559323ea0deb, type: 2}
+  - {fileID: 11400000, guid: 7be53b7b29b614b42b81b8bd9d4de0df, type: 2}
+  p1ExplosionEffect: {fileID: 11400000, guid: 4d11c1b10bb0e9148b71be7d7a7f2a7a, type: 2}
   p1ExplosionRadius: 2
-  summonList:
-  - {fileID: 0}
-  p2WarningPrefab: {fileID: 0}
-  p2ObjectPrefab: {fileID: 0}
+  p2CymbalPrefab: {fileID: 1848988426648404666, guid: f9579c73d3812aa4c9a6ee17862ac29b, type: 3}
   p2TravelSpeed: 10
   p2DamageWidth: 1.5
-  p3WarningPrefab: {fileID: 0}
-  p3ObjectPrefab: {fileID: 0}
+  p3BoxPrefab: {fileID: 1848988426648404666, guid: f9579c73d3812aa4c9a6ee17862ac29b, type: 3}
+  p3FistPrefab: {fileID: 1848988426648404666, guid: f9579c73d3812aa4c9a6ee17862ac29b, type: 3}
   p3PunchSpeed: 15
   p3DamageHeight: 1.5
-  invincibleHitEffect: {fileID: 0}

@@ -53,13 +53,6 @@ public class WarningArea : MonoBehaviour
 
     public float TestDuration = 3.0f;
 
-#if UNITY_EDITOR_64
-    public void OnValidate()
-    {
-        Setup(TestDuration, defaultFillType);
-    }
-#endif
-
     private IEnumerator FillRoutine(float duration, WarningFillType fillType)
     {
         float elapsed = 0f;

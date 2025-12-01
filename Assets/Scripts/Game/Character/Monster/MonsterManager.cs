@@ -105,7 +105,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
             case MonsterDataName.RabbitElite: monster = rabbitElitePool.GetPool(); break;
             case MonsterDataName.BearNormal: monster = bearNormalPool.GetPool(); break;
             case MonsterDataName.BearElite: monster = bearElitePool.GetPool(); break;
-            case MonsterDataName.TestBossData: monster = bossPool.GetPool(); break;
+            case MonsterDataName.Boss_Test_Data: monster = bossPool.GetPool(); break;
             default:
                 Debug.LogError($"{monsterName}에 해당하는 풀링 없음.");
                 return null;
@@ -122,6 +122,33 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         monster.transform.SetParent(monsterObjParent);
 
         return monster;
+    }
+
+    [ContextMenu("TEST_SpawnBoss")]
+    public void TEST_SpawnBoss()
+    {
+        // 보스 데이터 이름 (SODataLoader.cs의 enum과 일치해야 함)
+        string bossDataName = MonsterDataName.Boss_Test_Data.ToString();
+
+        SODataLoader.Instance.LoadSO<MonsterData>(bossDataName, data =>
+        {
+            if (data != null)
+            {
+                // 몬스터 이동 구역의 중앙에 소환
+                Vector2 spawnPos = Vector2.zero;
+                if (monsterMoveArea != null)
+                {
+                    spawnPos = monsterMoveArea.pos + monsterMoveArea.offset;
+                }
+
+                SpawnMonster(data, spawnPos);
+                Debug.Log("보스 테스트 소환 완료!");
+            }
+            else
+            {
+                Debug.LogError($"보스 데이터 '{bossDataName}'를 찾을 수 없습니다.");
+            }
+        });
     }
 
     public void SpawnMonster(MonsterData data, Vector2 pos)
