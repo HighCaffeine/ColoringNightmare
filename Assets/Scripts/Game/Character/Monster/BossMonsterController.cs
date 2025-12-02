@@ -97,7 +97,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P1: 몬스터 소환 ---
     private IEnumerator Pattern1_Summon()
     {
-        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("P1", bossData.warningDuration + 0.5f));
+        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("spawn", bossData.warningDuration + 0.5f));
 
         yield return new WaitForSeconds(bossData.castingDuration);
 
@@ -151,7 +151,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P2: 세로 패턴 ---
     private IEnumerator Pattern2_Vertical()
     {
-        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("P2", bossData.warningDuration + 1.0f));
+        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("cymbals", bossData.warningDuration + 1.0f));
         yield return new WaitForSeconds(bossData.castingDuration);
 
         float randomX = Random.Range(p2Area.pos.x - p2Area.size.x / 2, p2Area.pos.x + p2Area.size.x / 2);
@@ -219,7 +219,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P3: 가로 패턴 ---
     private IEnumerator Pattern3_Horizontal()
     {
-        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("P3", bossData.warningDuration + 1.0f));
+        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("box", bossData.warningDuration + 1.0f));
         yield return new WaitForSeconds(bossData.castingDuration);
 
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);

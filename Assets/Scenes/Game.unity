@@ -3008,7 +3008,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 781383687}
+      - m_Target: {fileID: 1701741888}
         m_TargetAssemblyTypeName: WaveManager, Assembly-CSharp
         m_MethodName: TEST_WaveStart
         m_Mode: 1
@@ -3090,10 +3090,10 @@ RectTransform:
   - {fileID: 31456008}
   m_Father: {fileID: 694590532}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.767125, y: 0.06366667}
-  m_AnchoredPosition: {x: -7, y: -3}
-  m_SizeDelta: {x: -12.301514, y: -6.45874}
+  m_AnchorMin: {x: 0.4094792, y: 0.04377778}
+  m_AnchorMax: {x: 0.671, y: 0.104481496}
+  m_AnchoredPosition: {x: 1, y: -2.5}
+  m_SizeDelta: {x: -2.3015137, y: -3.4587402}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &285910377
 MonoBehaviour:
@@ -9953,7 +9953,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &781383686
 Transform:
   m_ObjectHideFlags: 0
@@ -9988,14 +9988,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   waves:
-  - {fileID: 11400000, guid: 4d7e4c479d476de4aab9a7e6da4065ea, type: 2}
-  - {fileID: 11400000, guid: 81064707ad0e10e4fa3462f3585a5909, type: 2}
-  - {fileID: 11400000, guid: 15d9752ec7b747e41afee9a849f7f442, type: 2}
-  - {fileID: 11400000, guid: 7f4c6c7ea5e310249ae126d90ccf85e9, type: 2}
-  - {fileID: 11400000, guid: e690c1d641c9f884c87659bafa102b08, type: 2}
-  - {fileID: 11400000, guid: 5cd93e64b77caf94ba6eb4743acf9357, type: 2}
-  - {fileID: 11400000, guid: 9af29e69be494c343bc1527531eb2380, type: 2}
-  - {fileID: 11400000, guid: d5d63e246cbe34f4380b513f2cecaa9c, type: 2}
+  - {fileID: 11400000, guid: 78926b354c20f1a48a734f73e8f86d16, type: 2}
   spawnAreas:
   - {fileID: 11400000, guid: 0f95aaae4f389a44485b591c5e97c366, type: 2}
   - {fileID: 11400000, guid: 1099812781e784f4e903116833c73eec, type: 2}
@@ -16084,6 +16077,7 @@ Transform:
   - {fileID: 500854241}
   - {fileID: 1369437999}
   - {fileID: 781383686}
+  - {fileID: 1701741887}
   - {fileID: 1605676712}
   - {fileID: 865892073}
   - {fileID: 1055100312}
@@ -17113,7 +17107,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a63ec374f5f756f44b12502091ba6931, type: 3}
+  m_Sprite: {fileID: 21300000, guid: eded3ca7b41f61f47b64f8dfe41b6145, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -21656,6 +21650,72 @@ Transform:
   m_Children: []
   m_Father: {fileID: 570166903}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1701741886
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1701741887}
+  - component: {fileID: 1701741888}
+  m_Layer: 0
+  m_Name: WaveManager (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1701741887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701741886}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1220603887}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1701741888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701741886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41a6cbb97061cd94b8de78080b4175e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnWaveStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnWaveEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  waves:
+  - {fileID: 11400000, guid: 4d7e4c479d476de4aab9a7e6da4065ea, type: 2}
+  - {fileID: 11400000, guid: 81064707ad0e10e4fa3462f3585a5909, type: 2}
+  - {fileID: 11400000, guid: 15d9752ec7b747e41afee9a849f7f442, type: 2}
+  - {fileID: 11400000, guid: 7f4c6c7ea5e310249ae126d90ccf85e9, type: 2}
+  - {fileID: 11400000, guid: e690c1d641c9f884c87659bafa102b08, type: 2}
+  - {fileID: 11400000, guid: 5cd93e64b77caf94ba6eb4743acf9357, type: 2}
+  - {fileID: 11400000, guid: 9af29e69be494c343bc1527531eb2380, type: 2}
+  - {fileID: 11400000, guid: d5d63e246cbe34f4380b513f2cecaa9c, type: 2}
+  spawnAreas:
+  - {fileID: 11400000, guid: 0f95aaae4f389a44485b591c5e97c366, type: 2}
+  - {fileID: 11400000, guid: 1099812781e784f4e903116833c73eec, type: 2}
+  - {fileID: 11400000, guid: 57db72396061b5e489b06ab2534d410b, type: 2}
+  - {fileID: 11400000, guid: 218a9fac796357b44b2eb630eb215918, type: 2}
+  - {fileID: 11400000, guid: 6c9f00d40c230184e8fde0609efa768f, type: 2}
+  currentWaveIndex: 0
 --- !u!4 &1718775134 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1164805938420884461, guid: e67a3ed9004f5f8498e41788df43da53, type: 3}
@@ -29191,7 +29251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 26dc0f1f00b713d42aa8fb9643d71265, type: 3}
+  m_Sprite: {fileID: 21300000, guid: eded3ca7b41f61f47b64f8dfe41b6145, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -30731,7 +30791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &8633160163332350455
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
     private int damage;
     private WeaponManager.WeaponType currentWeaponType;
 
-    private BaseSkillLogic skillLogic;
+    [SerializeField] private BaseSkillLogic skillLogic;
     private EdgeCollider2D testCollider;
     private List<Collider2D> hitTargets = new List<Collider2D>();
     private Character player;

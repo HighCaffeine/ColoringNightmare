@@ -111,7 +111,7 @@ public class WaveManager : GenericSingleton<WaveManager>
                     MonsterManager.Instance.SpawnMonster(so, spawnPos);
                 });
 
-                yield return new WaitForSeconds(group.spawnInterval * 2f);
+                yield return new WaitForSeconds(group.spawnInterval);
             }
         }
 
@@ -124,7 +124,7 @@ public class WaveManager : GenericSingleton<WaveManager>
         currentWaveIndex++;
 
         //임의로 0.5초 딜레이 후 다음 웨이브
-        Invoke(nameof(TestWaveStart), 2f);
+        Invoke(nameof(TestWaveStart), 0.5f);
     }
 
     private bool CheckWaveClear(WaveType waveType)

@@ -37,7 +37,7 @@ public class BossSpineController : MonoBehaviour
     public IEnumerator PlayPatternAnimation(string patternName, float duration)
     {
         // 1. Start (시전 동작)
-        string startAnim = $"{patternName}_Start";
+        string startAnim = $"{patternName}_skill_start";
         float startDuration = GetAnimationDuration(startAnim);
 
         if (startDuration > 0)
@@ -47,7 +47,7 @@ public class BossSpineController : MonoBehaviour
         }
 
         // 2. Middle (유지 동작 - 루프)
-        string middleAnim = $"{patternName}_Middle";
+        string middleAnim = $"{patternName}_skill_mid";
         if (HasAnimation(middleAnim))
         {
             SetAnimation(middleAnim, true);
@@ -57,7 +57,7 @@ public class BossSpineController : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         // 3. End (종료 동작)
-        string endAnim = $"{patternName}_End";
+        string endAnim = $"{patternName}_skill_end";
         float endDuration = GetAnimationDuration(endAnim);
 
         if (endDuration > 0)
