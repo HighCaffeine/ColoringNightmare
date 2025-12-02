@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 0}
   characterName: Test_Monster2
-  maxHp: 1
-  dmg: 1
-  speed: 0.2
-  attackDelay: 1
+  maxHp: 150
+  dmg: 2
+  speed: 2
+  attackDelay: 2
   isSpine: 1
   colorType: 0
   type: 1

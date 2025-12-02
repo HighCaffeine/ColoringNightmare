@@ -2992,7 +2992,7 @@ MonoBehaviour:
   nextButton: {fileID: 790746350}
   startPanel: {fileID: 276328241}
   panelOff: 1
-  startTime: 20
+  startTime: 2
   OnWaitTimeEndEvent:
     m_PersistentCalls:
       m_Calls:
@@ -9988,11 +9988,14 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   waves:
-  - {fileID: 11400000, guid: 78926b354c20f1a48a734f73e8f86d16, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 4d7e4c479d476de4aab9a7e6da4065ea, type: 2}
+  - {fileID: 11400000, guid: 81064707ad0e10e4fa3462f3585a5909, type: 2}
+  - {fileID: 11400000, guid: 15d9752ec7b747e41afee9a849f7f442, type: 2}
+  - {fileID: 11400000, guid: 7f4c6c7ea5e310249ae126d90ccf85e9, type: 2}
+  - {fileID: 11400000, guid: e690c1d641c9f884c87659bafa102b08, type: 2}
+  - {fileID: 11400000, guid: 5cd93e64b77caf94ba6eb4743acf9357, type: 2}
+  - {fileID: 11400000, guid: 9af29e69be494c343bc1527531eb2380, type: 2}
+  - {fileID: 11400000, guid: d5d63e246cbe34f4380b513f2cecaa9c, type: 2}
   spawnAreas:
   - {fileID: 11400000, guid: 0f95aaae4f389a44485b591c5e97c366, type: 2}
   - {fileID: 11400000, guid: 1099812781e784f4e903116833c73eec, type: 2}

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 6.Cyan_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 026208c57ce84bb47a66f8c0d21676fc, type: 2}
-  durability: 8
-  damage: 1
+  durability: 15
+  damage: 35
   skillLogic: {fileID: 0}
   visualEffects:
   - weaponType: 0

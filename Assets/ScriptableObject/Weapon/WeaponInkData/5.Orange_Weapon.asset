@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 5.Orange_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 6b9c0cfdb916c4c4fa75c0a7059200d5, type: 2}
-  durability: 8
-  damage: 1
+  durability: 20
+  damage: 75
   skillLogic: {fileID: 0}
   visualEffects:
   - weaponType: 0

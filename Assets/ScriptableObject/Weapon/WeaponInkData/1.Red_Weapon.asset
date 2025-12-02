@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 1.Red_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 6f3d8346e8f89d04485f396963772ccb, type: 2}
-  durability: 7
-  damage: 3
+  durability: 18
+  damage: 40
   skillLogic: {fileID: 11400000, guid: 5058390f7a0a960449422b14e1560efa, type: 2}
   visualEffects:
   - weaponType: 0
