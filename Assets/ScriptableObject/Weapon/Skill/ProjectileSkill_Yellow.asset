@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: ProjectileSkill_Yellow
   m_EditorClassIdentifier: 
   colorType: 2
-  baseDamage: 1
+  baseDamage: 30
   cooldown: 0.5
-  visualData: {fileID: 11400000, guid: b21e71de065b5a14f93022dbcccdbbc2, type: 2}
-  hitEffectVisualData: {fileID: 11400000, guid: 98616b1faaac224469646b694614fe3e, type: 2}
   projectileParams:
     speed: 10
     lifeTime: 2

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86e3c53c45e9b4b4687c7d82df3562c5, type: 3}
+  m_Name: Wave 7
+  m_EditorClassIdentifier: 
+  waveNumber: 0
+  waveType: 0
+  typeValue: 0
+  monsterGroups:
+  - {fileID: 11400000, guid: f11597a9b6c1b50479d9af7344d31eb2, type: 2}
+  - {fileID: 11400000, guid: a1e6baa36855fa44d945b8172f7f1d19, type: 2}
+  - {fileID: 11400000, guid: 62aee55d0e848f740b4f53b5e7b36f73, type: 2}
+  - {fileID: 11400000, guid: 17d7c190e6185f542a3a6110b5238ea0, type: 2}
+  - {fileID: 11400000, guid: 0ed7cf20859957042aade3324af528c7, type: 2}
+  - {fileID: 11400000, guid: c01376391f72eff4c93d8c4346f12e3e, type: 2}
+  - {fileID: 11400000, guid: a26f430922db5404ebd6f13b992db803, type: 2}
+  - {fileID: 11400000, guid: 06b563e18fe30784983f4b705bcca90f, type: 2}

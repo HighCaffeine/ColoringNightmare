@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 7.Magenta_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 1383695343365d54998f757782b4ec96, type: 2}
-  durability: 8
-  damage: 1
+  durability: 25
+  damage: 30
   skillLogic: {fileID: 0}
   visualEffects:
   - weaponType: 0

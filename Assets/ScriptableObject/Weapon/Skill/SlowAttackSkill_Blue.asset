@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SlowAttackSkill_Blue
   m_EditorClassIdentifier: 
   colorType: 3
-  baseDamage: 1
+  baseDamage: 25
   cooldown: 0.5
   slowRate: 0.5
   duration: 3
