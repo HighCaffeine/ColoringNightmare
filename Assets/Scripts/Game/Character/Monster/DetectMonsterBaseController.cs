@@ -224,6 +224,8 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         StartCoroutine(PrepareAndLunge(startPosition, dashDir));
     }
 
+    [SerializeField] private float attackDelay = 0.3f;
+
     private IEnumerator PrepareAndLunge(Vector2 startPos, Vector2 dir)
     {
         isDashing = true;
@@ -257,6 +259,8 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         }
 
         SetSpineAnimation(ANIM_ATTACK, false);
+
+        yield return new WaitForSeconds(attackDelay);
 
         float elapsed = 0f;
         while (elapsed < lungeDuration)

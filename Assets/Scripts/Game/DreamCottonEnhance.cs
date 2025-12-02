@@ -6,52 +6,62 @@ public class DreamCottonEnhance : MonoBehaviour
 {
     [Header("Player Reference")]
     [SerializeField] private PlayerController player;
+
+    [Header("Currencies")]
     [SerializeField] private int currentCottonCount = 0;
+    [SerializeField] private int currentBlackInkCount = 0; // [★신규★] 검은 잉크 보유량
 
     [Header("Upgrade Settings")]
-    [SerializeField] private int maxLevel = 5; // 최대 5단계
-
-    // [기획 반영] 단계별 상승치
-    [SerializeField] private int hpPerLevel = 3;        // 체력 +3
-    [SerializeField] private float speedPercent = 0.1f; // 이속 +10%
-    [SerializeField] private float dmgPercent = 0.2f;   // 공격력 +20%
-
-    [Header("Skill Settings")]
-    [Tooltip("공격력 버프 지속 시간")]
-    [SerializeField] private float dmgBuffDuration = 15f;
-    [Tooltip("공격력 증폭 비율 (0.5 = 50%)")]
-    [SerializeField] private float dmgBuffRatio = 0.5f;
-    [Tooltip("월드 HP 회복량")]
-    [SerializeField] private int worldHealAmount = 3;
+    [SerializeField] private int maxLevel = 5;
+    [SerializeField] private int hpPerLevel = 3;
+    [SerializeField] private float speedPercent = 0.1f;
+    [SerializeField] private float dmgPercent = 0.2f;
 
     [Header("Costs")]
-    [SerializeField] private int[] upgradeCosts = { 1, 3, 5, 10, 20 }; // 단계별 비용
+    [SerializeField] private int[] upgradeCosts = { 1, 3, 5, 10, 20 };
     [SerializeField] private int skillCost_Dmg = 5;
     [SerializeField] private int skillCost_Heal = 5;
     [SerializeField] private int skillCost_Ink = 5;
-    [SerializeField] private int gachaCost = 3; // 색상 교환 비용
 
-    [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI cottonText; // 보유 코튼 표시
-    [SerializeField] private TextMeshProUGUI statText;   // 현재 스탯 표시
+    // 가챠 비용 (검은 잉크 1개 고정)
+    private const int GACHA_COST_BLACK_INK = 1;
 
-    // 강화 UI (레벨/비용 표시용)
+    [Header("UI - Cotton Count")]
+    [Tooltip("강화, 스킬 패널에 있는 '보유 코튼' 텍스트들")]
+    [SerializeField] private TextMeshProUGUI[] cottonCountTexts;
+
+    [Header("UI - Black Ink Count")]
+    [Tooltip("가챠 패널에 있는 '보유 검은 잉크' 텍스트")]
+    [SerializeField] private TextMeshProUGUI blackInkCountText; // [★신규★]
+
+    [Header("UI - Enhance Panel")]
+    [SerializeField] private TextMeshProUGUI statText;
     [SerializeField] private TextMeshProUGUI hpCostTxt;
     [SerializeField] private TextMeshProUGUI speedCostTxt;
     [SerializeField] private TextMeshProUGUI dmgCostTxt;
-    [SerializeField] private UnityEngine.UI.Image hpBarImage; // 단계 이미지(스프라이트)
+    [SerializeField] private UnityEngine.UI.Image hpBarImage;
     [SerializeField] private UnityEngine.UI.Image speedBarImage;
     [SerializeField] private UnityEngine.UI.Image dmgBarImage;
-    [SerializeField] private Sprite[] levelSprites; // 0~5단계 이미지
+    [SerializeField] private Sprite[] levelSprites;
 
-    [Header("Gacha & Skill Data")]
-    [SerializeField] private ItemDropTable inkGachaTable;
+    [Header("UI - Skill Panel")]
+    [SerializeField] private TextMeshProUGUI dmgSkillCostTxt;
+    [SerializeField] private TextMeshProUGUI hpSkillCostTxt;
+    [SerializeField] private TextMeshProUGUI inkSkillCostTxt;
+
+    [Header("UI - Gacha Panel")]
+    [SerializeField] private TextMeshProUGUI gachaCostTxt; // 필요하다면 "1" 표시
+
+    [Header("Skill Settings")]
+    [SerializeField] private float dmgBuffDuration = 15f;
+    [SerializeField] private float dmgBuffRatio = 0.5f;
+    [SerializeField] private int worldHealAmount = 3;
+
+    [Header("Gacha Data")]
+    [Tooltip("가챠 결과물 테이블 (빨강/노랑/파랑 잉크 + 드림코튼 포함)")]
+    [SerializeField] private ItemDropTable gachaDropTable; // [★수정★] 가챠 테이블
     [SerializeField] private Transform spawnPoint;
-    // 색상 교환용 아이템 데이터들 (인스펙터에서 할당)
-    [SerializeField] private ItemData inkRed;
-    [SerializeField] private ItemData inkBlue;
-    [SerializeField] private ItemData inkYellow;
-    [SerializeField] private ItemData inkBlack;
+    [SerializeField] private ItemDropTable inkSkillTable; // 스킬용(잉크생성) 테이블
 
     // 내부 상태
     private int hpLevel = 0;
@@ -60,175 +70,42 @@ public class DreamCottonEnhance : MonoBehaviour
 
     private void Start()
     {
-        UpdateUI();
+        UpdateAllUI();
     }
 
-    // --- [1. 강화 (Enhance)] ---
-
-    public void OnClickUpgradeHP()
+    // --- [UI 통합 갱신] ---
+    private void UpdateAllUI()
     {
-        if (hpLevel >= maxLevel) return;
-        int cost = upgradeCosts[hpLevel];
-
-        if (TryConsumeCotton(cost))
+        // 1. 보유 코튼 개수 (강화/스킬 패널)
+        if (cottonCountTexts != null)
         {
-            hpLevel++;
-            player.info.maxHp += hpPerLevel; // 체력 +3
-                                             // 현재 체력도 같이 채워줄지 여부 (선택)
-                                             // player.Heal(hpPerLevel); 
-
-            Debug.Log($"HP Upgrade Lv.{hpLevel}: MaxHP {player.info.maxHp}");
-            UpdateUI();
-        }
-    }
-
-    public void OnClickUpgradeSpeed()
-    {
-        if (speedLevel >= maxLevel) return;
-        int cost = upgradeCosts[speedLevel];
-
-        if (TryConsumeCotton(cost))
-        {
-            speedLevel++;
-            // 기존 속도의 10% 만큼 증가
-            float increase = player.info.speed * speedPercent;
-            player.info.speed += increase;
-
-            Debug.Log($"Speed Upgrade Lv.{speedLevel}: Speed {player.info.speed}");
-            UpdateUI();
-        }
-    }
-
-    public void OnClickUpgradeDamage()
-    {
-        if (dmgLevel >= maxLevel) return;
-        int cost = upgradeCosts[dmgLevel];
-
-        if (TryConsumeCotton(cost))
-        {
-            dmgLevel++;
-            // 공격력 20% 증가 (최소 1 증가 보장)
-            int increase = Mathf.Max(1, Mathf.RoundToInt(player.info.dmg * dmgPercent));
-            player.info.dmg += increase;
-
-            Debug.Log($"Damage Upgrade Lv.{dmgLevel}: Dmg {player.info.dmg}");
-            UpdateUI();
-        }
-    }
-
-    // --- [2. 스킬 (Skill)] ---
-
-    public void Skill_DamageBuff()
-    {
-        if (!TryConsumeCotton(skillCost_Dmg)) return;
-        StartCoroutine(DmgBuffRoutine());
-    }
-
-    private IEnumerator DmgBuffRoutine()
-    {
-        // 50% 증폭
-        int buffAmount = Mathf.Max(1, Mathf.RoundToInt(player.info.dmg * dmgBuffRatio));
-        player.info.dmg += buffAmount;
-        Debug.Log($"<color=red>Attack Buff! (+{buffAmount})</color>");
-
-        UpdateUI();
-
-        yield return new WaitForSeconds(dmgBuffDuration);
-
-        player.info.dmg -= buffAmount;
-        Debug.Log("Attack Buff End.");
-        UpdateUI();
-    }
-
-    public void Skill_WorldHeal()
-    {
-        if (!TryConsumeCotton(skillCost_Heal)) return;
-
-        // 월드 HP 회복
-        if (WorldHpController.Instance != null)
-        {
-            WorldHpController.Instance.RecoverHP(worldHealAmount);
-            Debug.Log($"World HP Recovered (+{worldHealAmount})");
-        }
-    }
-
-    public void Skill_InkRandom()
-    {
-        if (!TryConsumeCotton(skillCost_Ink)) return;
-
-        // 랜덤 생성 (DropTable)
-        Vector3 pos = (spawnPoint != null) ? spawnPoint.position : player.transform.position;
-        MonsterManager.Instance.SpawnItemsFromTable(inkGachaTable, pos);
-    }
-
-    // --- [3. 뽑기/교환 (Gacha)] ---
-    // UI 버튼에서 색상을 지정해서 호출 (Red, Blue, Yellow, Black)
-    public void ExchangeInk(string colorName)
-    {
-        if (!TryConsumeCotton(gachaCost)) return;
-
-        ItemData targetItem = null;
-        switch (colorName)
-        {
-            case "Red": targetItem = inkRed; break;
-            case "Blue": targetItem = inkBlue; break;
-            case "Yellow": targetItem = inkYellow; break;
-            case "Black": targetItem = inkBlack; break;
+            foreach (var txt in cottonCountTexts)
+                if (txt != null) txt.text = currentCottonCount.ToString();
         }
 
-        if (targetItem != null && DropManager.Instance != null)
+        // 2. 보유 검은 잉크 개수 (가챠 패널) [★신규★]
+        if (blackInkCountText != null)
         {
-            // DropManager의 SpawnInk (또는 SpawnItem) 활용
-            // (DropManager.cs에 public SpawnItem이 있어야 함. 없으면 SpawnInk 사용)
-            // 여기서는 편의상 몬스터 매니저의 콜백을 재사용하거나 직접 구현
-            // 간단하게 DropManager에 직접 요청:
-            Vector3 pos = (spawnPoint != null) ? spawnPoint.position : player.transform.position;
-            // DropManager.Instance.SpawnItem(targetItem, pos, ...); // 이 함수가 private이라면 public으로 변경 필요
-            // 대안: MonsterManager 콜백 활용
-            MonsterManager.Instance.SpawnItemsFromTable(CreateSingleItemTable(targetItem), pos);
+            blackInkCountText.text = currentBlackInkCount.ToString();
         }
-    }
 
-    // 단일 아이템 테이블을 임시로 만드는 헬퍼 (교환용)
-    private ItemDropTable CreateSingleItemTable(ItemData item)
-    {
-        ItemDropTable table = ScriptableObject.CreateInstance<ItemDropTable>();
-        table.itemDropTable = new System.Collections.Generic.List<ItemDropData>();
-        table.itemDropTable.Add(new ItemDropData { itemData = item, dropChance = 1f, minDropAmount = 1, maxDropAmount = 1 });
-        return table;
-    }
+        // 3. 강화 패널
+        UpdateEnhanceSlot(hpLevel, hpCostTxt, hpBarImage);
+        UpdateEnhanceSlot(speedLevel, speedCostTxt, speedBarImage);
+        UpdateEnhanceSlot(dmgLevel, dmgCostTxt, dmgBarImage);
 
-    // --- [유틸리티] ---
-
-    public void AddCotton(int amount)
-    {
-        currentCottonCount += amount;
-        UpdateUI();
-    }
-
-    private bool TryConsumeCotton(int amount)
-    {
-        if (currentCottonCount < amount) return false;
-        currentCottonCount -= amount;
-        UpdateUI();
-        return true;
-    }
-
-    private void UpdateUI()
-    {
-        if (cottonText != null) cottonText.text = currentCottonCount.ToString();
-
-        // 스탯 표시
-        if (statText != null && player != null)
+        // 4. 스탯 표시
+        if (statText != null && player != null && player.info != null)
             statText.text = $"HP: {player.info.maxHp}\nATK: {player.info.dmg}\nSPD: {player.info.speed:F1}";
 
-        // 강화 비용 및 단계 이미지 업데이트
-        UpdateEnhanceUI(hpLevel, hpCostTxt, hpBarImage);
-        UpdateEnhanceUI(speedLevel, speedCostTxt, speedBarImage);
-        UpdateEnhanceUI(dmgLevel, dmgCostTxt, dmgBarImage);
+        // 5. 비용 표시
+        if (dmgSkillCostTxt) dmgSkillCostTxt.text = skillCost_Dmg.ToString();
+        if (hpSkillCostTxt) hpSkillCostTxt.text = skillCost_Heal.ToString();
+        if (inkSkillCostTxt) inkSkillCostTxt.text = skillCost_Ink.ToString();
+        if (gachaCostTxt) gachaCostTxt.text = GACHA_COST_BLACK_INK.ToString();
     }
 
-    private void UpdateEnhanceUI(int level, TextMeshProUGUI costTxt, UnityEngine.UI.Image barImage)
+    private void UpdateEnhanceSlot(int level, TextMeshProUGUI costTxt, UnityEngine.UI.Image barImage)
     {
         if (level < maxLevel)
         {
@@ -245,8 +122,134 @@ public class DreamCottonEnhance : MonoBehaviour
         }
     }
 
-    /*
-    (인스펙터)
+    // --- [가챠 (Gacha)] ---
+
+    // [★신규★] 가챠 버튼 클릭 시 호출
+    public void PlayGacha()
+    {
+        // 검은 잉크 소모 체크
+        if (currentBlackInkCount < GACHA_COST_BLACK_INK)
+        {
+            Debug.Log("검은 잉크가 부족합니다!");
+            return;
+        }
+
+        // 소모
+        currentBlackInkCount -= GACHA_COST_BLACK_INK;
+        UpdateAllUI();
+
+        // 랜덤 보상 소환
+        if (gachaDropTable != null && MonsterManager.Instance != null)
+        {
+            Vector3 pos = (spawnPoint != null) ? spawnPoint.position : player.transform.position;
+            MonsterManager.Instance.SpawnItemsFromTable(gachaDropTable, pos);
+            Debug.Log("가챠 성공!");
+        }
+    }
+
+    // --- [강화 (Enhance)] ---
+
+    public void OnClickUpgradeHP()
+    {
+        if (hpLevel >= maxLevel) return;
+        if (TryConsumeCotton(upgradeCosts[hpLevel]))
+        {
+            hpLevel++;
+            player.info.maxHp += hpPerLevel;
+            player.GetComponent<PlayerHPController>()?.UpdateHpGauge();
+            UpdateAllUI();
+        }
+    }
+
+    public void OnClickUpgradeSpeed()
+    {
+        if (speedLevel >= maxLevel) return;
+        if (TryConsumeCotton(upgradeCosts[speedLevel]))
+        {
+            speedLevel++;
+            player.info.speed += (player.info.speed * speedPercent);
+            UpdateAllUI();
+        }
+    }
+
+    public void OnClickUpgradeDamage()
+    {
+        if (dmgLevel >= maxLevel) return;
+        if (TryConsumeCotton(upgradeCosts[dmgLevel]))
+        {
+            dmgLevel++;
+            player.info.dmg += Mathf.Max(1, Mathf.RoundToInt(player.info.dmg * dmgPercent));
+            UpdateAllUI();
+        }
+    }
+
+    // --- [스킬 (Skill)] ---
+
+    public void Skill_DamageBuff()
+    {
+        if (TryConsumeCotton(skillCost_Dmg))
+        {
+            StartCoroutine(DmgBuffRoutine());
+            UpdateAllUI();
+        }
+    }
+
+    private IEnumerator DmgBuffRoutine()
+    {
+        int buffAmount = Mathf.Max(1, Mathf.RoundToInt(player.info.dmg * dmgBuffRatio));
+        player.info.dmg += buffAmount;
+        UpdateAllUI();
+
+        yield return new WaitForSeconds(dmgBuffDuration);
+
+        player.info.dmg -= buffAmount;
+        UpdateAllUI();
+    }
+
+    public void Skill_WorldHeal()
+    {
+        if (TryConsumeCotton(skillCost_Heal))
+        {
+            WorldHpController.Instance?.RecoverHP(worldHealAmount);
+            UpdateAllUI();
+        }
+    }
+
+    public void Skill_InkRandom()
+    {
+        if (TryConsumeCotton(skillCost_Ink))
+        {
+            Vector3 pos = (spawnPoint != null) ? spawnPoint.position : player.transform.position;
+            if (inkSkillTable != null)
+                MonsterManager.Instance.SpawnItemsFromTable(inkSkillTable, pos);
+            UpdateAllUI();
+        }
+    }
+
+    // --- [자원 관리] ---
+
+    public void AddCotton(int amount)
+    {
+        currentCottonCount += amount;
+        UpdateAllUI();
+    }
+
+    // [★신규★] 검은 잉크 획득 시 호출 (MonsterManager 등에서)
+    public void AddBlackInk(int amount)
+    {
+        currentBlackInkCount += amount;
+        UpdateAllUI();
+    }
+
+    private bool TryConsumeCotton(int amount)
+    {
+        if (currentCottonCount < amount) return false;
+        currentCottonCount -= amount;
+        return true;
+    }
+}
+/*
+(인스펙터)
 DreamCottonUIManager: 씬에 빈 오브젝트를 만들고 붙인 뒤, Enhance, Skill, Gacha 패널 오브젝트를 연결합니다. (각 패널 닫기 버튼에 CloseAll 연결)
 
 DreamCottonEnhance:
@@ -266,5 +269,4 @@ UI 버튼 연결:
 스킬 버튼: Skill_DamageBuff 등 연결.
 
 교환 버튼: ExchangeInk 연결 후 매개변수(String)에 "Red", "Blue" 등 입력.
-    */
-}
+*/
