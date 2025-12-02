@@ -1,26 +1,31 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Spine.Unity;
 
 public class BossMonsterController : Character, OnReturnPool<BossMonsterController>
 {
     [SerializeField] private BossMonsterData bossData;
     public OnReturnPoolEvent<BossMonsterController> OnReturnPoolEvent;
 
+    [Header("Components")]
     [SerializeField] private BossSpineController bossSpine;
 
-    [Header("Pattern Areas (Scene Objects)")]
-    [SerializeField] private AreaData p1Area; // 공 떨어지는 구역
-    [SerializeField] private AreaData p2Area; // 세로 패턴 구역
-    [SerializeField] private AreaData p3Area; // 가로 패턴 구역
+    [Header("Pattern Areas")]
+    [SerializeField] private AreaData p1Area;
+    [SerializeField] private AreaData p2Area;
+    [SerializeField] private AreaData p3Area;
 
-    // 상태 관리
     private int currentGroggyCoin;
     private bool isInvincible = true;
-
-    // 패턴 관련
     private float idleTimer = 0f;
     private float currentIdleDuration = 2f;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if (bossSpine == null) bossSpine = GetComponent<BossSpineController>();
+    }
 
     public void Setup(BossMonsterData data)
     {
@@ -45,13 +50,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     void Update()
     {
         if (isDead) return;
-
-        switch (state)
-        {
-            case StateType.Idle: Idle(); break;
-            case StateType.Attack: break;
-            case StateType.Skill: break;
-        }
+        if (state == StateType.Idle) Idle();
     }
 
     protected override void Idle()
@@ -72,22 +71,15 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     private IEnumerator SelectAndExecutePattern()
     {
         state = StateType.Attack;
-
         int totalWeight = bossData.p1Weight + bossData.p2Weight + bossData.p3Weight;
         int randomValue = Random.Range(0, totalWeight);
 
         if (randomValue < bossData.p1Weight)
-        {
             yield return StartCoroutine(Pattern1_Summon());
-        }
         else if (randomValue < bossData.p1Weight + bossData.p2Weight)
-        {
             yield return StartCoroutine(Pattern2_Vertical());
-        }
         else
-        {
             yield return StartCoroutine(Pattern3_Horizontal());
-        }
 
         state = StateType.Idle;
         SetIdleDuration();
@@ -97,47 +89,41 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P1: 몬스터 소환 ---
     private IEnumerator Pattern1_Summon()
     {
-        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("spawn", bossData.warningDuration + 0.5f));
-
-        yield return new WaitForSeconds(bossData.castingDuration);
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayStartAndMiddle("spawn_skill", bossData.warningDuration));
+        else
+            yield return new WaitForSeconds(bossData.warningDuration);
 
         Vector2 spawnPos = GetRandomPosInArea(p1Area);
+        SpawnWarning(bossData.warningCirclePrefab, spawnPos, Vector3.one * 3.0f, WarningFillType.CenterExpand);
 
-        // Warning
-        GameObject warning = Instantiate(bossData.warningCirclePrefab, spawnPos, Quaternion.identity);
-        warning.transform.localScale = Vector3.one * 3.0f;
-
-        WarningArea warningScript = warning.GetComponent<WarningArea>();
-        if (warningScript != null) warningScript.Setup(bossData.warningDuration, WarningFillType.CenterExpand);
-
-        Destroy(warning, bossData.warningDuration);
-        yield return new WaitForSeconds(bossData.warningDuration);
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("spawn_skill", "spawn"));
 
         if (bossData.p1BallPrefab != null)
         {
             GameObject ball = Instantiate(bossData.p1BallPrefab, spawnPos + Vector2.up * 10f, Quaternion.identity);
-            Destroy(ball, 1.0f);
+            float fallTime = 0.5f;
+            float t = 0;
+            Vector2 start = ball.transform.position;
+            while (t < fallTime)
+            {
+                t += Time.deltaTime;
+                ball.transform.position = Vector2.Lerp(start, spawnPos, t / fallTime);
+                yield return null;
+            }
+            Destroy(ball);
         }
 
-        // 충돌 판정
         if (effectController != null && bossData.p1ExplosionEffect != null)
-        {
             effectController.PlayHitEffectAt(spawnPos, bossData.p1ExplosionEffect, false);
-        }
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(spawnPos, bossData.p1ExplosionRadius, LayerMask.GetMask("Player"));
-        if (hits != null)
+        foreach (var hit in hits)
         {
-            foreach (var hit in hits)
-            {
-                if (hit != null && hit.CompareTag("Player1"))
-                {
-                    hit.GetComponent<Character>()?.TakeDamage(info.dmg);
-                }
-            }
+            if (hit.CompareTag("Player1")) hit.GetComponent<Character>()?.TakeDamage(info.dmg);
         }
 
-        // 소환
         if (bossData.p1SummonMonsters != null && bossData.p1SummonMonsters.Count > 0)
         {
             MonsterData randomMonster = bossData.p1SummonMonsters[Random.Range(0, bossData.p1SummonMonsters.Count)];
@@ -151,40 +137,28 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P2: 세로 패턴 ---
     private IEnumerator Pattern2_Vertical()
     {
-        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("cymbals", bossData.warningDuration + 1.0f));
-        yield return new WaitForSeconds(bossData.castingDuration);
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayStartAndMiddle("cymbals_skill", bossData.warningDuration));
+        else
+            yield return new WaitForSeconds(bossData.warningDuration);
 
         float randomX = Random.Range(p2Area.pos.x - p2Area.size.x / 2, p2Area.pos.x + p2Area.size.x / 2);
         Vector2 centerPos = new Vector2(randomX, p2Area.pos.y);
         float yOffset = p2Area.size.y * 0.25f;
-        Vector2 topPos = new Vector2(randomX, p2Area.pos.y + yOffset);
-        Vector2 bottomPos = new Vector2(randomX, p2Area.pos.y - yOffset);
 
-        GameObject warningTop = Instantiate(bossData.warningBoxPrefab, topPos, Quaternion.identity);
-        warningTop.transform.localScale = new Vector3(2f, p2Area.size.y * 0.5f, 1f);
+        SpawnWarning(bossData.warningBoxPrefab, new Vector2(randomX, p2Area.pos.y + yOffset), new Vector3(2f, p2Area.size.y * 0.5f, 1f), WarningFillType.TopToBottom);
+        SpawnWarning(bossData.warningBoxPrefab, new Vector2(randomX, p2Area.pos.y - yOffset), new Vector3(2f, p2Area.size.y * 0.5f, 1f), WarningFillType.BottomToTop);
 
-        GameObject warningBottom = Instantiate(bossData.warningBoxPrefab, bottomPos, Quaternion.identity);
-        warningBottom.transform.localScale = new Vector3(2f, p2Area.size.y * 0.5f, 1f);
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("cymbals_skill", "attack_start"));
 
-        WarningArea scriptTop = warningTop.GetComponent<WarningArea>();
-        WarningArea scriptBottom = warningBottom.GetComponent<WarningArea>();
+        Vector2 topStart = new Vector2(randomX, p2Area.pos.y + p2Area.size.y / 2);
+        Vector2 botStart = new Vector2(randomX, p2Area.pos.y - p2Area.size.y / 2);
 
-        if (scriptTop != null) scriptTop.Setup(bossData.warningDuration, WarningFillType.TopToBottom);
-        if (scriptBottom != null) scriptBottom.Setup(bossData.warningDuration, WarningFillType.BottomToTop);
+        GameObject topObj = Instantiate(bossData.p2CymbalPrefab, topStart, Quaternion.identity);
+        GameObject botObj = Instantiate(bossData.p2CymbalPrefab, botStart, Quaternion.identity);
 
-        Destroy(warningTop, bossData.warningDuration);
-        Destroy(warningBottom, bossData.warningDuration);
-
-        yield return new WaitForSeconds(bossData.warningDuration);
-
-        Vector2 cymbalTopStart = new Vector2(randomX, p2Area.pos.y + p2Area.size.y / 2);
-        Vector2 cymbalBotStart = new Vector2(randomX, p2Area.pos.y - p2Area.size.y / 2);
-
-        GameObject topObj = Instantiate(bossData.p2CymbalPrefab, cymbalTopStart, Quaternion.identity);
-        GameObject bottomObj = Instantiate(bossData.p2CymbalPrefab, cymbalBotStart, Quaternion.identity);
-
-        float distance = Vector2.Distance(cymbalTopStart, centerPos);
-        float duration = distance / bossData.p2TravelSpeed;
+        float duration = Vector2.Distance(topStart, centerPos) / bossData.p2TravelSpeed;
         float elapsed = 0f;
         bool damageDealt = false;
 
@@ -192,70 +166,76 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            Vector2 curTop = Vector2.Lerp(cymbalTopStart, centerPos, t);
-            Vector2 curBot = Vector2.Lerp(cymbalBotStart, centerPos, t);
+            Vector2 curTop = Vector2.Lerp(topStart, centerPos, t);
+            Vector2 curBot = Vector2.Lerp(botStart, centerPos, t);
 
             if (topObj) topObj.transform.position = curTop;
-            if (bottomObj) bottomObj.transform.position = curBot;
+            if (botObj) botObj.transform.position = curBot;
 
             if (!damageDealt)
             {
                 Vector2 boxSize = new Vector2(bossData.p2DamageWidth, Vector2.Distance(curTop, curBot));
-                Vector2 boxCenter = (curTop + curBot) * 0.5f;
-                Collider2D hit = Physics2D.OverlapBox(boxCenter, boxSize, 0f, LayerMask.GetMask("Player"));
+                Collider2D hit = Physics2D.OverlapBox((curTop + curBot) * 0.5f, boxSize, 0f, LayerMask.GetMask("Player"));
                 if (hit != null && hit.CompareTag("Player1"))
                 {
                     hit.GetComponent<Character>()?.TakeDamage(info.dmg);
+
+                    if (effectController != null && bossData.p2HitEffect != null)
+                        effectController.PlayHitEffectAt(centerPos, bossData.p2HitEffect, false);
+
                     damageDealt = true;
                 }
             }
             yield return null;
         }
-
         if (topObj) Destroy(topObj);
-        if (bottomObj) Destroy(bottomObj);
+        if (botObj) Destroy(botObj);
     }
 
     // --- P3: 가로 패턴 ---
     private IEnumerator Pattern3_Horizontal()
     {
-        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("box", bossData.warningDuration + 1.0f));
-        yield return new WaitForSeconds(bossData.castingDuration);
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_spawn", 0f));
+
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_spawn", "spawn"));
 
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);
-        bool isLeft = false;
+        bool isLeft = Random.value > 0.5f;
+        float startX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
+        float endX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
 
-        float startX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
-        float endX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
-        Vector2 startPos = new Vector2(startX, randomY);
-        Vector2 endPos = new Vector2(endX, randomY);
-        Vector2 centerPos = new Vector2(p3Area.pos.x, randomY);
+        Vector2 boxPos = new Vector2(startX, randomY);
+        GameObject boxObj = Instantiate(bossData.p3BoxPrefab, boxPos, Quaternion.identity);
+        SkeletonAnimation boxSpine = boxObj.GetComponent<SkeletonAnimation>();
 
-        GameObject warning = Instantiate(bossData.warningBoxPrefab, centerPos, Quaternion.identity);
-        warning.transform.localScale = new Vector3(p3Area.size.x, 2f, 1);
-
-        WarningArea warningScript = warning.GetComponent<WarningArea>();
-        if (warningScript != null)
+        if (boxSpine != null)
         {
-            warningScript.Setup(bossData.warningDuration, WarningFillType.LeftToRight);
+            boxSpine.skeleton.ScaleX = isLeft ? -1 : 1;
+            boxSpine.AnimationState.SetAnimation(0, "SPAWN", false);
+            boxSpine.AnimationState.AddAnimation(0, "IDLE", true, 0);
         }
 
-        Destroy(warning, bossData.warningDuration);
-
+        SpawnWarning(bossData.warningBoxPrefab, new Vector2(p3Area.pos.x, randomY), new Vector3(p3Area.size.x, 2f, 1), WarningFillType.Horizontal);
         yield return new WaitForSeconds(bossData.warningDuration);
 
-        if (bossData.p3BoxPrefab != null)
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_skill", 0f));
+
+        if (bossSpine != null)
+            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_skill", "attack_start"));
+
+        if (boxSpine != null)
         {
-            GameObject boxObj = Instantiate(bossData.p3BoxPrefab, startPos, Quaternion.identity);
-            if (isLeft) boxObj.transform.localScale = new Vector3(-1, 1, 1);
-            Destroy(boxObj, 2.0f);
+            boxSpine.AnimationState.SetAnimation(0, "ATTACK_START", false);
+            boxSpine.AnimationState.AddAnimation(0, "IDLE", true, 0);
         }
 
-        GameObject punchObj = Instantiate(bossData.p3FistPrefab, startPos, Quaternion.identity);
+        GameObject punchObj = Instantiate(bossData.p3FistPrefab, boxPos, Quaternion.identity);
         if (isLeft) punchObj.transform.localScale = new Vector3(-1, 1, 1);
 
-        float distance = Mathf.Abs(endX - startX);
-        float duration = distance / bossData.p3PunchSpeed;
+        float duration = Mathf.Abs(endX - startX) / bossData.p3PunchSpeed;
         float elapsed = 0f;
         bool damageDealt = false;
 
@@ -263,16 +243,18 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            Vector2 curPos = Vector2.Lerp(startPos, endPos, t);
-
-            if (punchObj) punchObj.transform.position = curPos;
+            punchObj.transform.position = Vector2.Lerp(boxPos, new Vector2(endX, randomY), t);
 
             if (!damageDealt)
             {
-                Collider2D hit = Physics2D.OverlapBox(curPos, new Vector2(1f, bossData.p3DamageHeight), 0f, LayerMask.GetMask("Player"));
+                Collider2D hit = Physics2D.OverlapBox(punchObj.transform.position, new Vector2(1f, bossData.p3DamageHeight), 0f, LayerMask.GetMask("Player"));
                 if (hit != null && hit.CompareTag("Player1"))
                 {
                     hit.GetComponent<Character>()?.TakeDamage(info.dmg);
+
+                    if (effectController != null && bossData.p3HitEffect != null)
+                        effectController.PlayHitEffectAt(punchObj.transform.position, bossData.p3HitEffect, false);
+
                     damageDealt = true;
                 }
             }
@@ -280,13 +262,13 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         }
 
         if (punchObj) Destroy(punchObj);
+        if (boxObj) Destroy(boxObj);
     }
 
     private IEnumerator GroggyRoutine()
     {
         state = StateType.Skill;
         isInvincible = false;
-
         if (bossSpine != null) bossSpine.PlayGroggy();
 
         yield return new WaitForSeconds(bossData.groggyDuration);
@@ -294,9 +276,17 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         isInvincible = true;
         currentGroggyCoin = bossData.groggyCoinMax;
         state = StateType.Idle;
-
         if (bossSpine != null) bossSpine.PlayIdle();
         SetIdleDuration();
+    }
+
+    private void SpawnWarning(GameObject prefab, Vector2 pos, Vector3 scale, WarningFillType type)
+    {
+        GameObject warning = Instantiate(prefab, pos, Quaternion.identity);
+        warning.transform.localScale = scale;
+        WarningArea ws = warning.GetComponent<WarningArea>();
+        if (ws != null) ws.Setup(bossData.warningDuration, type);
+        Destroy(warning, bossData.warningDuration);
     }
 
     public override void TakeDamage(int amount, EffectVisualData hitEffect)
@@ -305,36 +295,18 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         {
             if (effectController != null && bossData.invincibleHitEffect != null)
             {
-                effectController.PlayHitEffectAt(transform.position, bossData.invincibleHitEffect, false);
+                effectController.PlayHitEffectAt(transform.position, bossData.invincibleHitEffect, FlipX());
             }
             return;
         }
+
         base.TakeDamage(amount, hitEffect);
     }
 
-    private void TakeFixedDamage()
-    {
-        int damage = Mathf.RoundToInt(info.maxHp * bossData.fixedDamageRatio);
-        currentHP -= damage;
-        if (currentHP <= 0) Dead();
-    }
-
-    private void DecreaseGroggyCoin()
-    {
-        if (currentGroggyCoin > 0) currentGroggyCoin--;
-    }
-
-    protected override void Dead()
-    {
-        base.Dead();
-        OnReturnPoolEvent?.Invoke(this);
-    }
-
-    public void Init(OnReturnPoolEvent<BossMonsterController> onReturnPoolEvent)
-    {
-        OnReturnPoolEvent = onReturnPoolEvent;
-    }
-
+    private void TakeFixedDamage() { int dmg = Mathf.RoundToInt(info.maxHp * bossData.fixedDamageRatio); currentHP -= dmg; if (currentHP <= 0) Dead(); }
+    private void DecreaseGroggyCoin() { if (currentGroggyCoin > 0) currentGroggyCoin--; }
+    protected override void Dead() { base.Dead(); OnReturnPoolEvent?.Invoke(this); }
+    public void Init(OnReturnPoolEvent<BossMonsterController> onReturnPoolEvent) { OnReturnPoolEvent = onReturnPoolEvent; }
     private Vector2 GetRandomPosInArea(AreaData area)
     {
         if (area == null) return transform.position;

@@ -32,7 +32,12 @@ public class GameManager : GenericSingleton<GameManager>
 
     public void Restart()
     {
-        SceneController.Instance.ReloadGameScene();
+        Time.timeScale = 1.0f;
+
+        if (SceneController.Instance != null)
+        {
+            SceneController.Instance.ReloadGameScene();
+        }
     }
 
     public void ResetTimeScale()

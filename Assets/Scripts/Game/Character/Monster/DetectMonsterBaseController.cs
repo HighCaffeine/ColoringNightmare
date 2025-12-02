@@ -325,8 +325,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             return;
         }
 
-        skeleton.AnimationState.ClearTrack(0);
-
         if (skeleton != null && skeleton.skeletonDataAsset != null)
         {
             if (skeleton.AnimationName != animName)

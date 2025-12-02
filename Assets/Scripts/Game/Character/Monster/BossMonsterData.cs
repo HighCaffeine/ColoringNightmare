@@ -27,7 +27,6 @@ public class BossMonsterData : MonsterData
     [Header("Common Assets")]
     public GameObject warningBoxPrefab;
     public GameObject warningCirclePrefab;
-    public EffectVisualData invincibleHitEffect;
 
     [Header("P1 Assets (Summon)")]
     public GameObject p1BallPrefab;
@@ -39,10 +38,15 @@ public class BossMonsterData : MonsterData
     public GameObject p2CymbalPrefab;
     public float p2TravelSpeed = 10.0f;
     public float p2DamageWidth = 1.0f;
+    public EffectVisualData p2HitEffect;
 
     [Header("P3 Assets (Horizontal)")]
     public GameObject p3BoxPrefab;
     public GameObject p3FistPrefab;
     public float p3PunchSpeed = 15.0f;
     public float p3DamageHeight = 1.0f;
+    public EffectVisualData p3HitEffect;
+
+    [Header("Boss Status Effects")]
+    public EffectVisualData invincibleHitEffect;
 }

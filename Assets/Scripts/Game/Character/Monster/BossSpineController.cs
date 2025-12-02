@@ -1,4 +1,5 @@
 using UnityEngine;
+using Spine;
 using Spine.Unity;
 using System.Collections;
 
@@ -6,74 +7,85 @@ public class BossSpineController : MonoBehaviour
 {
     [SerializeField] private SkeletonAnimation skeletonAnimation;
 
-    // 보스 애니메이션 이름 정의
-    private const string ANIM_IDLE = "idle";
-    private const string ANIM_GROGGY = "groggy";
+    // 보스 애니메이션 이름
+    public const string IDLE = "idle";
+    public const string GROGGY = "groggy";
+    public const string DEAD = "Dead";
 
-    // 패턴별 애니메이션 이름 (접두어)
-    // 예: P1_Start, P1_Middle, P1_End
+    private string lastEventName = "";
+    private bool eventTriggered = false;
 
     private void Awake()
     {
         if (skeletonAnimation == null)
             skeletonAnimation = GetComponent<SkeletonAnimation>();
+
+        if (skeletonAnimation != null)
+        {
+            skeletonAnimation.AnimationState.Event += HandleSpineEvent;
+        }
     }
 
-    public void PlayIdle()
+    private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        SetAnimation(ANIM_IDLE, true);
+        lastEventName = e.Data.Name;
+        eventTriggered = true;
     }
 
-    public void PlayGroggy()
-    {
-        SetAnimation(ANIM_GROGGY, true);
-    }
+    public void PlayIdle() { SetAnimation(IDLE, true); }
+    public void PlayGroggy() { SetAnimation(GROGGY, true); }
+    public void PlayDead() { SetAnimation(DEAD, false); }
 
-    /// <summary>
-    /// 3단계 패턴 애니메이션을 재생하는 코루틴 (Start -> Middle -> End)
-    /// </summary>
-    /// <param name="patternName">패턴 이름 (예: "P1", "P2")</param>
-    /// <param name="duration">Middle(유지) 애니메이션을 재생할 시간</param>
-    public IEnumerator PlayPatternAnimation(string patternName, float duration)
+    public IEnumerator PlayStartAndMiddle(string patternPrefix, float midDuration)
     {
-        // 1. Start (시전 동작)
-        string startAnim = $"{patternName}_skill_start";
-        float startDuration = GetAnimationDuration(startAnim);
-
-        if (startDuration > 0)
+        // 1. Start
+        string startAnim = $"{patternPrefix}_start";
+        float startLen = GetAnimationDuration(startAnim);
+        if (startLen > 0)
         {
             SetAnimation(startAnim, false);
-            yield return new WaitForSeconds(startDuration);
+            yield return new WaitForSeconds(startLen);
         }
 
-        // 2. Middle (유지 동작 - 루프)
-        string middleAnim = $"{patternName}_skill_mid";
-        if (HasAnimation(middleAnim))
+        // 2. Mid (Loop)
+        string midAnim = $"{patternPrefix}_mid";
+        if (HasAnimation(midAnim))
         {
-            SetAnimation(middleAnim, true);
+            SetAnimation(midAnim, true);
         }
 
-        // 지정된 시간(패턴 지속 시간)만큼 대기
-        yield return new WaitForSeconds(duration);
-
-        // 3. End (종료 동작)
-        string endAnim = $"{patternName}_skill_end";
-        float endDuration = GetAnimationDuration(endAnim);
-
-        if (endDuration > 0)
+        if (midDuration > 0)
         {
-            SetAnimation(endAnim, false);
-            yield return new WaitForSeconds(endDuration);
+            yield return new WaitForSeconds(midDuration);
         }
+    }
 
-        // 끝나면 Idle로 복귀
-        PlayIdle();
+    public IEnumerator PlayEndAndWaitForEvent(string patternPrefix, string targetEventName)
+    {
+        string endAnim = $"{patternPrefix}_end";
+
+        // 이벤트 플래그 초기화
+        eventTriggered = false;
+        lastEventName = "";
+
+        // End 애니메이션 재생
+        SetAnimation(endAnim, false);
+
+        // 이벤트가 발생할 때까지 대기 (최대 애니메이션 길이만큼만 대기 - 안전장치)
+        float timeout = GetAnimationDuration(endAnim) + 0.5f;
+        float timer = 0f;
+
+        while (!eventTriggered || lastEventName != targetEventName)
+        {
+            timer += Time.deltaTime;
+            if (timer > timeout) break; // 무한 대기 방지
+            yield return null;
+        }
     }
 
     private void SetAnimation(string name, bool loop)
     {
         if (skeletonAnimation == null || skeletonAnimation.Skeleton == null) return;
-
         var anim = skeletonAnimation.Skeleton.Data.FindAnimation(name);
         if (anim != null)
         {

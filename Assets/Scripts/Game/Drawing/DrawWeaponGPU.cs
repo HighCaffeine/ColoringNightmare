@@ -456,6 +456,14 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
         line = null;
     }
 
+    public void ForceCancelDrawing()
+    {
+        isAllowDrawing = false; // 그리기 허용 끄기
+        InitLine();             // 그리던 선 모두 삭제
+
+        Cursor.visible = true;
+    }
+
     public void SetRefSprite(SpriteRenderer refSprite)
     {
         this.refSprite = refSprite;

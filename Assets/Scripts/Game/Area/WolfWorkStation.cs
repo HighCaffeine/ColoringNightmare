@@ -138,6 +138,19 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         OnSketchOff?.Invoke();
     }
 
+    public void ForceExitAll()
+    {
+        if (DrawWeaponGPU.Instance != null)
+        {
+            DrawWeaponGPU.Instance.ForceCancelDrawing();
+        }
+
+        AllWorkStationOff();
+
+        workStationType = WorkStationType.None;
+        isOnInteractive = false;
+    }
+
     public void Interactive()
     {
         switch (workStationType)
