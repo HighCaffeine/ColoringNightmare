@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: sheep2_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
-  - {fileID: 11400000, guid: e680bfd9f1d537a438ea4a13c0f8544f, type: 2}
+  - {fileID: 11400000, guid: 964111e8c4dc9094b908ca10d4211018, type: 2}
   scale: 0.01
-  skeletonJSON: {fileID: 4900000, guid: 1dc2641218fd958408eaf446bc747d2e, type: 3}
+  skeletonJSON: {fileID: 4900000, guid: 8f36ae8451d1dd144a21893849b8c9ee, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
     requiresBlendModeMaterials: 0

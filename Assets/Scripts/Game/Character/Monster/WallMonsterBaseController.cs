@@ -7,8 +7,6 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
 {
     OnReturnPoolEvent<WallMonsterBaseController<T>> OnReturnPoolEvent;
 
-    [SerializeField] private Animator ani;
-
     protected T monsterData;
     protected float idleTime = 1f;
     protected float idleTimer = 0f;
@@ -137,7 +135,6 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     {
         yield return new WaitForSeconds(delay);
         isSelfDestruct = true;
-        if (ani != null) ani.SetTrigger("Explode");
         MonsterManager.Instance.SubWorldHpEvent();
         ChangeState(StateType.Dead);
     }
@@ -152,7 +149,8 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     private IEnumerator WallAttackCoroutine()
     {
         isAttacking = true;
-        if (ani != null) ani.SetTrigger("Attack");
+        skeleton.AnimationState.ClearTrack(0);
+
         float attackDuration = 0.3f;
         yield return new WaitForSeconds(attackDuration);
         isAttacking = false;

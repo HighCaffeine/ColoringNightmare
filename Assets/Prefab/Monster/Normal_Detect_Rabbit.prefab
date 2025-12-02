@@ -55,7 +55,6 @@ MonoBehaviour:
   info: {fileID: 0}
   currentHP: 0
   skeleton: {fileID: 4479632977678530229}
-  ani: {fileID: 0}
   lungeDistance: 1
   lungeDuration: 0.15
   lungePause: 0.1
@@ -238,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skeletonDataAsset: {fileID: 11400000, guid: 39862a0ef34c85f45ac7de01e3e7862b, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: 447b91b34fa4e32419068e0f7e3187c4, type: 2}
   initialSkinName: 
   fixPrefabOverrideViaMeshFilter: 2
   initialFlipX: 0

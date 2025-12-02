@@ -27,7 +27,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     private const string ANIM_MOVE = "animation";
     private const string ANIM_IDLE = "idle";
-    private const string ANIM_ATTACK = "Attack";
+    private const string ANIM_ATTACK = "attack";
 
     // 기본 Wall 몬스터 동작 변수
     private float baseIdleTimer = 0f;
@@ -319,11 +319,13 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     protected void SetSpineAnimation(string animName, bool loop)
     {
-        if (animName == ANIM_IDLE || animName == ANIM_ATTACK)
+        if (animName == ANIM_IDLE)
         {
             skeleton.AnimationState.ClearTrack(0);
             return;
         }
+
+        skeleton.AnimationState.ClearTrack(0);
 
         if (skeleton != null && skeleton.skeletonDataAsset != null)
         {

@@ -14,6 +14,11 @@ public class PlayerHPController : MonoBehaviour
         playerController = GetComponent<PlayerController>();
     }
 
+    void Start()
+    {
+        UpdateHpGauge();
+    }
+
     public void OnDamagedPanelEvent()
     {
         SetActivePanel(true);
