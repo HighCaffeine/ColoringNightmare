@@ -5,6 +5,8 @@ public class GameManager : GenericSingleton<GameManager>
     [SerializeField] private int targetFrameRate = 60;  //Default - 60
     [SerializeField] private GameObject gameOverPanel;
 
+    private bool first = true;
+
     private new void Awake()
     {
         base.Awake();
@@ -16,9 +18,13 @@ public class GameManager : GenericSingleton<GameManager>
     {
         Time.timeScale = 0.0f;
 
-        if (gameOverPanel != null)
+        if (gameOverPanel != null && !first)
         {
             gameOverPanel.SetActive(true);
+        }
+        else
+        {
+            first = false;
         }
 
         Debug.Log("Game Over");

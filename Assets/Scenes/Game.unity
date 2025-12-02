@@ -4687,7 +4687,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &329578053
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12731,7 +12731,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1021395293
 RectTransform:
   m_ObjectHideFlags: 0
@@ -27536,7 +27536,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2066908747
 RectTransform:
   m_ObjectHideFlags: 0
@@ -29151,7 +29151,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2129122300
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30748,6 +30748,7 @@ MonoBehaviour:
   currentHP: 0
   skeleton: {fileID: 0}
   bossData: {fileID: 11400000, guid: 3926cafa1ccfa9f4fa5ea34b0c1bb121, type: 2}
+  bossSpine: {fileID: 0}
   p1Area: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
   p2Area: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
   p3Area: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
