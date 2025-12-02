@@ -7,16 +7,12 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     [SerializeField] private BossMonsterData bossData;
     public OnReturnPoolEvent<BossMonsterController> OnReturnPoolEvent;
 
+    [SerializeField] private BossSpineController bossSpine;
+
     [Header("Pattern Areas (Scene Objects)")]
     [SerializeField] private AreaData p1Area; // 공 떨어지는 구역
     [SerializeField] private AreaData p2Area; // 세로 패턴 구역
     [SerializeField] private AreaData p3Area; // 가로 패턴 구역
-
-    // 애니메이션 상수
-    private const string ANIM_IDLE = "idle";
-    private const string ANIM_CAST = "cast";
-    private const string ANIM_GROGGY = "groggy";
-    private const string ANIM_HIT = "hit";
 
     // 상태 관리
     private int currentGroggyCoin;
@@ -36,7 +32,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         isInvincible = true;
         state = StateType.Idle;
 
-        SetSpineAnimation(ANIM_IDLE, true);
+        if (bossSpine != null) bossSpine.PlayIdle();
         SetIdleDuration();
     }
 
@@ -95,59 +91,53 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
         state = StateType.Idle;
         SetIdleDuration();
-        SetSpineAnimation(ANIM_IDLE, true);
+        if (bossSpine != null) bossSpine.PlayIdle();
     }
 
     // --- P1: 몬스터 소환 ---
     private IEnumerator Pattern1_Summon()
     {
-        SetSpineAnimation(ANIM_CAST, false);
+        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("P1", bossData.warningDuration + 0.5f));
+
         yield return new WaitForSeconds(bossData.castingDuration);
 
         Vector2 spawnPos = GetRandomPosInArea(p1Area);
 
+        // Warning
         GameObject warning = Instantiate(bossData.warningCirclePrefab, spawnPos, Quaternion.identity);
         warning.transform.localScale = Vector3.one * 3.0f;
 
         WarningArea warningScript = warning.GetComponent<WarningArea>();
-        if (warningScript != null)
-        {
-            warningScript.Setup(bossData.warningDuration, WarningFillType.CenterExpand);
-        }
-        Destroy(warning, bossData.warningDuration);
+        if (warningScript != null) warningScript.Setup(bossData.warningDuration, WarningFillType.CenterExpand);
 
+        Destroy(warning, bossData.warningDuration);
         yield return new WaitForSeconds(bossData.warningDuration);
 
         if (bossData.p1BallPrefab != null)
         {
-            Vector2 startPos = spawnPos + Vector2.up * 10f;
-            GameObject ball = Instantiate(bossData.p1BallPrefab, startPos, Quaternion.identity);
-
-            float fallDuration = 0.5f;
-            float elapsed = 0f;
-            while (elapsed < fallDuration)
-            {
-                elapsed += Time.deltaTime;
-                ball.transform.position = Vector2.Lerp(startPos, spawnPos, elapsed / fallDuration);
-                yield return null;
-            }
-            Destroy(ball);
+            GameObject ball = Instantiate(bossData.p1BallPrefab, spawnPos + Vector2.up * 10f, Quaternion.identity);
+            Destroy(ball, 1.0f);
         }
 
+        // 충돌 판정
         if (effectController != null && bossData.p1ExplosionEffect != null)
         {
             effectController.PlayHitEffectAt(spawnPos, bossData.p1ExplosionEffect, false);
         }
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(spawnPos, bossData.p1ExplosionRadius, LayerMask.GetMask("Player"));
-        foreach (var hit in hits)
+        if (hits != null)
         {
-            if (hit.CompareTag("Player1"))
+            foreach (var hit in hits)
             {
-                hit.GetComponent<Character>()?.TakeDamage(info.dmg);
+                if (hit != null && hit.CompareTag("Player1"))
+                {
+                    hit.GetComponent<Character>()?.TakeDamage(info.dmg);
+                }
             }
         }
 
+        // 소환
         if (bossData.p1SummonMonsters != null && bossData.p1SummonMonsters.Count > 0)
         {
             MonsterData randomMonster = bossData.p1SummonMonsters[Random.Range(0, bossData.p1SummonMonsters.Count)];
@@ -161,7 +151,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P2: 세로 패턴 ---
     private IEnumerator Pattern2_Vertical()
     {
-        SetSpineAnimation(ANIM_CAST, false);
+        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("P2", bossData.warningDuration + 1.0f));
         yield return new WaitForSeconds(bossData.castingDuration);
 
         float randomX = Random.Range(p2Area.pos.x - p2Area.size.x / 2, p2Area.pos.x + p2Area.size.x / 2);
@@ -229,7 +219,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P3: 가로 패턴 ---
     private IEnumerator Pattern3_Horizontal()
     {
-        SetSpineAnimation(ANIM_CAST, false);
+        if (bossSpine != null) StartCoroutine(bossSpine.PlayPatternAnimation("P3", bossData.warningDuration + 1.0f));
         yield return new WaitForSeconds(bossData.castingDuration);
 
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);
@@ -297,14 +287,15 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         state = StateType.Skill;
         isInvincible = false;
 
-        SetSpineAnimation(ANIM_GROGGY, true);
+        if (bossSpine != null) bossSpine.PlayGroggy();
 
         yield return new WaitForSeconds(bossData.groggyDuration);
 
         isInvincible = true;
         currentGroggyCoin = bossData.groggyCoinMax;
         state = StateType.Idle;
-        SetSpineAnimation(ANIM_IDLE, true);
+
+        if (bossSpine != null) bossSpine.PlayIdle();
         SetIdleDuration();
     }
 
@@ -342,17 +333,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     public void Init(OnReturnPoolEvent<BossMonsterController> onReturnPoolEvent)
     {
         OnReturnPoolEvent = onReturnPoolEvent;
-    }
-
-    private void SetSpineAnimation(string animName, bool loop)
-    {
-        if (skeleton != null && skeleton.skeletonDataAsset != null)
-        {
-            if (skeleton.AnimationName != animName)
-            {
-                skeleton.AnimationState.SetAnimation(0, animName, loop);
-            }
-        }
     }
 
     private Vector2 GetRandomPosInArea(AreaData area)

@@ -5865,7 +5865,7 @@ PrefabInstance:
       objectReference: {fileID: 1748574277}
     - target: {fileID: 6697285388701204012, guid: c0af1d632e4f2854caa6937d17c5a9fe, type: 3}
       propertyPath: m_Delegates.Array.data[3].callback.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
-      value: OnClickUpgradeSpeed
+      value: InkSkill
       objectReference: {fileID: 0}
     - target: {fileID: 9179513678170536794, guid: c0af1d632e4f2854caa6937d17c5a9fe, type: 3}
       propertyPath: m_Pivot.x
@@ -16862,6 +16862,10 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[3].callback.m_PersistentCalls.m_Calls.Array.data[4].m_Target
       value: 
       objectReference: {fileID: 1748574277}
+    - target: {fileID: 6697285388701204012, guid: c0af1d632e4f2854caa6937d17c5a9fe, type: 3}
+      propertyPath: m_Delegates.Array.data[3].callback.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
+      value: DmgSkill
+      objectReference: {fileID: 0}
     - target: {fileID: 9179513678170536794, guid: c0af1d632e4f2854caa6937d17c5a9fe, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -19037,7 +19041,7 @@ PrefabInstance:
       objectReference: {fileID: 1748574277}
     - target: {fileID: 6697285388701204012, guid: c0af1d632e4f2854caa6937d17c5a9fe, type: 3}
       propertyPath: m_Delegates.Array.data[3].callback.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
-      value: OnClickUpgradeDamage
+      value: HPSkill
       objectReference: {fileID: 0}
     - target: {fileID: 9179513678170536794, guid: c0af1d632e4f2854caa6937d17c5a9fe, type: 3}
       propertyPath: m_Pivot.x
