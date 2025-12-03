@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public enum SceneName
 {
@@ -20,6 +21,21 @@ public class SceneController : GenericSingleton<SceneController>
         base.Awake();
         DontDestroyOnLoad(this);
     }
+
+    void Start()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.IsShowCredits)
+        {
+            GameObject creditObj = GameObject.FindGameObjectWithTag("Credit");
+
+            if (creditObj != null)
+            {
+                creditObj.SetActive(true);
+            }
+            GameManager.Instance.OffCreditsFlag();
+        }
+    }
+
     public static bool IsLoadGameScene => isLoadGameScene;
 
     private static bool isLoadGameScene = false;

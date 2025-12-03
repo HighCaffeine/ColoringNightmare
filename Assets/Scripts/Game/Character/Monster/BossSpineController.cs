@@ -19,7 +19,9 @@ public class BossSpineController : MonoBehaviour
     private void Awake()
     {
         if (skeletonAnimation == null)
+        {
             skeletonAnimation = GetComponent<SkeletonAnimation>();
+        }
 
         if (skeletonAnimation != null)
         {
@@ -42,7 +44,6 @@ public class BossSpineController : MonoBehaviour
 
     public IEnumerator PlayStartAndMiddle(string patternPrefix, float midDuration)
     {
-        // 1. Start
         string startAnim = $"{patternPrefix}_start";
         float startLen = GetAnimationDuration(startAnim);
         if (startLen > 0)
@@ -51,7 +52,6 @@ public class BossSpineController : MonoBehaviour
             yield return new WaitForSeconds(startLen);
         }
 
-        // 2. Mid (Loop)
         string midAnim = $"{patternPrefix}_mid";
         if (HasAnimation(midAnim))
         {
@@ -75,7 +75,6 @@ public class BossSpineController : MonoBehaviour
         // End 애니메이션 재생
         SetAnimation(endAnim, false);
 
-        // 이벤트가 발생할 때까지 대기 (최대 애니메이션 길이만큼만 대기 - 안전장치)
         float timeout = GetAnimationDuration(endAnim) + 0.5f;
         float timer = 0f;
 

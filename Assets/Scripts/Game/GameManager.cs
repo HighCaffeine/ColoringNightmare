@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class GameManager : GenericSingleton<GameManager>
 {
-    [SerializeField] private int targetFrameRate = 60;  //Default - 60
+    [SerializeField] private int targetFrameRate = 60;  // Default - 60
     [SerializeField] private GameObject gameOverPanel;
 
     private bool first = true;
+
+    public bool IsShowCredits { get; private set; } = false;
 
     private new void Awake()
     {
@@ -50,8 +52,20 @@ public class GameManager : GenericSingleton<GameManager>
         ResetTimeScale();
     }
 
-    public void Exit()
+    public void Exit(bool showCredits = false)
     {
-        SceneController.Instance.GoToScene(SceneName.Menu.ToString());
+        Time.timeScale = 1.0f;
+
+        IsShowCredits = showCredits;
+
+        if (SceneController.Instance != null)
+        {
+            SceneController.Instance.GoToScene(SceneName.Menu.ToString());
+        }
+    }
+
+    public void OffCreditsFlag()
+    {
+        IsShowCredits = false;
     }
 }
