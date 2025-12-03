@@ -2,6 +2,7 @@ using UnityEngine;
 using Spine;
 using Spine.Unity;
 using System.Collections;
+using System;
 
 public class BossSpineController : MonoBehaviour
 {
@@ -34,7 +35,10 @@ public class BossSpineController : MonoBehaviour
 
     public void PlayIdle() { SetAnimation(IDLE, true); }
     public void PlayGroggy() { SetAnimation(GROGGY, true); }
-    public void PlayDead() { SetAnimation(DEAD, false); }
+    public void PlayDead(MonsterManager.OnEndingEvent OnEndEvent)
+    {
+        SetAnimation(DEAD, false, () => { OnEndEvent?.Invoke(); });
+    }
 
     public IEnumerator PlayStartAndMiddle(string patternPrefix, float midDuration)
     {
@@ -83,13 +87,20 @@ public class BossSpineController : MonoBehaviour
         }
     }
 
-    private void SetAnimation(string name, bool loop)
+    private void SetAnimation(string name, bool loop, Action onComplete = null)
     {
         if (skeletonAnimation == null || skeletonAnimation.Skeleton == null) return;
         var anim = skeletonAnimation.Skeleton.Data.FindAnimation(name);
         if (anim != null)
         {
             skeletonAnimation.AnimationState.SetAnimation(0, anim, loop);
+        }
+
+        TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(0, anim, loop);
+
+        if (!loop && onComplete != null)
+        {
+            entry.Complete += _ => onComplete();
         }
     }
 

@@ -8,6 +8,8 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     [SerializeField] private BossMonsterData bossData;
     public OnReturnPoolEvent<BossMonsterController> OnReturnPoolEvent;
 
+    public MonsterManager.OnEndingEvent OnEndingEvent;
+
     [Header("Components")]
     [SerializeField] private BossSpineController bossSpine;
 
@@ -27,8 +29,10 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         if (bossSpine == null) bossSpine = GetComponent<BossSpineController>();
     }
 
-    public void Setup(BossMonsterData data)
+    public void Setup(BossMonsterData data, MonsterManager.OnEndingEvent OnEndingEvent)
     {
+        this.OnEndingEvent = OnEndingEvent;
+
         bossData = data;
         info = data;
         currentHP = info.maxHp;
@@ -75,11 +79,17 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         int randomValue = Random.Range(0, totalWeight);
 
         if (randomValue < bossData.p1Weight)
+        {
             yield return StartCoroutine(Pattern1_Summon());
+        }
         else if (randomValue < bossData.p1Weight + bossData.p2Weight)
+        {
             yield return StartCoroutine(Pattern2_Vertical());
+        }
         else
+        {
             yield return StartCoroutine(Pattern3_Horizontal());
+        }
 
         state = StateType.Idle;
         SetIdleDuration();
@@ -90,15 +100,18 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     private IEnumerator Pattern1_Summon()
     {
         if (bossSpine != null)
+        {
             yield return StartCoroutine(bossSpine.PlayStartAndMiddle("spawn_skill", bossData.warningDuration));
+        }
         else
+        {
             yield return new WaitForSeconds(bossData.warningDuration);
+        }
 
         Vector2 spawnPos = GetRandomPosInArea(p1Area);
         SpawnWarning(bossData.warningCirclePrefab, spawnPos, Vector3.one * 3.0f, WarningFillType.CenterExpand);
 
-        if (bossSpine != null)
-            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("spawn_skill", "spawn"));
+        if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("spawn_skill", "spawn"));
 
         if (bossData.p1BallPrefab != null)
         {
@@ -116,7 +129,9 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         }
 
         if (effectController != null && bossData.p1ExplosionEffect != null)
+        {
             effectController.PlayHitEffectAt(spawnPos, bossData.p1ExplosionEffect, false);
+        }
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(spawnPos, bossData.p1ExplosionRadius, LayerMask.GetMask("Player"));
         foreach (var hit in hits)
@@ -181,7 +196,9 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
                     hit.GetComponent<Character>()?.TakeDamage(info.dmg);
 
                     if (effectController != null && bossData.p2HitEffect != null)
+                    {
                         effectController.PlayHitEffectAt(centerPos, bossData.p2HitEffect, false);
+                    }
 
                     damageDealt = true;
                 }
@@ -253,7 +270,9 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
                     hit.GetComponent<Character>()?.TakeDamage(info.dmg);
 
                     if (effectController != null && bossData.p3HitEffect != null)
+                    {
                         effectController.PlayHitEffectAt(punchObj.transform.position, bossData.p3HitEffect, false);
+                    }
 
                     damageDealt = true;
                 }
@@ -305,7 +324,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
     private void TakeFixedDamage() { int dmg = Mathf.RoundToInt(info.maxHp * bossData.fixedDamageRatio); currentHP -= dmg; if (currentHP <= 0) Dead(); }
     private void DecreaseGroggyCoin() { if (currentGroggyCoin > 0) currentGroggyCoin--; }
-    protected override void Dead() { base.Dead(); OnReturnPoolEvent?.Invoke(this); }
+    protected override void Dead() { base.Dead(); bossSpine.PlayDead(OnEndingEvent); }
     public void Init(OnReturnPoolEvent<BossMonsterController> onReturnPoolEvent) { OnReturnPoolEvent = onReturnPoolEvent; }
     private Vector2 GetRandomPosInArea(AreaData area)
     {

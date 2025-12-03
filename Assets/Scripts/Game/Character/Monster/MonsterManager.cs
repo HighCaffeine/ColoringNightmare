@@ -10,6 +10,12 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         Count,
     }
 
+    public delegate void OnEndingEvent();
+
+    public void EndingEvent() { OnEnding?.Invoke(); }
+
+    public UnityEngine.Events.UnityEvent OnEnding;
+
     [SerializeField] private UnityEngine.Events.UnityEvent OnSubWorldHP;
 
     [Header("Monster Obj Parent")]
@@ -32,6 +38,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     [SerializeField] private WallMonsterBaseController<MonsterData> bearElitePrefab;
     [Header("Boss Prefab")]
     [SerializeField] private BossMonsterController bossPrefab;
+    [SerializeField] private Transform bossSpawnPoint;
 
     [Header("Pool Count")]
     [SerializeField] private int detectPoolCount = 10;
@@ -47,7 +54,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     private ObjectPooling<MonsterManager, BossMonsterController> bossPool;
 
     [Tooltip("동시에 공격할 수 있는 최대 몬스터 수")]
-    [SerializeField] private int maxSimultaneousAttackers = 2;
+    [SerializeField] private int attackerLimit = 2;
     private int currentAttackerCount = 0;
 
     public Bounds GetAreaBound() => monsterMoveArea.GetBounds();
@@ -134,26 +141,15 @@ public class MonsterManager : GenericSingleton<MonsterManager>
     [ContextMenu("TEST_SpawnBoss")]
     public void TEST_SpawnBoss()
     {
-        // 보스 데이터 이름 (SODataLoader.cs의 enum과 일치해야 함)
         string bossDataName = MonsterDataName.Boss_Test_Data.ToString();
 
         SODataLoader.Instance.LoadSO<MonsterData>(bossDataName, data =>
         {
             if (data != null)
             {
-                // 몬스터 이동 구역의 중앙에 소환
-                Vector2 spawnPos = Vector2.zero;
-                if (monsterMoveArea != null)
-                {
-                    spawnPos = monsterMoveArea.pos + monsterMoveArea.offset;
-                }
-
+                Vector2 spawnPos = bossSpawnPoint.position;
                 SpawnMonster(data, spawnPos);
-                Debug.Log("보스 테스트 소환 완료!");
-            }
-            else
-            {
-                Debug.LogError($"보스 데이터 '{bossDataName}'를 찾을 수 없습니다.");
+                Debug.Log("보스 테스트 소환");
             }
         });
     }
@@ -180,7 +176,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
                 break;
 
             case MonsterType.Boss:
-                (monster as BossMonsterController)?.Setup(data as BossMonsterData);
+                (monster as BossMonsterController)?.Setup(data as BossMonsterData, EndingEvent);
                 break;
         }
 
@@ -253,11 +249,17 @@ public class MonsterManager : GenericSingleton<MonsterManager>
                     Debug.Log($"{inkData.colorType} 잉크 획득");
                     MixerButtonController.Instance.AddInk(inkData.colorType);
                 }
+
+                if (inkData.colorType == ColorMixer.ColorType.Black)
+                {
+                    DreamCottonEnhance.Instance.AddBlackInk(1);
+                }
             }},
 
             { ItemType.Enhance, (itemData) =>
             {
                 Debug.Log($"{itemData.itemName} 획득");
+                DreamCottonEnhance.Instance.AddCotton(1);
             }}
         };
     }
@@ -309,7 +311,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
 
     public bool TryRequestAttackToken()
     {
-        if (currentAttackerCount < maxSimultaneousAttackers)
+        if (currentAttackerCount < attackerLimit)
         {
             currentAttackerCount++;
             return true;
