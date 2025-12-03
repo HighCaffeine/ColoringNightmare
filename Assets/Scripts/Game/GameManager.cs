@@ -4,6 +4,7 @@ public class GameManager : GenericSingleton<GameManager>
 {
     [SerializeField] private int targetFrameRate = 60;  // Default - 60
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject endingPanel;
 
     private bool first = true;
 
@@ -62,6 +63,11 @@ public class GameManager : GenericSingleton<GameManager>
         {
             SceneController.Instance.GoToScene(SceneName.Menu.ToString());
         }
+    }
+
+    public void OnEndingPanel()
+    {
+        endingPanel.SetActive(true);
     }
 
     public void OffCreditsFlag()

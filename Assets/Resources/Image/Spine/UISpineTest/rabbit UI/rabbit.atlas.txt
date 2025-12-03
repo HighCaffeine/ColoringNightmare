@@ -1,0 +1,36 @@
+rabbit.png
+size:516,196
+filter:Linear,Linear
+pma:true
+Rabbit_L ear
+bounds:334,93,75,101
+Rabbit_L leg
+bounds:255,6,63,55
+offsets:0,0,66,57
+rotate:90
+Rabbit_R ear
+bounds:282,76,50,118
+offsets:7,3,60,121
+Rabbit_R leg
+bounds:455,48,51,59
+rotate:90
+Rabbit_body
+bounds:411,101,96,93
+offsets:0,4,96,97
+Rabbit_color
+bounds:2,2,176,192
+offsets:0,0,177,192
+Rabbit_hand
+bounds:312,5,80,69
+Rabbit_head
+bounds:180,71,123,100
+offsets:1,1,124,101
+rotate:90
+Rabbit_ribbon
+bounds:394,17,74,59
+rotate:90
+Rabbit_shadow
+bounds:180,2,67,73
+rotate:90
+Rabbit_tail
+bounds:455,5,37,41

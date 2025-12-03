@@ -2,7 +2,6 @@ using UnityEngine;
 using Spine;
 using Spine.Unity;
 using System.Collections;
-using System;
 
 public class BossSpineController : MonoBehaviour
 {
@@ -12,6 +11,7 @@ public class BossSpineController : MonoBehaviour
     public const string IDLE = "idle";
     public const string GROGGY = "groggy";
     public const string DEAD = "Dead";
+    public const string ENTER = "enter";
 
     private string lastEventName = "";
     private bool eventTriggered = false;
@@ -35,12 +35,14 @@ public class BossSpineController : MonoBehaviour
         eventTriggered = true;
     }
 
+
     public void PlayIdle() { SetAnimation(IDLE, true); }
     public void PlayGroggy() { SetAnimation(GROGGY, true); }
-    public void PlayDead(MonsterManager.OnEndingEvent OnEndEvent)
+    public void PlayDead(UnityEngine.Events.UnityEvent OnDeadEvent)
     {
-        SetAnimation(DEAD, false, () => { OnEndEvent?.Invoke(); });
+        SetAnimation(DEAD, false, () => { OnDeadEvent?.Invoke(); });
     }
+    public void PlayEnter() { SetAnimation(ENTER, false); }
 
     public IEnumerator PlayStartAndMiddle(string patternPrefix, float midDuration)
     {
@@ -68,11 +70,9 @@ public class BossSpineController : MonoBehaviour
     {
         string endAnim = $"{patternPrefix}_end";
 
-        // 이벤트 플래그 초기화
         eventTriggered = false;
         lastEventName = "";
 
-        // End 애니메이션 재생
         SetAnimation(endAnim, false);
 
         float timeout = GetAnimationDuration(endAnim) + 0.5f;
@@ -81,12 +81,12 @@ public class BossSpineController : MonoBehaviour
         while (!eventTriggered || lastEventName != targetEventName)
         {
             timer += Time.deltaTime;
-            if (timer > timeout) break; // 무한 대기 방지
+            if (timer > timeout) break;
             yield return null;
         }
     }
 
-    private void SetAnimation(string name, bool loop, Action onComplete = null)
+    private void SetAnimation(string name, bool loop, System.Action action = null)
     {
         if (skeletonAnimation == null || skeletonAnimation.Skeleton == null) return;
         var anim = skeletonAnimation.Skeleton.Data.FindAnimation(name);
@@ -95,15 +95,14 @@ public class BossSpineController : MonoBehaviour
             skeletonAnimation.AnimationState.SetAnimation(0, anim, loop);
         }
 
-        TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(0, anim, loop);
-
-        if (!loop && onComplete != null)
+        TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(0, name, loop);
+        if (!loop && action != null)
         {
-            entry.Complete += _ => onComplete();
+            entry.Complete += _ => action();
         }
     }
 
-    private float GetAnimationDuration(string name)
+    public float GetAnimationDuration(string name)
     {
         if (skeletonAnimation == null || skeletonAnimation.Skeleton == null) return 0f;
         var anim = skeletonAnimation.Skeleton.Data.FindAnimation(name);

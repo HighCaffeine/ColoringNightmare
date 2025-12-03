@@ -5,10 +5,10 @@ using Spine.Unity;
 
 public class BossMonsterController : Character, OnReturnPool<BossMonsterController>
 {
+    private MonsterManager.OnEndingEvent OnDeadEvent;
+
     [SerializeField] private BossMonsterData bossData;
     public OnReturnPoolEvent<BossMonsterController> OnReturnPoolEvent;
-
-    public MonsterManager.OnEndingEvent OnEndingEvent;
 
     [Header("Components")]
     [SerializeField] private BossSpineController bossSpine;
@@ -18,10 +18,14 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     [SerializeField] private AreaData p2Area;
     [SerializeField] private AreaData p3Area;
 
+    // 상태 관리
     private int currentGroggyCoin;
     private bool isInvincible = true;
     private float idleTimer = 0f;
     private float currentIdleDuration = 2f;
+
+    // UI 컨트롤러
+    private BossUIController bossUI => BossUIController.Instance;
 
     protected override void Awake()
     {
@@ -29,18 +33,39 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         if (bossSpine == null) bossSpine = GetComponent<BossSpineController>();
     }
 
-    public void Setup(BossMonsterData data, MonsterManager.OnEndingEvent OnEndingEvent)
+    public void Setup(BossMonsterData data, MonsterManager.OnEndingEvent OnDeadEvent)
     {
-        this.OnEndingEvent = OnEndingEvent;
-
         bossData = data;
         info = data;
         currentHP = info.maxHp;
 
         currentGroggyCoin = bossData.groggyCoinMax;
         isInvincible = true;
-        state = StateType.Idle;
 
+        if (bossUI != null) bossUI.Init(info.maxHp, currentGroggyCoin);
+        this.OnDeadEvent = OnDeadEvent;
+
+        StartCoroutine(SpawnRoutine());
+    }
+
+    private IEnumerator SpawnRoutine()
+    {
+        state = StateType.None;
+
+        if (bossSpine != null)
+        {
+            bossSpine.PlayEnter();
+
+            float duration = bossSpine.GetAnimationDuration(BossSpineController.ENTER);
+            if (duration > 0) yield return new WaitForSeconds(duration);
+            else yield return new WaitForSeconds(1.0f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1.0f);
+        }
+
+        state = StateType.Idle;
         if (bossSpine != null) bossSpine.PlayIdle();
         SetIdleDuration();
     }
@@ -111,7 +136,10 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         Vector2 spawnPos = GetRandomPosInArea(p1Area);
         SpawnWarning(bossData.warningCirclePrefab, spawnPos, Vector3.one * 3.0f, WarningFillType.CenterExpand);
 
-        if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("spawn_skill", "spawn"));
+        if (bossSpine != null)
+        {
+            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("spawn_skill", "spawn"));
+        }
 
         if (bossData.p1BallPrefab != null)
         {
@@ -153,9 +181,13 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     private IEnumerator Pattern2_Vertical()
     {
         if (bossSpine != null)
+        {
             yield return StartCoroutine(bossSpine.PlayStartAndMiddle("cymbals_skill", bossData.warningDuration));
+        }
         else
+        {
             yield return new WaitForSeconds(bossData.warningDuration);
+        }
 
         float randomX = Random.Range(p2Area.pos.x - p2Area.size.x / 2, p2Area.pos.x + p2Area.size.x / 2);
         Vector2 centerPos = new Vector2(randomX, p2Area.pos.y);
@@ -164,8 +196,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         SpawnWarning(bossData.warningBoxPrefab, new Vector2(randomX, p2Area.pos.y + yOffset), new Vector3(2f, p2Area.size.y * 0.5f, 1f), WarningFillType.TopToBottom);
         SpawnWarning(bossData.warningBoxPrefab, new Vector2(randomX, p2Area.pos.y - yOffset), new Vector3(2f, p2Area.size.y * 0.5f, 1f), WarningFillType.BottomToTop);
 
-        if (bossSpine != null)
-            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("cymbals_skill", "attack_start"));
+        if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("cymbals_skill", "attack_start"));
 
         Vector2 topStart = new Vector2(randomX, p2Area.pos.y + p2Area.size.y / 2);
         Vector2 botStart = new Vector2(randomX, p2Area.pos.y - p2Area.size.y / 2);
@@ -194,12 +225,8 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
                 if (hit != null && hit.CompareTag("Player1"))
                 {
                     hit.GetComponent<Character>()?.TakeDamage(info.dmg);
-
                     if (effectController != null && bossData.p2HitEffect != null)
-                    {
                         effectController.PlayHitEffectAt(centerPos, bossData.p2HitEffect, false);
-                    }
-
                     damageDealt = true;
                 }
             }
@@ -212,11 +239,9 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     // --- P3: 가로 패턴 ---
     private IEnumerator Pattern3_Horizontal()
     {
-        if (bossSpine != null)
-            yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_spawn", 0f));
+        if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_spawn", 0f));
 
-        if (bossSpine != null)
-            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_spawn", "spawn"));
+        if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_spawn", "spawn"));
 
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);
         bool isLeft = Random.value > 0.5f;
@@ -226,6 +251,13 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         Vector2 boxPos = new Vector2(startX, randomY);
         GameObject boxObj = Instantiate(bossData.p3BoxPrefab, boxPos, Quaternion.identity);
         SkeletonAnimation boxSpine = boxObj.GetComponent<SkeletonAnimation>();
+        BoxObjectController boxCtrl = boxObj.GetComponent<BoxObjectController>();
+
+        if (boxCtrl != null)
+        {
+            boxCtrl.SetFlip(isLeft);
+            boxCtrl.PlaySpawn();
+        }
 
         if (boxSpine != null)
         {
@@ -237,11 +269,10 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         SpawnWarning(bossData.warningBoxPrefab, new Vector2(p3Area.pos.x, randomY), new Vector3(p3Area.size.x, 2f, 1), WarningFillType.Horizontal);
         yield return new WaitForSeconds(bossData.warningDuration);
 
-        if (bossSpine != null)
-            yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_skill", 0f));
+        if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_skill", 0f));
 
-        if (bossSpine != null)
-            yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_skill", "attack_start"));
+
+        if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_skill", "attack_start"));
 
         if (boxSpine != null)
         {
@@ -249,39 +280,33 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
             boxSpine.AnimationState.AddAnimation(0, "IDLE", true, 0);
         }
 
-        GameObject punchObj = Instantiate(bossData.p3FistPrefab, boxPos, Quaternion.identity);
-        if (isLeft) punchObj.transform.localScale = new Vector3(-1, 1, 1);
+        if (boxCtrl != null) boxCtrl.PlayAttack();
 
-        float duration = Mathf.Abs(endX - startX) / bossData.p3PunchSpeed;
-        float elapsed = 0f;
-        bool damageDealt = false;
+        Vector2 attackCenter = new Vector2(p3Area.pos.x, randomY);
+        Vector2 attackSize = new Vector2(p3Area.size.x, bossData.p3DamageHeight);
 
-        while (elapsed < duration)
+        Collider2D[] hits = Physics2D.OverlapBoxAll(attackCenter, attackSize, 0f, LayerMask.GetMask("Player"));
+        foreach (var hit in hits)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            punchObj.transform.position = Vector2.Lerp(boxPos, new Vector2(endX, randomY), t);
-
-            if (!damageDealt)
+            if (hit.CompareTag("Player1"))
             {
-                Collider2D hit = Physics2D.OverlapBox(punchObj.transform.position, new Vector2(1f, bossData.p3DamageHeight), 0f, LayerMask.GetMask("Player"));
-                if (hit != null && hit.CompareTag("Player1"))
-                {
-                    hit.GetComponent<Character>()?.TakeDamage(info.dmg);
+                hit.GetComponent<Character>()?.TakeDamage(info.dmg);
 
-                    if (effectController != null && bossData.p3HitEffect != null)
-                    {
-                        effectController.PlayHitEffectAt(punchObj.transform.position, bossData.p3HitEffect, false);
-                    }
-
-                    damageDealt = true;
-                }
+                // 타격 이펙트 재생
+                if (effectController != null && bossData.p3HitEffect != null)
+                    effectController.PlayHitEffectAt(hit.transform.position, bossData.p3HitEffect, false);
             }
-            yield return null;
         }
 
-        if (punchObj) Destroy(punchObj);
-        if (boxObj) Destroy(boxObj);
+        if (boxCtrl != null)
+        {
+            boxCtrl.PlayEnd();
+            Destroy(boxObj, 1.0f); // 애니메이션 시간 고려
+        }
+        else
+        {
+            Destroy(boxObj);
+        }
     }
 
     private IEnumerator GroggyRoutine()
@@ -290,10 +315,15 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         isInvincible = false;
         if (bossSpine != null) bossSpine.PlayGroggy();
 
+        if (bossUI != null) bossUI.UpdateCoins(0);
+
         yield return new WaitForSeconds(bossData.groggyDuration);
 
         isInvincible = true;
         currentGroggyCoin = bossData.groggyCoinMax;
+
+        if (bossUI != null) bossUI.UpdateCoins(currentGroggyCoin);
+
         state = StateType.Idle;
         if (bossSpine != null) bossSpine.PlayIdle();
         SetIdleDuration();
@@ -320,11 +350,44 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         }
 
         base.TakeDamage(amount, hitEffect);
+        if (bossUI != null) bossUI.UpdateHP(currentHP, info.maxHp);
     }
 
-    private void TakeFixedDamage() { int dmg = Mathf.RoundToInt(info.maxHp * bossData.fixedDamageRatio); currentHP -= dmg; if (currentHP <= 0) Dead(); }
-    private void DecreaseGroggyCoin() { if (currentGroggyCoin > 0) currentGroggyCoin--; }
-    protected override void Dead() { base.Dead(); bossSpine.PlayDead(OnEndingEvent); }
+    private void TakeFixedDamage()
+    {
+        int dmg = Mathf.RoundToInt(info.maxHp * bossData.fixedDamageRatio);
+        currentHP -= dmg;
+        if (bossUI != null) bossUI.UpdateHP(currentHP, info.maxHp);
+        if (currentHP <= 0) Dead();
+    }
+
+    private void DecreaseGroggyCoin()
+    {
+        if (currentGroggyCoin > 0)
+        {
+            currentGroggyCoin--;
+            if (bossUI != null) bossUI.UpdateCoins(currentGroggyCoin);
+        }
+    }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        if (bossUI != null) bossUI.SetActiveBossHP(false);
+
+        if (GameManager.Instance != null)
+        {
+            Invoke(nameof(End), 3f);
+        }
+
+        OnReturnPoolEvent?.Invoke(this);
+    }
+
+    private void End()
+    {
+        GameManager.Instance.OnEndingPanel();
+    }
+
     public void Init(OnReturnPoolEvent<BossMonsterController> onReturnPoolEvent) { OnReturnPoolEvent = onReturnPoolEvent; }
     private Vector2 GetRandomPosInArea(AreaData area)
     {

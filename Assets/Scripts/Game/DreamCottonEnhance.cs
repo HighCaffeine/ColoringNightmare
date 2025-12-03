@@ -23,6 +23,9 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
     [SerializeField] private int skillCostHeal = 5;
     [SerializeField] private int skillCostInk = 5;
 
+    [Header("Exchange Cost (Black Ink)")]
+    [SerializeField] private int inkExchangeCost = 1;
+
     // 가챠 비용 (검은 잉크 1개 고정)
     private const int GACHA_COST_BLACK_INK = 1;
 
@@ -55,10 +58,15 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
     [SerializeField] private float dmgBuffRatio = 0.5f;
     [SerializeField] private int worldHealAmount = 3;
 
+    [SerializeField] private TextMeshProUGUI exchangeCostTxt;
+
     [Header("Gacha Data")]
-    [SerializeField] private ItemDropTable gachaDropTable;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private ItemDropTable inkSkillTable;
+
+    [SerializeField] private ItemData inkRed;
+    [SerializeField] private ItemData inkBlue;
+    [SerializeField] private ItemData inkYellow;
 
     // 내부 상태
     private int hpLevel = 0;
@@ -89,6 +97,8 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         UpdateEnhanceSlot(speedLevel, speedCostTxt, speedBarImage);
         UpdateEnhanceSlot(dmgLevel, dmgCostTxt, dmgBarImage);
 
+        if (exchangeCostTxt) exchangeCostTxt.text = inkExchangeCost.ToString();
+
 #if UNITY_EDITOR_64
         Debug.Log($"HP: {player.info.maxHp}\nATK: {player.info.dmg}\nSPD: {player.info.speed:F1}");
 #endif
@@ -113,26 +123,6 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         if (barImage != null && levelSprites != null && level < levelSprites.Length)
         {
             barImage.sprite = levelSprites[level];
-        }
-    }
-
-    public void PlayGacha()
-    {
-        if (currentBlackInkCount < GACHA_COST_BLACK_INK)
-        {
-            Debug.Log("검은 잉크 부족");
-            return;
-        }
-
-        // 소모
-        currentBlackInkCount -= GACHA_COST_BLACK_INK;
-        UpdateAllUI();
-
-        // 랜덤 보상 소환
-        if (gachaDropTable != null && MonsterManager.Instance != null)
-        {
-            Vector3 pos = (spawnPoint != null) ? spawnPoint.position : player.transform.position;
-            MonsterManager.Instance.SpawnItemsFromTable(gachaDropTable, pos);
         }
     }
 
@@ -195,6 +185,39 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
 
         player.info.dmg -= buffAmount;
         UpdateAllUI();
+    }
+
+    public void PurchaseInk(string colorName)
+    {
+        if (currentBlackInkCount < inkExchangeCost)
+        {
+            return;
+        }
+
+        ItemData targetItem = null;
+        switch (colorName)
+        {
+            case "Red": targetItem = inkRed; break;
+            case "Blue": targetItem = inkBlue; break;
+            case "Yellow": targetItem = inkYellow; break;
+        }
+
+        if (targetItem == null) return;
+
+        currentBlackInkCount -= inkExchangeCost;
+        UpdateAllUI();
+
+        Vector3 pos = (spawnPoint != null) ? spawnPoint.position : player.transform.position;
+
+        ItemDropTable tempTable = ScriptableObject.CreateInstance<ItemDropTable>();
+        tempTable.itemDropTable = new System.Collections.Generic.List<ItemDropData>();
+        tempTable.itemDropTable.Add(new ItemDropData { itemData = targetItem, dropChance = 1f, minDropAmount = 1, maxDropAmount = 1 });
+
+        if (MonsterManager.Instance != null)
+        {
+            MonsterManager.Instance.SpawnItemsFromTable(tempTable, pos);
+            Debug.Log($"{colorName} Ink Purchased!");
+        }
     }
 
     public void SkillWorldHeal()

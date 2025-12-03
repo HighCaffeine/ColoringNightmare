@@ -149,6 +149,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
             {
                 Vector2 spawnPos = bossSpawnPoint.position;
                 SpawnMonster(data, spawnPos);
+                BossUIController.Instance.SetActiveBossHP(true);
                 Debug.Log("보스 테스트 소환");
             }
         });

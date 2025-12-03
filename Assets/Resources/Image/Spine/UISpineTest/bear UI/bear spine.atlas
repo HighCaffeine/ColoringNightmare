@@ -1,0 +1,43 @@
+bear spine.png
+size:548,162
+filter:Linear,Linear
+pma:true
+Bear_ U plate
+bounds:288,63,97,80
+offsets:0,0,97,85
+rotate:90
+Bear_D plate
+bounds:450,71,89,39
+rotate:90
+Bear_L ear
+bounds:231,2,61,54
+Bear_L hand
+bounds:467,6,79,63
+offsets:0,0,80,66
+Bear_L leg
+bounds:395,3,70,65
+Bear_R ear
+bounds:339,7,54,54
+Bear_R hand
+bounds:231,58,102,55
+offsets:0,0,102,56
+rotate:90
+Bear_R leg
+bounds:491,96,64,53
+rotate:90
+Bear_body
+bounds:124,38,122,105
+offsets:1,1,123,137
+rotate:90
+Bear_cap
+bounds:370,70,78,90
+Bear_head
+bounds:2,4,156,120
+offsets:0,0,157,121
+rotate:90
+Bear_plate ribbon
+bounds:294,5,56,43
+rotate:90
+Bear_tail
+bounds:124,3,33,45
+rotate:90
