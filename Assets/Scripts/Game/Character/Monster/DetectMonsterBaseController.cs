@@ -336,6 +336,15 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
                 skeleton.AnimationState.SetAnimation(0, animName, loop);
             }
         }
+
+        if (animName == ANIM_ATTACK)
+        {
+            Spine.TrackEntry entry = skeleton.AnimationState.SetAnimation(0, animName, loop);
+            if (!loop)
+            {
+                entry.Complete += _ => SetSpineAnimation(ANIM_IDLE, true);
+            }
+        }
     }
 
     public void Init(OnReturnPoolEvent<DetectMonsterBaseController> onReturnPoolEvent)

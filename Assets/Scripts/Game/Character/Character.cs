@@ -24,6 +24,8 @@ public class Character : MonoBehaviour
     private bool isDamageImmune = false;
     private Coroutine hitEffectCoroutine;
 
+    public Action OnDeathCallback;
+
     public bool FlipX() => spriteRenderer.flipX;
     public bool IsExistsSprite() => spriteRenderer != null;
 
@@ -48,7 +50,7 @@ public class Character : MonoBehaviour
     }
 
     protected virtual void Idle() { }
-    protected virtual void Dead() { }
+    protected virtual void Dead() { if (OnDeathCallback != null) { OnDeathCallback?.Invoke(); OnDeathCallback = null; } }
     protected virtual void Move(Vector2 dir) { }
 
     protected void SetDamageImmune(bool isImmune) { isDamageImmune = isImmune; }

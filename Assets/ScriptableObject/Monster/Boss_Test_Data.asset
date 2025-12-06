@@ -27,9 +27,9 @@ MonoBehaviour:
   groggyCoinMax: 2
   groggyDuration: 12
   fixedDamageRatio: 0.08
-  p1Weight: 0
+  p1Weight: 100
   p2Weight: 0
-  p3Weight: 100
+  p3Weight: 0
   idleDurationMin: 1
   idleDurationMax: 3
   warningDuration: 1.5
@@ -43,13 +43,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7be53b7b29b614b42b81b8bd9d4de0df, type: 2}
   p1ExplosionEffect: {fileID: 11400000, guid: 4d11c1b10bb0e9148b71be7d7a7f2a7a, type: 2}
   p1ExplosionRadius: 2
-  p2CymbalPrefab: {fileID: 1848988426648404666, guid: f9579c73d3812aa4c9a6ee17862ac29b, type: 3}
+  p2CymbalPrefab: {fileID: 93640428089957343, guid: 9d36ade07e190e643a47c3c784db358c, type: 3}
   p2TravelSpeed: 10
   p2DamageWidth: 1.5
-  p2HitEffect: {fileID: 11400000, guid: 0cebf0456236ad04a9826bcb865a550b, type: 2}
+  p2HitEffect: {fileID: 11400000, guid: 0d6cc63e20635184387111bd7fd9d7ea, type: 2}
   p3BoxPrefab: {fileID: 6831793127820150265, guid: d6b52557cba5d4140a97bd430f0c435f, type: 3}
-  p3FistPrefab: {fileID: 1848988426648404666, guid: f9579c73d3812aa4c9a6ee17862ac29b, type: 3}
-  p3PunchSpeed: 15
   p3DamageHeight: 1.5
   p3HitEffect: {fileID: 11400000, guid: 0cebf0456236ad04a9826bcb865a550b, type: 2}
+  p3AttackEffect: {fileID: 11400000, guid: dec3046a99bb0b64bbe0195672fbeed8, type: 2}
   invincibleHitEffect: {fileID: 11400000, guid: 0d6cc63e20635184387111bd7fd9d7ea, type: 2}

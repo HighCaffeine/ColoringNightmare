@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 1425772052551485675}
   - component: {fileID: 3600902405029843704}
   - component: {fileID: -3400712696105261331}
+  - component: {fileID: 3349108683670777370}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Monster
@@ -258,3 +259,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3748581799248991654}
   m_Mesh: {fileID: 0}
+--- !u!114 &3349108683670777370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748581799248991654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb94c7037c3197458fd1074ba5dca31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
+  effectPivot: {fileID: 0}
+  character: {fileID: -5899581110599946469}

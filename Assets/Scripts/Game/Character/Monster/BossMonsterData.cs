@@ -42,10 +42,9 @@ public class BossMonsterData : MonsterData
 
     [Header("P3 Assets (Horizontal)")]
     public GameObject p3BoxPrefab;
-    public GameObject p3FistPrefab;
-    public float p3PunchSpeed = 15.0f;
     public float p3DamageHeight = 1.0f;
     public EffectVisualData p3HitEffect;
+    public EffectVisualData p3AttackEffect;
 
     [Header("Boss Status Effects")]
     public EffectVisualData invincibleHitEffect;

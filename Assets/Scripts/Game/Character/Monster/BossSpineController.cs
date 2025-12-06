@@ -73,7 +73,7 @@ public class BossSpineController : MonoBehaviour
         eventTriggered = false;
         lastEventName = "";
 
-        SetAnimation(endAnim, false);
+        SetAnimation(endAnim, false, PlayIdle);
 
         float timeout = GetAnimationDuration(endAnim) + 0.5f;
         float timer = 0f;

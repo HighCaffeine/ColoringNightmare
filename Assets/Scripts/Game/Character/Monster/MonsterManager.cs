@@ -155,16 +155,16 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         });
     }
 
-    public void SpawnMonster(MonsterData data, Vector2 pos)
+    public Character SpawnMonster(MonsterData data, Vector2 pos)
     {
         if (data == null)
         {
             Debug.LogError("[SpawnMonster] data is null");
-            return;
+            return null;
         }
 
         Character monster = GetMonsterFromPool(data.monsterDataName, pos);
-        if (monster == null) return;
+        if (monster == null) return null;
 
         switch (data.Type)
         {
@@ -187,6 +187,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         {
             SetSortingOrderByYPos(monster, data.isSpine);
         }
+
+        return monster;
     }
 
     private void ColorTest(Transform t, ColorMixer.ColorType colorType)

@@ -170,11 +170,15 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         if (bossData.p1SummonMonsters != null && bossData.p1SummonMonsters.Count > 0)
         {
             MonsterData randomMonster = bossData.p1SummonMonsters[Random.Range(0, bossData.p1SummonMonsters.Count)];
-            MonsterManager.Instance.SpawnMonster(randomMonster, spawnPos);
-        }
 
+            Character summonedMonster = MonsterManager.Instance.SpawnMonster(randomMonster, spawnPos);
+
+            if (summonedMonster != null)
+            {
+                summonedMonster.OnDeathCallback += DecreaseGroggyCoin;
+            }
+        }
         TakeFixedDamage();
-        DecreaseGroggyCoin();
     }
 
     // --- P2: 세로 패턴 ---
@@ -248,7 +252,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         bool isLeft = true;
         float startX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
         float endX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
-
         Vector2 boxPos = new Vector2(startX, randomY);
 
         GameObject boxObj = Instantiate(bossData.p3BoxPrefab, boxPos, Quaternion.identity);
@@ -256,71 +259,65 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
         if (boxCtrl != null)
         {
-            boxCtrl.SetFlip(isLeft);
+            //boxCtrl.SetFlip(isLeft);
             boxCtrl.PlaySpawn();
         }
 
-        SpawnWarning(bossData.warningBoxPrefab, new Vector2(p3Area.pos.x, randomY), new Vector3(p3Area.size.x, 2f, 1), WarningFillType.Horizontal);
+        SpawnWarning(bossData.warningBoxPrefab, new Vector2(p3Area.pos.x, randomY), new Vector3(p3Area.size.x, 2f, 1), WarningFillType.LeftToRight);
         yield return new WaitForSeconds(bossData.warningDuration);
 
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_skill", 0f));
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_skill", "attack_start"));
 
-        float boxAnimDuration = 0f;
+        float attackDuration = 0f;
         if (boxCtrl != null)
         {
-            boxAnimDuration = boxCtrl.PlayAttack();
+            attackDuration = boxCtrl.PlayAttack();
         }
 
-        GameObject punchObj = Instantiate(bossData.p3FistPrefab, boxPos, Quaternion.identity);
-        if (isLeft) punchObj.transform.localScale = new Vector3(-1, 1, 1);
-
-        float punchTravelTime = Mathf.Abs(endX - startX) / bossData.p3PunchSpeed;
-        float elapsed = 0f;
-        bool damageDealt = false;
-
-        float totalWaitTime = Mathf.Max(punchTravelTime, boxAnimDuration);
-
-        while (elapsed < totalWaitTime)
+        if (effectController != null && bossData.p3AttackEffect != null)
         {
-            elapsed += Time.deltaTime;
+            effectController.PlayHitEffectAt(boxPos, bossData.p3AttackEffect, isLeft);
+        }
 
-            float t = Mathf.Clamp01(elapsed / punchTravelTime);
-            if (punchObj != null)
+        yield return new WaitForSeconds(0.1f);
+
+        Vector2 attackCenter = new Vector2(p3Area.pos.x, randomY);
+        Vector2 attackSize = new Vector2(p3Area.size.x, bossData.p3DamageHeight);
+
+        Collider2D[] hits = Physics2D.OverlapBoxAll(attackCenter, attackSize, 0f, LayerMask.GetMask("Player"));
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Player1"))
             {
-                punchObj.transform.position = Vector2.Lerp(boxPos, new Vector2(endX, randomY), t);
+                hit.GetComponent<Character>()?.TakeDamage(info.dmg);
 
-                if (!damageDealt && t < 1.0f)
+                if (effectController != null && bossData.p3HitEffect != null)
                 {
-                    Collider2D hit = Physics2D.OverlapBox(punchObj.transform.position, new Vector2(1f, bossData.p3DamageHeight), 0f, LayerMask.GetMask("Player"));
-                    if (hit != null && hit.CompareTag("Player1"))
-                    {
-                        hit.GetComponent<Character>()?.TakeDamage(info.dmg);
-                        if (effectController != null && bossData.p3HitEffect != null)
-                            effectController.PlayHitEffectAt(punchObj.transform.position, bossData.p3HitEffect, false);
-                        damageDealt = true;
-                    }
+                    effectController.PlayHitEffectAt(hit.transform.position, bossData.p3HitEffect, false);
                 }
             }
-            yield return null;
         }
 
-        if (punchObj) Destroy(punchObj);
+        yield return new WaitForSeconds(Mathf.Max(0, attackDuration - 0.1f));
 
         if (boxCtrl != null)
         {
             float endDuration = boxCtrl.PlayEnd();
             Destroy(boxObj, endDuration);
         }
-        else
-        {
-            Destroy(boxObj);
-        }
+        else Destroy(boxObj);
+    }
+
+    [UnityEditor.MenuItem("Debug/GroggyTest _F6")]
+    public void TEST_BossGroggy()
+    {
+        StartCoroutine(GroggyRoutine());
     }
 
     private IEnumerator GroggyRoutine()
     {
-        state = StateType.Skill;
+        state = StateType.Groggy;
         isInvincible = false;
         if (bossSpine != null) bossSpine.PlayGroggy();
 
