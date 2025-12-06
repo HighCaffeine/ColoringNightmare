@@ -78,17 +78,26 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
     [Header("Rail Spine Event (black, red, yellow, blue)")]
     [SerializeField] private RailEvents railEvents;
+
+    [Header("Palette Dolls")]
+    [SerializeField] private PaletteDollController blackDoll;
+    [SerializeField] private PaletteDollController redDoll;
+    [SerializeField] private PaletteDollController blueDoll;
+    [SerializeField] private PaletteDollController yellowDoll;
+
+
     public float RailSpineDuration => 0.5f;
 
     private int selectedColors = 0;
 
     private ColorMixer.ColorType c1, c2;
 
-    public void ColorButton_Black() { SelectColor(ColorMixer.ColorType.Black); }
-    public void ColorButton_Yellow() { SelectColor(ColorMixer.ColorType.Yellow); }
-    public void ColorButton_Red() { SelectColor(ColorMixer.ColorType.Red); }
-    public void ColorButton_Blue() { SelectColor(ColorMixer.ColorType.Blue); }
-    public void ColorButton_White() { SelectColor(ColorMixer.ColorType.White); }
+
+
+    public void ColorButton_Black() { SelectColor(ColorMixer.ColorType.Black); if (blackDoll != null) blackDoll.PlaySelect(); }
+    public void ColorButton_Yellow() { SelectColor(ColorMixer.ColorType.Yellow); if (yellowDoll != null) yellowDoll.PlaySelect(); }
+    public void ColorButton_Red() { SelectColor(ColorMixer.ColorType.Red); if (redDoll != null) redDoll.PlaySelect(); }
+    public void ColorButton_Blue() { SelectColor(ColorMixer.ColorType.Blue); if (blueDoll != null) blueDoll.PlaySelect(); }
 
     private void SelectColor(ColorMixer.ColorType colorType)
     {

@@ -15,7 +15,7 @@ MonoBehaviour:
   inkData: {fileID: 11400000, guid: 6b9c0cfdb916c4c4fa75c0a7059200d5, type: 2}
   durability: 20
   damage: 75
-  skillLogic: {fileID: 0}
+  skillLogic: {fileID: 11400000, guid: d814d6e6057881642a0ee309c123c4b0, type: 2}
   visualEffects:
   - weaponType: 0
     attackEffect: {fileID: 11400000, guid: 23399ae4925df6b4b994a20def7e41c8, type: 2}

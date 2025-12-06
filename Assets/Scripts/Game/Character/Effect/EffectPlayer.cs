@@ -8,7 +8,6 @@ public class EffectPlayer : MonoBehaviour
     private BaseSkillLogic skillData;
     private WeaponInkData inkData;
 
-    private List<Collider2D> alreadyHit;
 
     private CircleCollider2D circleCollider;
     private float originalRadius;
@@ -16,8 +15,6 @@ public class EffectPlayer : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        alreadyHit = new List<Collider2D>();
-
         circleCollider = GetComponent<CircleCollider2D>();
         if (circleCollider != null)
         {
@@ -36,11 +33,11 @@ public class EffectPlayer : MonoBehaviour
         {
             circleCollider.radius = originalRadius * scaleMultiplier;
         }
+
         transform.localScale = new Vector3(
             scaleMultiplier * (isFacingLeft ? 1 : -1),
             scaleMultiplier,
-            scaleMultiplier
-        );
+            scaleMultiplier);
 
         StartCoroutine(PlayAnimation(data));
     }
@@ -61,28 +58,5 @@ public class EffectPlayer : MonoBehaviour
         }
 
         Destroy(gameObject);
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (skillData == null || alreadyHit.Contains(other))
-        {
-            return;
-        }
-
-        if (other.CompareTag("Monster"))
-        {
-            Character monster = other.GetComponent<Character>();
-            if (monster != null)
-            {
-                alreadyHit.Add(other);
-                EffectVisualData hitEffect = (inkData != null) ? inkData.GetVisualData(WeaponManager.WeaponType.Sword).hitEffect : null;
-                monster.TakeDamage(skillData.baseDamage, hitEffect);
-                if (inkData != null && inkData.passiveEffect != null && inkData.passiveEffect.effectType == PassiveEffectData.EffectType.Slow)
-                {
-                    monster.ApplyStatusEffect(new SlowEffect(inkData.passiveEffect.effectValue1, inkData.passiveEffect.effectValue2, inkData.passiveEffect.statusColorType));
-                }
-            }
-        }
     }
 }

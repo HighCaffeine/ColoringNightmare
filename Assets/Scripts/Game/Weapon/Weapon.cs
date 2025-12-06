@@ -12,7 +12,7 @@ public class Weapon : MonoBehaviour
 
     [SerializeField] private BaseSkillLogic skillLogic;
     private EdgeCollider2D testCollider;
-    private List<Collider2D> hitTargets = new List<Collider2D>();
+    private List<Character> hitTargets = new List<Character>();
     private Character player;
 
     public UnityEngine.Events.UnityEvent OnWeaponBroken;
@@ -77,14 +77,14 @@ public class Weapon : MonoBehaviour
     {
         if (other.CompareTag("Monster"))
         {
-            if (hitTargets.Contains(other)) return;
-            hitTargets.Add(other);
-
             Character monster = other.GetComponent<Character>();
+
             if (monster != null)
             {
-                EffectVisualData hitEffect = GetHitEffect();
-                monster.TakeDamage(damage, hitEffect);
+                if (hitTargets.Contains(monster)) return;
+                hitTargets.Add(monster);
+
+                monster.TakeDamage(damage, GetHitEffect());
                 ApplyPassiveEffect(monster);
             }
         }

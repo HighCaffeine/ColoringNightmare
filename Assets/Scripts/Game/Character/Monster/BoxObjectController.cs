@@ -13,29 +13,29 @@ public class BoxObjectController : MonoBehaviour
     private void Awake()
     {
         if (skeletonAnimation == null)
-        {
             skeletonAnimation = GetComponent<SkeletonAnimation>();
-        }
     }
 
-    public void PlaySpawn()
+    public float PlaySpawn()
     {
-        if (skeletonAnimation == null) return;
-        // 소환 모션 후 Idle 대기
-        skeletonAnimation.AnimationState.SetAnimation(0, ANI_SPAWN, false);
+        if (skeletonAnimation == null) return 0f;
+        var track = skeletonAnimation.AnimationState.SetAnimation(0, ANI_SPAWN, false);
         skeletonAnimation.AnimationState.AddAnimation(0, ANI_IDLE, true, 0);
+        return track.Animation.Duration;
     }
 
-    public void PlayAttack()
+    public float PlayAttack()
     {
-        if (skeletonAnimation == null) return;
-        skeletonAnimation.AnimationState.SetAnimation(0, ANI_ATTACK_START, false);
+        if (skeletonAnimation == null) return 0f;
+        var track = skeletonAnimation.AnimationState.SetAnimation(0, ANI_ATTACK_START, false);
+        return track.Animation.Duration;
     }
 
-    public void PlayEnd()
+    public float PlayEnd()
     {
-        if (skeletonAnimation == null) return;
-        skeletonAnimation.AnimationState.SetAnimation(0, ANI_ATTACK_END, false);
+        if (skeletonAnimation == null) return 0f;
+        var track = skeletonAnimation.AnimationState.SetAnimation(0, ANI_ATTACK_END, false);
+        return track.Animation.Duration;
     }
 
     public void SetFlip(bool isLeft)

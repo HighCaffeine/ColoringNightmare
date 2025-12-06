@@ -68,6 +68,9 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
     [SerializeField] private ItemData inkBlue;
     [SerializeField] private ItemData inkYellow;
 
+    [Header("Spine")]
+    [SerializeField] private DreamBearController dreamBear;
+
     // 내부 상태
     private int hpLevel = 0;
     private int speedLevel = 0;
@@ -138,6 +141,8 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
             player.GetComponent<PlayerHPController>()?.UpdateHpGauge();
 
             UpdateAllUI();
+
+            if (dreamBear != null) dreamBear.PlayResult();
         }
     }
 
@@ -150,6 +155,8 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
             speedLevel++;
             player.info.speed += (player.info.speed * speedPercent);
             UpdateAllUI();
+
+            if (dreamBear != null) dreamBear.PlayResult();
         }
     }
 
@@ -172,6 +179,7 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         {
             StartCoroutine(DmgBuffRoutine());
             UpdateAllUI();
+            if (dreamBear != null) dreamBear.PlayResult();
         }
     }
 
@@ -216,8 +224,9 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         if (MonsterManager.Instance != null)
         {
             MonsterManager.Instance.SpawnItemsFromTable(tempTable, pos);
-            Debug.Log($"{colorName} Ink Purchased!");
         }
+
+        if (dreamBear != null) dreamBear.PlayResult();
     }
 
     public void SkillWorldHeal()
@@ -226,6 +235,7 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         {
             WorldHpController.Instance?.RecoverHP(worldHealAmount);
             UpdateAllUI();
+            if (dreamBear != null) dreamBear.PlayResult();
         }
     }
 
@@ -234,9 +244,9 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         if (TryConsumeCotton(skillCostInk))
         {
             Vector3 pos = (spawnPoint != null) ? spawnPoint.position : player.transform.position;
-            if (inkSkillTable != null)
-                MonsterManager.Instance.SpawnItemsFromTable(inkSkillTable, pos);
+            if (inkSkillTable != null) MonsterManager.Instance.SpawnItemsFromTable(inkSkillTable, pos);
             UpdateAllUI();
+            if (dreamBear != null) dreamBear.PlayResult();
         }
     }
 

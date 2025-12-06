@@ -16,4 +16,4 @@ MonoBehaviour:
   effectValue1: 1
   effectValue2: 0
   statusVisual: {fileID: 11400000, guid: 44903ec2d324a714492a9084f8e943a5, type: 2}
-  statusColorType: -1
+  statusColorType: 6

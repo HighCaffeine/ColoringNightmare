@@ -204,6 +204,8 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         GameObject topObj = Instantiate(bossData.p2CymbalPrefab, topStart, Quaternion.identity);
         GameObject botObj = Instantiate(bossData.p2CymbalPrefab, botStart, Quaternion.identity);
 
+        botObj.transform.localScale = new Vector3(1, -1, 1);
+
         float duration = Vector2.Distance(topStart, centerPos) / bossData.p2TravelSpeed;
         float elapsed = 0f;
         bool damageDealt = false;
@@ -240,17 +242,16 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     private IEnumerator Pattern3_Horizontal()
     {
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_spawn", 0f));
-
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_spawn", "spawn"));
 
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);
-        bool isLeft = Random.value > 0.5f;
+        bool isLeft = false;
         float startX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
         float endX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
 
         Vector2 boxPos = new Vector2(startX, randomY);
+
         GameObject boxObj = Instantiate(bossData.p3BoxPrefab, boxPos, Quaternion.identity);
-        SkeletonAnimation boxSpine = boxObj.GetComponent<SkeletonAnimation>();
         BoxObjectController boxCtrl = boxObj.GetComponent<BoxObjectController>();
 
         if (boxCtrl != null)
@@ -259,49 +260,57 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
             boxCtrl.PlaySpawn();
         }
 
-        if (boxSpine != null)
-        {
-            boxSpine.skeleton.ScaleX = isLeft ? -1 : 1;
-            boxSpine.AnimationState.SetAnimation(0, "SPAWN", false);
-            boxSpine.AnimationState.AddAnimation(0, "IDLE", true, 0);
-        }
-
         SpawnWarning(bossData.warningBoxPrefab, new Vector2(p3Area.pos.x, randomY), new Vector3(p3Area.size.x, 2f, 1), WarningFillType.Horizontal);
         yield return new WaitForSeconds(bossData.warningDuration);
 
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayStartAndMiddle("box_skill", 0f));
-
-
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_skill", "attack_start"));
 
-        if (boxSpine != null)
+        float boxAnimDuration = 0f;
+        if (boxCtrl != null)
         {
-            boxSpine.AnimationState.SetAnimation(0, "ATTACK_START", false);
-            boxSpine.AnimationState.AddAnimation(0, "IDLE", true, 0);
+            boxAnimDuration = boxCtrl.PlayAttack();
         }
 
-        if (boxCtrl != null) boxCtrl.PlayAttack();
+        GameObject punchObj = Instantiate(bossData.p3FistPrefab, boxPos, Quaternion.identity);
+        if (isLeft) punchObj.transform.localScale = new Vector3(-1, 1, 1);
 
-        Vector2 attackCenter = new Vector2(p3Area.pos.x, randomY);
-        Vector2 attackSize = new Vector2(p3Area.size.x, bossData.p3DamageHeight);
+        float punchTravelTime = Mathf.Abs(endX - startX) / bossData.p3PunchSpeed;
+        float elapsed = 0f;
+        bool damageDealt = false;
 
-        Collider2D[] hits = Physics2D.OverlapBoxAll(attackCenter, attackSize, 0f, LayerMask.GetMask("Player"));
-        foreach (var hit in hits)
+        float totalWaitTime = Mathf.Max(punchTravelTime, boxAnimDuration);
+
+        while (elapsed < totalWaitTime)
         {
-            if (hit.CompareTag("Player1"))
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(elapsed / punchTravelTime);
+            if (punchObj != null)
             {
-                hit.GetComponent<Character>()?.TakeDamage(info.dmg);
+                punchObj.transform.position = Vector2.Lerp(boxPos, new Vector2(endX, randomY), t);
 
-                // 타격 이펙트 재생
-                if (effectController != null && bossData.p3HitEffect != null)
-                    effectController.PlayHitEffectAt(hit.transform.position, bossData.p3HitEffect, false);
+                if (!damageDealt && t < 1.0f)
+                {
+                    Collider2D hit = Physics2D.OverlapBox(punchObj.transform.position, new Vector2(1f, bossData.p3DamageHeight), 0f, LayerMask.GetMask("Player"));
+                    if (hit != null && hit.CompareTag("Player1"))
+                    {
+                        hit.GetComponent<Character>()?.TakeDamage(info.dmg);
+                        if (effectController != null && bossData.p3HitEffect != null)
+                            effectController.PlayHitEffectAt(punchObj.transform.position, bossData.p3HitEffect, false);
+                        damageDealt = true;
+                    }
+                }
             }
+            yield return null;
         }
+
+        if (punchObj) Destroy(punchObj);
 
         if (boxCtrl != null)
         {
-            boxCtrl.PlayEnd();
-            Destroy(boxObj, 1.0f); // 애니메이션 시간 고려
+            float endDuration = boxCtrl.PlayEnd();
+            Destroy(boxObj, endDuration);
         }
         else
         {
