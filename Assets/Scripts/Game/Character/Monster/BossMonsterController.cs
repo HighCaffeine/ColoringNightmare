@@ -245,7 +245,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("box_spawn", "spawn"));
 
         float randomY = Random.Range(p3Area.pos.y - p3Area.size.y / 2, p3Area.pos.y + p3Area.size.y / 2);
-        bool isLeft = false;
+        bool isLeft = true;
         float startX = isLeft ? p3Area.pos.x - p3Area.size.x / 2 : p3Area.pos.x + p3Area.size.x / 2;
         float endX = isLeft ? p3Area.pos.x + p3Area.size.x / 2 : p3Area.pos.x - p3Area.size.x / 2;
 
