@@ -52,6 +52,11 @@ public class SceneController : GenericSingleton<SceneController>
         StartCoroutine(StartLoad(SceneName.Game.ToString()));
     }
 
+    public void LoadCutScene()
+    {
+        SceneManager.LoadSceneAsync("IntroScene");
+    }
+
     public void GameOff()
     {
         Application.Quit();

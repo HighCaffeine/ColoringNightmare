@@ -147,8 +147,6 @@ public class CutSceneController : MonoBehaviour
 
     private void PlaySound(CutsceneStep step)
     {
-        return;
-        // 1. SoundManager 이름으로 재생
         if (!string.IsNullOrEmpty(step.soundName.ToString()))
         {
             if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(step.soundName.ToString(), false);
@@ -235,5 +233,10 @@ public class CutSceneController : MonoBehaviour
         }
 
         if (group != null) group.alpha = 1f;
+    }
+
+    public void LoadGame()
+    {
+        SceneController.Instance.ReloadGameScene();
     }
 }
