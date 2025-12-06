@@ -208,7 +208,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         GameObject topObj = Instantiate(bossData.p2CymbalPrefab, topStart, Quaternion.identity);
         GameObject botObj = Instantiate(bossData.p2CymbalPrefab, botStart, Quaternion.identity);
 
-        botObj.transform.localScale = new Vector3(1, -1, 1);
+        botObj.transform.localScale = new Vector3(botObj.transform.localScale.x, -botObj.transform.localScale.y, botObj.transform.localScale.z);
 
         float duration = Vector2.Distance(topStart, centerPos) / bossData.p2TravelSpeed;
         float elapsed = 0f;
