@@ -23,6 +23,7 @@ public class PlayerController : Character
     [SerializeField] private float damageDelay = 2.0f;
 
     [Header("Attack")]
+    [SerializeField] private GameObject punchHitboxObj;
     [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
 
     [Header("Weapon")]
@@ -273,7 +274,15 @@ public class PlayerController : Character
         }
         else
         {
-            effectController?.NoneWeapon(playerNoneEffect);
+
+            effectController?.NoneWeapon(playerNoneEffect); // 이펙트
+
+            if (punchHitboxObj != null)
+            {
+                punchHitboxObj.SetActive(true); // 히트박스 켜기
+                // 아주 짧은 순간만 켜서 판정 (0.1초)
+                StartCoroutine(DisablePunchHitboxAfter(0.1f));
+            }
         }
 
         if (skeleton != null)
@@ -294,6 +303,12 @@ public class PlayerController : Character
         if (skeleton != null) skeleton.timeScale = 1.0f;
 
         ChangeState(StateType.Idle);
+    }
+
+    private System.Collections.IEnumerator DisablePunchHitboxAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (punchHitboxObj != null) punchHitboxObj.SetActive(false);
     }
 
     public void ResetAttackCooldown()
