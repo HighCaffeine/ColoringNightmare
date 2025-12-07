@@ -138,7 +138,8 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         {
             hpLevel++;
             player.info.maxHp += hpPerLevel;
-            player.GetComponent<PlayerHPController>()?.UpdateHpGauge();
+            player.Heal(hpPerLevel);
+            player.UpdateHP();
 
             UpdateAllUI();
 

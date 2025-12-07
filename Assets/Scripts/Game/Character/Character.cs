@@ -47,6 +47,11 @@ public class Character : MonoBehaviour
     {
         info = data;
         currentHP = info.maxHp;
+
+        if (info != null)
+        {
+            info = Instantiate(info);
+        }
     }
 
     protected virtual void Idle() { }

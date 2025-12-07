@@ -113,7 +113,7 @@ public class PlayerController : Character
     {
         if (hpController != null && info != null)
         {
-            hpController.Init(currentHP, info.maxHp);
+            UpdateHP();
         }
     }
 
@@ -364,6 +364,8 @@ public class PlayerController : Character
 
             StopAllCoroutines();
 
+            IsAttacking = false;
+
             if (WolfWorkStation.Instance != null)
             {
                 WolfWorkStation.Instance.ForceExitAll();
@@ -414,6 +416,11 @@ public class PlayerController : Character
                 playerInput.Player2.Enable();
                 break;
         }
+    }
+
+    public void UpdateHP()
+    {
+        hpController.Init(currentHP, info.maxHp);
     }
 
     private System.Collections.IEnumerator RespawnCoroutine(float delay)
