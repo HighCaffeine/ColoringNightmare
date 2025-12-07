@@ -16,13 +16,13 @@ public class SoundBar : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text;
 
     void Awake()
-    {   
+    {
         slider = GetComponent<Slider>();
     }
 
     void Start()
     {
-        slider.value =  type == SoundManager.SoundType.Master ? SoundManager.Instance.masterVol 
+        slider.value = type == SoundManager.SoundType.Master ? SoundManager.Instance.masterVol
                                 : type == SoundManager.SoundType.Effect ? SoundManager.Instance.effectVol
                                 : SoundManager.Instance.bgmVol;
     }
@@ -41,6 +41,6 @@ public class SoundBar : MonoBehaviour
         // }
         SoundManager.Instance.OnChangedVol(type, slider.value);
 
-        text.SetText(string.Format("{0:N0}", slider.value * 100f));
+        if (text != null) text.SetText(string.Format("{0:N0}", slider.value * 100f));
     }
 }
