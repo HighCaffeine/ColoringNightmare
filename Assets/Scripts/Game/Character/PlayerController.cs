@@ -239,7 +239,7 @@ public class PlayerController : Character
 
     private void PerformAttack()
     {
-        if (isGroggy || state == StateType.Attack) return;
+        if (isGroggy || IsAttacking) return;
 
         StartCoroutine(AttackRoutine());
     }

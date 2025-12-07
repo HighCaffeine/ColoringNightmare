@@ -178,7 +178,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
                 summonedMonster.OnDeathCallback += DecreaseGroggyCoin;
             }
         }
-        TakeFixedDamage();
     }
 
     // --- P2: 세로 패턴 ---
@@ -307,15 +306,11 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         else Destroy(boxObj);
     }
 
-    [UnityEditor.MenuItem("Debug/GroggyTest _F6")]
-    public void TEST_BossGroggy()
-    {
-        StartCoroutine(GroggyRoutine());
-    }
-
     private IEnumerator GroggyRoutine()
     {
         state = StateType.Groggy;
+        TakeFixedDamage();
+
         isInvincible = false;
         if (bossSpine != null) bossSpine.PlayGroggy();
 

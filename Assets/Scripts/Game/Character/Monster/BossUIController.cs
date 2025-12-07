@@ -17,6 +17,7 @@ public class BossUIController : GenericSingleton<BossUIController>
 
     private new void Awake()
     {
+        base.Awake();
         SetActiveBossHP(false);
     }
 
