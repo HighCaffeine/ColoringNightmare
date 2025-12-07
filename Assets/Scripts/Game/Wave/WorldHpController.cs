@@ -46,6 +46,7 @@ public class WorldHpController : GenericSingleton<WorldHpController>
 
     public void RecoverHP(int amount)
     {
+        if (isGameOver) return;
         worldHP = Mathf.Min(worldHP + amount, maxHP);
         UpdateUI();
         Debug.Log($"World HP Recovered: {worldHP}/{maxHP}");
