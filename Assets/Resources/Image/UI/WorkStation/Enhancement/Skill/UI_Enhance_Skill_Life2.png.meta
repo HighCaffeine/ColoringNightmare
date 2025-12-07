@@ -100,10 +100,10 @@ TextureImporter:
       name: UI_Enhance_Skill_Life2_0
       rect:
         serializedVersion: 2
-        x: 39
-        y: 81
-        width: 484
-        height: 732
+        x: 33
+        y: 82
+        width: 344
+        height: 521
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

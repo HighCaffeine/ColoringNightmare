@@ -100,10 +100,10 @@ TextureImporter:
       name: UI_Enhance_Skill_Damage2_0
       rect:
         serializedVersion: 2
-        x: 310
-        y: 203
-        width: 479
-        height: 732
+        x: 70
+        y: 79
+        width: 342
+        height: 524
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

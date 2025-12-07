@@ -100,10 +100,10 @@ TextureImporter:
       name: UI_Enhance_RedSelect_0
       rect:
         serializedVersion: 2
-        x: 32
-        y: 162
-        width: 596
-        height: 907
+        x: 30
+        y: 22
+        width: 357
+        height: 544
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

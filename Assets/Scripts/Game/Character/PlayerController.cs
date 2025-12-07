@@ -304,6 +304,15 @@ public class PlayerController : Character
             OnPlayerDead?.Invoke();
             LockMovement(); // 이동 및 공격 입력 비활성화
 
+            ChangeState(StateType.Dead);
+
+            StopAllCoroutines();
+
+            if (WolfWorkStation.Instance != null)
+            {
+                WolfWorkStation.Instance.ForceExitAll();
+            }
+
             // 충돌 판정 비활성화
             if (playerCollider != null)
             {
@@ -321,6 +330,8 @@ public class PlayerController : Character
                 skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy2.ToString(), false, 0);
                 skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy3.ToString(), false, 0);
             }
+
+            LockMovement();
 
             // 부활 코루틴 시작
             StartCoroutine(RespawnCoroutine(groggyDuration));
@@ -354,6 +365,8 @@ public class PlayerController : Character
         isGroggy = false;
         currentHP = info.maxHp;
         OnPlayerRespawn?.Invoke();
+
+        state = StateType.Idle;
 
         if (skeleton != null && normalSkeletonData != null && meshRenderer != null && normalMaterial != null)
         {

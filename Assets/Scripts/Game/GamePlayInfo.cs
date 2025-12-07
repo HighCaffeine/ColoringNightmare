@@ -9,7 +9,7 @@ public class GamePlayInfo : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image targetImage;
     [SerializeField] private Sprite[] playInfo;
 
-    [SerializeField] private Transform endButton;
+    [SerializeField] private Transform prevButton;
     [SerializeField] private Transform nextButton;
 
     [SerializeField] private Transform startPanel;
@@ -68,20 +68,30 @@ public class GamePlayInfo : MonoBehaviour
         if (currentIndex == playInfo.Length - 1)
         {
             nextButton.gameObject.SetActive(true);
-            endButton.gameObject.SetActive(false);
         }
+
         currentIndex--;
+
+        if (currentIndex == 0)
+        {
+            prevButton.gameObject.SetActive(false);
+        }
+
         UpdateInfo();
     }
 
     public void NextInfo()
     {
+        if (currentIndex == 0)
+        {
+            prevButton.gameObject.SetActive(true);
+        }
+
         currentIndex++;
 
         if (currentIndex == playInfo.Length - 1)
         {
             nextButton.gameObject.SetActive(false);
-            endButton.gameObject.SetActive(true);
         }
 
         UpdateInfo();

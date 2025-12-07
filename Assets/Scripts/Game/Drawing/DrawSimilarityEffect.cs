@@ -9,19 +9,14 @@ public struct SimilarityEffectData
     [Tooltip("유사도 (0.0 = 0%, 1.0 = 100%)")]
     [Range(0f, 1f)]
     public float probabilityThreshold;
-
-    [Tooltip("표시할 멘트 (예: Good!, Perfect!)")]
-    public string message;
-
-    [Tooltip("멘트의 색상")]
-    public Color color;
+    public Sprite sprite;
 }
 
 public class DrawSimilarityEffect : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField]
-    private TextMeshProUGUI effectText; // 멘트 표시
+    private UnityEngine.UI.Image targetImage;
 
     [Header("Settings")]
     [SerializeField]
@@ -33,9 +28,9 @@ public class DrawSimilarityEffect : MonoBehaviour
 
     void Awake()
     {
-        if (effectText != null)
+        if (targetImage != null)
         {
-            effectText.gameObject.SetActive(false);
+            targetImage.gameObject.SetActive(false);
         }
 
         effectTiers.Sort((a, b) => a.probabilityThreshold.CompareTo(b.probabilityThreshold));
@@ -43,7 +38,7 @@ public class DrawSimilarityEffect : MonoBehaviour
 
     public void ShowEffect(float diceValue)
     {
-        if (effectText == null || effectTiers.Count == 0)
+        if (targetImage == null || effectTiers.Count == 0)
         {
             return;
         }
@@ -59,9 +54,8 @@ public class DrawSimilarityEffect : MonoBehaviour
             }
         }
 
-        effectText.text = currentTier.message;
-        effectText.color = currentTier.color;
-        effectText.gameObject.SetActive(true);
+        targetImage.sprite = currentTier.sprite;
+        targetImage.gameObject.SetActive(true);
 
         CancelInvoke(nameof(HideEffect));
 
@@ -70,9 +64,9 @@ public class DrawSimilarityEffect : MonoBehaviour
 
     private void HideEffect()
     {
-        if (effectText != null)
+        if (targetImage != null)
         {
-            effectText.gameObject.SetActive(false);
+            targetImage.gameObject.SetActive(false);
         }
     }
 }
