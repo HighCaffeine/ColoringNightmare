@@ -188,10 +188,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         {
             yield return StartCoroutine(bossSpine.PlayStartAndMiddle("cymbals_skill", bossData.warningDuration));
         }
-        else
-        {
-            yield return new WaitForSeconds(bossData.warningDuration);
-        }
 
         float randomX = Random.Range(p2Area.pos.x - p2Area.size.x / 2, p2Area.pos.x + p2Area.size.x / 2);
         Vector2 centerPos = new Vector2(randomX, p2Area.pos.y);
@@ -199,8 +195,10 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
         SpawnWarning(bossData.warningBoxPrefab, new Vector2(randomX, p2Area.pos.y + yOffset), new Vector3(2f, p2Area.size.y * 0.5f, 1f), WarningFillType.TopToBottom);
         SpawnWarning(bossData.warningBoxPrefab, new Vector2(randomX, p2Area.pos.y - yOffset), new Vector3(2f, p2Area.size.y * 0.5f, 1f), WarningFillType.BottomToTop);
+        yield return new WaitForSeconds(bossData.warningDuration);
 
         if (bossSpine != null) yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("cymbals_skill", "attack_start"));
+
 
         Vector2 topStart = new Vector2(randomX, p2Area.pos.y + p2Area.size.y / 2);
         Vector2 botStart = new Vector2(randomX, p2Area.pos.y - p2Area.size.y / 2);
@@ -255,7 +253,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         Vector2 boxPos = new Vector2(startX, randomY);
 
         GameObject boxObj = Instantiate(bossData.p3BoxPrefab, boxPos, Quaternion.identity);
-        BoxObjectController boxCtrl = boxObj.GetComponent<BoxObjectController>();
+        BoxObjectController boxCtrl = boxObj.GetComponentInChildren<BoxObjectController>();
 
         if (boxCtrl != null)
         {

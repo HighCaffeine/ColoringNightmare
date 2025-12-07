@@ -25,10 +25,7 @@ public class GameManager : GenericSingleton<GameManager>
         {
             gameOverPanel.SetActive(true);
         }
-        else
-        {
-            first = false;
-        }
+        first = false;
 
         Debug.Log("Game Over");
     }

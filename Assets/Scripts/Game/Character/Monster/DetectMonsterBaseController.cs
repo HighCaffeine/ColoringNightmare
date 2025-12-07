@@ -227,6 +227,8 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
     [SerializeField] private float attackDelay = 0.3f;
 
+    private GameObject currentWarning;
+
     private IEnumerator PrepareAndLunge(Vector2 startPos, Vector2 dir)
     {
         isDashing = true;
@@ -243,6 +245,9 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
             GameObject warning = Instantiate(warningPrefab, midPoint, rotation);
 
+            if (currentWarning != null) Destroy(currentWarning);
+
+            currentWarning = warning;
             warning.transform.localScale = new Vector3(lungeDistance, warningWidth, 1f);
 
             WarningArea warningScript = warning.GetComponent<WarningArea>();
@@ -278,6 +283,12 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         rigid.MovePosition(lungeEndPos);
 
         yield return new WaitForSeconds(lungePause);
+
+        SetSpineAnimation(ANIM_MOVE, false);
+
+        yield return null;
+
+        SetSpineAnimation(ANIM_IDLE, false);
 
         elapsed = 0f;
         while (elapsed < returnDuration)
@@ -337,15 +348,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
                 skeleton.AnimationState.SetAnimation(0, animName, loop);
             }
         }
-
-        if (animName == ANIM_ATTACK)
-        {
-            Spine.TrackEntry entry = skeleton.AnimationState.SetAnimation(0, animName, loop);
-            if (!loop)
-            {
-                entry.Complete += _ => { skeleton.AnimationState.SetAnimation(0, ANIM_MOVE, false); skeleton.AnimationState.ClearTrack(0); };
-            }
-        }
     }
 
     public void Init(OnReturnPoolEvent<DetectMonsterBaseController> onReturnPoolEvent)
@@ -362,5 +364,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             hasAttackToken = false;
         }
         OnReturnPoolEvent?.Invoke(this);
+        Destroy(currentWarning);
     }
 }
