@@ -27,6 +27,7 @@ public class WorldHpController : GenericSingleton<WorldHpController>
         if (worldHP <= 0)
         {
             worldHP = 0;
+            UpdateUI();
             OnGameOver?.Invoke();
         }
 

@@ -113,7 +113,7 @@ public class PlayerController : Character
     {
         if (hpController != null && info != null)
         {
-            UpdateHP();
+            hpController.Init(1, 1);
         }
     }
 
