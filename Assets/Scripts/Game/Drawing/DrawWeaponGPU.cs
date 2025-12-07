@@ -542,7 +542,7 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
         // Weapon 컴포넌트 추가 및 데이터 설정
         var weapon = obj.AddComponent<Weapon>();
         obj.tag = "Weapon";
-        weapon.relativeScaleRatio = ratioFromSketchBook; // 배율 저장
+        weapon.relativeScaleRatio = GetWeaponSizeSimilarity(); // 배율 저장
 
         // --- [잉크 및 무기 데이터 셋업] ---
         WeaponInkData weaponDataAsset = weaponInkDataList.Find(data => data.inkData.color == colorType);
@@ -600,6 +600,29 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
 
         // 색상 초기화
         colorType = ColorMixer.ColorType.None;
+    }
+
+    private float GetWeaponSizeSimilarity()
+    {
+        float[] diceValues = { 0.3f, 0.5f, 0.8f, };
+        float[] sizeEachDice = { 0.5f, 0.75f, 1.0f };
+
+        int index = 0;
+        float size = -1;
+
+        foreach (var dice in diceValues)
+        {
+            if (currentDiceScore >= dice)
+            {
+                size = sizeEachDice[index++];
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return size;
     }
 
     private Bounds CalculateBound(List<Vector3> points, float width)

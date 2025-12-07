@@ -147,6 +147,8 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
         AllWorkStationOff();
 
+        WeaponPatternSelector.Instance.CloseAllPattern();
+
         workStationType = WorkStationType.None;
         isOnInteractive = false;
     }

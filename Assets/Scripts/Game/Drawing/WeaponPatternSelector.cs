@@ -7,7 +7,6 @@ public enum Design { Sword, Spear, Axe, Count }
 public struct DesignPatternGroup
 {
     public Design type;
-    [Tooltip("이 타입에 해당하는 3개의 도안을 넣으세요")]
     public List<SpriteRenderer> patterns;
 }
 
@@ -37,6 +36,12 @@ public class WeaponPatternSelector : GenericSingleton<WeaponPatternSelector>
         selectedDesign = Design.Count;
         currentActivePattern = null;
 
+        CloseAllPattern();
+        DrawWeaponGPU.Instance.SetRefSprite(null);
+    }
+
+    public void CloseAllPattern()
+    {
         foreach (var group in designPatterns)
         {
             if (group.patterns != null)
@@ -47,9 +52,7 @@ public class WeaponPatternSelector : GenericSingleton<WeaponPatternSelector>
                 }
             }
         }
-
         foreach (var c in checkDesigns) c?.gameObject.SetActive(false);
-        DrawWeaponGPU.Instance.SetRefSprite(null);
     }
 
     public void SetSword() { SelectWeaponDesign(Design.Sword); }

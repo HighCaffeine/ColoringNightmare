@@ -284,11 +284,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
         yield return new WaitForSeconds(lungePause);
 
-        SetSpineAnimation(ANIM_MOVE, false);
-
-        yield return null;
-
-        SetSpineAnimation(ANIM_IDLE, false);
+        SetSpineAnimation(ANIM_IDLE, true);
 
         elapsed = 0f;
         while (elapsed < returnDuration)
@@ -338,6 +334,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
         if (animName == ANIM_IDLE)
         {
             skeleton.AnimationState.ClearTrack(0);
+            skeleton.Skeleton.SetToSetupPose();
             return;
         }
 

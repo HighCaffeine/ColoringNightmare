@@ -36,7 +36,10 @@ MonoBehaviour:
   castingDuration: 1
   warningBoxPrefab: {fileID: 5152362679918131031, guid: 6b8d4b0ddcb08984fba0580f8b4c0138, type: 3}
   warningCirclePrefab: {fileID: 5152362679918131031, guid: 6f266f62b53390741a82a545778dd631, type: 3}
-  p1BallPrefab: {fileID: 6958675942149771495, guid: 5d8b3c3f6f09b3d4ebfdc3c6bcc63a31, type: 3}
+  p1BallPrefabs:
+  - {fileID: 8478765013045015133, guid: b8ed563316763184da8e2b1a062f3216, type: 3}
+  - {fileID: 7721385303035583584, guid: b5008c75d32c07644982567fdbf48a3d, type: 3}
+  - {fileID: 3687097435895942539, guid: f192c22026826004bba4296633807185, type: 3}
   p1SummonMonsters:
   - {fileID: 11400000, guid: 16402a9c6886c3b479faf5a314a40854, type: 2}
   - {fileID: 11400000, guid: 323ba4308d8e2bf42baa559323ea0deb, type: 2}

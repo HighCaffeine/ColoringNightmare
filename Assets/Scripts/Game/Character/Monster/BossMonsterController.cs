@@ -141,9 +141,9 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
             yield return StartCoroutine(bossSpine.PlayEndAndWaitForEvent("spawn_skill", "spawn"));
         }
 
-        if (bossData.p1BallPrefab != null)
+        if (bossData.p1BallPrefabs.Count > 0)
         {
-            GameObject ball = Instantiate(bossData.p1BallPrefab, spawnPos + Vector2.up * 10f, Quaternion.identity);
+            GameObject ball = Instantiate(bossData.p1BallPrefabs[UnityEngine.Random.Range(0, bossData.p1BallPrefabs.Count)], spawnPos + Vector2.up * 10f, Quaternion.identity);
             float fallTime = 0.5f;
             float t = 0;
             Vector2 start = ball.transform.position;

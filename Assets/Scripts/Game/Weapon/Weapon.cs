@@ -18,6 +18,7 @@ public class Weapon : MonoBehaviour
     public UnityEngine.Events.UnityEvent OnWeaponBroken;
     [HideInInspector] public float relativeScaleRatio = 1f;
 
+
     public void Initialize(WeaponInkData data, WeaponManager.WeaponType type)
     {
         this.inkData = data;
@@ -88,6 +89,14 @@ public class Weapon : MonoBehaviour
                 ApplyPassiveEffect(monster);
             }
         }
+    }
+
+    public void SetScaleBasedOnScore(float ratio)
+    {
+        relativeScaleRatio = ratio;
+        transform.localScale *= ratio;
+
+        Debug.Log($"Weapon Size Adjusted: {ratio * 100}%");
     }
 
     private void ApplyPassiveEffect(Character monster)

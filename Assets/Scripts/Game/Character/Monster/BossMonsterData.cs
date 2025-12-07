@@ -29,7 +29,7 @@ public class BossMonsterData : MonsterData
     public GameObject warningCirclePrefab;
 
     [Header("P1 Assets (Summon)")]
-    public GameObject p1BallPrefab;
+    public List<GameObject> p1BallPrefabs;
     public List<MonsterData> p1SummonMonsters;
     public EffectVisualData p1ExplosionEffect;
     public float p1ExplosionRadius = 2.0f;

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class WeaponStorageController : GenericSingleton<WeaponStorageController>
 {
+    [SerializeField] private PlayerController player;
     [SerializeField] private WeaponController weaponController;
     [SerializeField] private Transform storedWeaponPivot;
 

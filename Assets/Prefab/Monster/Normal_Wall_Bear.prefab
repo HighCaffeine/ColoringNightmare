@@ -151,7 +151,6 @@ MonoBehaviour:
   info: {fileID: 0}
   currentHP: 0
   skeleton: {fileID: 9157412667983172476}
-  ani: {fileID: 0}
 --- !u!50 &971440212086888985
 Rigidbody2D:
   serializedVersion: 5
@@ -213,7 +212,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.23889816, y: 2.4487054}
+  m_Offset: {x: -0.09, y: 1.45}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -223,7 +222,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.7474277, y: 4.89751}
+  m_Size: {x: 2.11, y: 2.52}
   m_EdgeRadius: 0
 --- !u!114 &1764727842765831003
 MonoBehaviour:

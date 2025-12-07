@@ -24,6 +24,8 @@ public class SceneController : GenericSingleton<SceneController>
 
     void Start()
     {
+        Time.timeScale = 1.0f;
+
         if (GameManager.Instance != null && GameManager.Instance.IsShowCredits)
         {
             GameObject creditObj = GameObject.FindGameObjectWithTag("Credit");

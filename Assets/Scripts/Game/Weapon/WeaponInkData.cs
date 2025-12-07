@@ -18,7 +18,6 @@ public class WeaponInkData : ScriptableObject
     public int durability;
     public int damage;
 
-
     [Header("Skill Logic")]
     public BaseSkillLogic skillLogic;
 

@@ -239,10 +239,21 @@ public class PlayerController : Character
 
     private void PerformAttack()
     {
-        if (isGroggy || IsAttacking) return;
+        if (isGroggy || state == StateType.Attack) return;
 
+        StartCoroutine(AttackRoutine());
+    }
+
+    private System.Collections.IEnumerator AttackRoutine()
+    {
         ChangeState(StateType.Attack);
         OnAttack?.Invoke();
+
+        float currentAnimSpeed = 1.0f;
+        float finalWaitTime = 0.5f;
+
+        if (weaponController != null) currentAnimSpeed = weaponController.GetAttackSpeed();
+        if (skeleton != null) skeleton.timeScale = currentAnimSpeed;
 
         SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_Weapon_Attack_Yellow.ToString(), false);
 
@@ -264,6 +275,25 @@ public class PlayerController : Character
         {
             effectController?.NoneWeapon(playerNoneEffect);
         }
+
+        if (skeleton != null)
+        {
+            yield return null;
+
+            var currentTrack = skeleton.AnimationState.GetCurrent(0);
+
+            if (currentTrack != null && currentTrack.Animation != null)
+            {
+                float animDuration = currentTrack.Animation.Duration / currentAnimSpeed;
+                finalWaitTime = Mathf.Max(animDuration, finalWaitTime);
+            }
+        }
+
+        yield return new WaitForSeconds(finalWaitTime);
+
+        if (skeleton != null) skeleton.timeScale = 1.0f;
+
+        ChangeState(StateType.Idle);
     }
 
     public void ResetAttackCooldown()
