@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : GenericSingleton<GameManager>
@@ -15,11 +16,18 @@ public class GameManager : GenericSingleton<GameManager>
         DontDestroyOnLoad(this);
     }
 
+    private Coroutine coroutine;
     public void GameOver()
     {
-        Time.timeScale = 0.0f;
-
+        if (coroutine != null) StopCoroutine(coroutine);
+        coroutine = StartCoroutine(TimeScale0());
         Debug.Log("Game Over");
+    }
+
+    private IEnumerator TimeScale0()
+    {
+        yield return new WaitForSecondsRealtime(1.0f);
+        Time.timeScale = 0.0f;
     }
 
     public void Restart()
