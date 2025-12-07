@@ -29,6 +29,7 @@ public class WorldHpController : GenericSingleton<WorldHpController>
             worldHP = 0;
             UpdateUI();
             OnGameOver?.Invoke();
+            GameManager.Instance.GameOver(1.5f);
         }
 
         UpdateUI();

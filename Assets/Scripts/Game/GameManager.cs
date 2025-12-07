@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class GameManager : GenericSingleton<GameManager>
 {
-    [SerializeField] private int targetFrameRate = 60;  // Default - 60
+    [SerializeField] private int targetFrameRate = 60;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject endingPanel;
 
     public bool IsShowCredits { get; private set; } = false;
+
+    private Coroutine gameoverCoroutine;
 
     private new void Awake()
     {
@@ -16,33 +18,54 @@ public class GameManager : GenericSingleton<GameManager>
         DontDestroyOnLoad(this);
     }
 
-    private Coroutine coroutine;
-    public void GameOver()
+    public void PauseGame()
     {
-        if (coroutine != null) StopCoroutine(coroutine);
-        coroutine = StartCoroutine(TimeScale0());
-        Debug.Log("Game Over");
+        if (gameoverCoroutine != null) StopCoroutine(gameoverCoroutine);
+
+        Time.timeScale = 0.0f;
     }
 
-    private IEnumerator TimeScale0()
+    public void GameOver(float delay = 1.5f)
     {
-        yield return new WaitForSecondsRealtime(1.0f);
+        if (gameoverCoroutine != null) StopCoroutine(gameoverCoroutine);
+
+        if (delay > 0f)
+        {
+            gameoverCoroutine = StartCoroutine(TimeScaleDelayRoutine(delay));
+        }
+        else
+        {
+            PauseGame();
+        }
+
+        Debug.Log($"Game Over Requested (Delay: {delay})");
+    }
+
+    private IEnumerator TimeScaleDelayRoutine(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
         Time.timeScale = 0.0f;
+    }
+
+    public void ResetTimeScale()
+    {
+        if (gameoverCoroutine != null)
+        {
+            StopCoroutine(gameoverCoroutine);
+            gameoverCoroutine = null;
+        }
+
+        Time.timeScale = 1.0f;
     }
 
     public void Restart()
     {
-        Time.timeScale = 1.0f;
+        ResetTimeScale();
 
         if (SceneController.Instance != null)
         {
             SceneController.Instance.ReloadGameScene();
         }
-    }
-
-    public void ResetTimeScale()
-    {
-        Time.timeScale = 1.0f;
     }
 
     public void GameStart()
@@ -52,23 +75,15 @@ public class GameManager : GenericSingleton<GameManager>
 
     public void Exit(bool showCredits = false)
     {
-        Time.timeScale = 1.0f;
+        ResetTimeScale();
 
         IsShowCredits = showCredits;
-
         if (SceneController.Instance != null)
         {
             SceneController.Instance.GoToScene(SceneName.Menu.ToString());
         }
     }
 
-    public void OnEndingPanel()
-    {
-        endingPanel.SetActive(true);
-    }
-
-    public void OffCreditsFlag()
-    {
-        IsShowCredits = false;
-    }
+    public void OnEndingPanel() { endingPanel.SetActive(true); }
+    public void OffCreditsFlag() { IsShowCredits = false; }
 }

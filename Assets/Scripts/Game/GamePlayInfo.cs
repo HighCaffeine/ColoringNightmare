@@ -31,12 +31,12 @@ public class GamePlayInfo : MonoBehaviour
 
     void Start()
     {
-        GameManager.Instance.GameOver();
+        GameManager.Instance.PauseGame();
     }
 
     public void Init()
     {
-        GameManager.Instance.GameOver();
+        GameManager.Instance.PauseGame();
         currentIndex = 0;
         UpdateInfo();
     }
@@ -50,11 +50,18 @@ public class GamePlayInfo : MonoBehaviour
     {
         if (!isAllowGameStart) return;
         if (!isFirst) return;
-        isFirst = true;
+        isFirst = false;
 
-        startPanel.gameObject.SetActive(true);
-        Invoke(nameof(PanelOff), panelOff);
-        Invoke(nameof(OnWaitTimeEnd), startTime);
+        GameManager.Instance.GameStart();
+
+        infoPanel.gameObject.SetActive(false);
+
+        if (startPanel != null)
+        {
+            startPanel.gameObject.SetActive(true);
+            Invoke(nameof(PanelOff), panelOff);
+            Invoke(nameof(OnWaitTimeEnd), startTime);
+        }
     }
 
     private void PanelOff()
