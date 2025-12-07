@@ -5,6 +5,7 @@ using Spine.Unity;
 
 public enum PlayerType
 {
+    NONE,
     Player1,
     Player2,
 }
@@ -458,6 +459,8 @@ public class PlayerController : Character
 
         SetDamageImmune(true);
         StartCoroutine(GroggyCoroutine(invincibilityDuration));
+
+        UpdateHP();
     }
 
     private System.Collections.IEnumerator GroggyCoroutine(float duration)

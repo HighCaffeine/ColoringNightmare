@@ -4705,7 +4705,7 @@ MonoBehaviour:
   groggyMaterial: {fileID: 2100000, guid: aa9b135a89820b0458c0a2a51d8fcea9, type: 2}
   moveArea: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
   addressableName: 0
-  playerType: 0
+  playerType: 1
 --- !u!114 &319180213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25452,7 +25452,7 @@ MonoBehaviour:
   groggyMaterial: {fileID: 0}
   moveArea: {fileID: 11400000, guid: fdabbc143b6bbbc46a140d8b6fe91852, type: 2}
   addressableName: 1
-  playerType: 1
+  playerType: 2
 --- !u!114 &1798803160
 MonoBehaviour:
   m_ObjectHideFlags: 0

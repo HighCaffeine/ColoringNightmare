@@ -242,10 +242,9 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
 
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            if (currentWarning != null) Destroy(currentWarning);
 
             currentWarning = Instantiate(warningPrefab, midPoint, rotation);
-
-            if (currentWarning != null) Destroy(currentWarning);
 
             currentWarning.transform.localScale = new Vector3(lungeDistance, warningWidth, 1f);
 

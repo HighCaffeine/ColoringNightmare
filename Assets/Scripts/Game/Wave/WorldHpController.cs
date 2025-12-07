@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI; // Image 컴포넌트 사용을 위해 필요
-using TMPro;          // 텍스트 사용 (TextMeshPro 기준)
+using UnityEngine.UI;
+using TMPro;
 
 public class WorldHpController : GenericSingleton<WorldHpController>
 {
@@ -13,6 +13,8 @@ public class WorldHpController : GenericSingleton<WorldHpController>
 
     private int maxHP;
 
+    private bool isGameOver = false;
+
     new void Awake()
     {
         base.Awake();
@@ -24,10 +26,13 @@ public class WorldHpController : GenericSingleton<WorldHpController>
     {
         worldHP--;
 
-        if (worldHP <= 0)
+        if (worldHP <= 0 && !isGameOver)
         {
+            isGameOver = true;
             worldHP = 0;
+
             UpdateUI();
+
             OnGameOver?.Invoke();
             GameManager.Instance.GameOver(1.5f);
         }
