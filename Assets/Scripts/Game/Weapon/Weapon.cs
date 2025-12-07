@@ -117,6 +117,8 @@ public class Weapon : MonoBehaviour
                 break;
 
             case PassiveEffectData.EffectType.Heal:
+                player.Heal(1);
+                PlayStatusEffect(player.transform.position, passive.statusVisual);
                 break;
         }
     }

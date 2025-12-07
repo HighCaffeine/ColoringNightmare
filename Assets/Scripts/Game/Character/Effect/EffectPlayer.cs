@@ -8,18 +8,11 @@ public class EffectPlayer : MonoBehaviour
     private BaseSkillLogic skillData;
     private WeaponInkData inkData;
 
-
-    private CircleCollider2D circleCollider;
     private float originalRadius;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        circleCollider = GetComponent<CircleCollider2D>();
-        if (circleCollider != null)
-        {
-            originalRadius = circleCollider.radius;
-        }
     }
 
     public void Play(EffectVisualData data, BaseSkillLogic skill, WeaponInkData ink, Vector3 localScale, bool isFacingLeft)
@@ -29,9 +22,10 @@ public class EffectPlayer : MonoBehaviour
 
         float scaleMultiplier = Mathf.Max(Mathf.Abs(localScale.x), Mathf.Abs(localScale.y));
 
-        if (circleCollider != null)
+        if (spriteRenderer != null)
         {
-            circleCollider.radius = originalRadius * scaleMultiplier;
+            spriteRenderer.sortingOrder = 100;
+            spriteRenderer.enabled = true;
         }
 
         transform.localScale = new Vector3(
