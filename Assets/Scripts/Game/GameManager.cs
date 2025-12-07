@@ -6,8 +6,6 @@ public class GameManager : GenericSingleton<GameManager>
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject endingPanel;
 
-    private bool first = true;
-
     public bool IsShowCredits { get; private set; } = false;
 
     private new void Awake()
@@ -20,12 +18,6 @@ public class GameManager : GenericSingleton<GameManager>
     public void GameOver()
     {
         Time.timeScale = 0.0f;
-
-        if (gameOverPanel != null && !first)
-        {
-            gameOverPanel.SetActive(true);
-        }
-        first = false;
 
         Debug.Log("Game Over");
     }

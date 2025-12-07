@@ -243,21 +243,20 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
-            GameObject warning = Instantiate(warningPrefab, midPoint, rotation);
+            currentWarning = Instantiate(warningPrefab, midPoint, rotation);
 
             if (currentWarning != null) Destroy(currentWarning);
 
-            currentWarning = warning;
-            warning.transform.localScale = new Vector3(lungeDistance, warningWidth, 1f);
+            currentWarning.transform.localScale = new Vector3(lungeDistance, warningWidth, 1f);
 
-            WarningArea warningScript = warning.GetComponent<WarningArea>();
+            WarningArea warningScript = currentWarning.GetComponent<WarningArea>();
             if (warningScript != null)
             {
                 warningScript.Setup(warningDuration, WarningFillType.LeftToRight);
             }
 
             yield return new WaitForSeconds(warningDuration);
-            Destroy(warning);
+            Destroy(currentWarning);
         }
         else
         {
@@ -361,6 +360,6 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             hasAttackToken = false;
         }
         OnReturnPoolEvent?.Invoke(this);
-        Destroy(currentWarning);
+        if (currentWarning != null) Destroy(currentWarning);
     }
 }

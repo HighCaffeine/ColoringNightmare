@@ -348,6 +348,8 @@ public class PlayerController : Character
 
         base.TakeDamage(amount);
 
+        UpdateHP();
+
         OnDamaged?.Invoke();
         isAllowDamaged = false; // 짧은 시간 동안 무적
 

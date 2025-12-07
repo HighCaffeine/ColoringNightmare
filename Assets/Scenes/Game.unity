@@ -4570,6 +4570,7 @@ MonoBehaviour:
   info: {fileID: 11400000, guid: cbe2d3d20345ea94885cafbfce9d75ac, type: 2}
   currentHP: 0
   skeleton: {fileID: 319180220}
+  hpController: {fileID: 319180216}
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls:
@@ -4729,7 +4730,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af905d0a5f3590d4590a9cf8ad9e04f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 4053538593039705427, guid: 70e998ae95ecdaa489db3533117a9bd8, type: 3}
   effectPivot: {fileID: 389713297}
   weaponController: {fileID: 319180215}
   effectController: {fileID: 319180211}
@@ -16989,6 +16989,7 @@ MonoBehaviour:
   info: {fileID: 11400000, guid: cbe2d3d20345ea94885cafbfce9d75ac, type: 2}
   currentHP: 0
   skeleton: {fileID: 1206501475}
+  hpController: {fileID: 0}
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls:
@@ -17160,7 +17161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af905d0a5f3590d4590a9cf8ad9e04f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 4053538593039705427, guid: 70e998ae95ecdaa489db3533117a9bd8, type: 3}
   effectPivot: {fileID: 1348453517}
   weaponController: {fileID: 1206501471}
   effectController: {fileID: 1206501468}
@@ -22204,6 +22204,7 @@ MonoBehaviour:
   info: {fileID: 0}
   currentHP: 0
   skeleton: {fileID: 0}
+  hpController: {fileID: 0}
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls: []
@@ -23829,6 +23830,7 @@ MonoBehaviour:
   info: {fileID: 11400000, guid: 6e653342ff7be3a409a730f3aaf51e93, type: 2}
   currentHP: 0
   skeleton: {fileID: 1723600701}
+  hpController: {fileID: 0}
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls: []
@@ -25423,6 +25425,7 @@ MonoBehaviour:
   info: {fileID: 11400000, guid: 6e653342ff7be3a409a730f3aaf51e93, type: 2}
   currentHP: 0
   skeleton: {fileID: 1798803166}
+  hpController: {fileID: 0}
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls: []
@@ -26159,6 +26162,7 @@ MonoBehaviour:
   info: {fileID: 11400000, guid: cbe2d3d20345ea94885cafbfce9d75ac, type: 2}
   currentHP: 0
   skeleton: {fileID: 1814418403}
+  hpController: {fileID: 0}
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls:
@@ -26330,7 +26334,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af905d0a5f3590d4590a9cf8ad9e04f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 4053538593039705427, guid: 70e998ae95ecdaa489db3533117a9bd8, type: 3}
   effectPivot: {fileID: 545266331}
   weaponController: {fileID: 1814418398}
   effectController: {fileID: 1814418394}
@@ -31464,6 +31467,7 @@ MonoBehaviour:
   info: {fileID: 11400000, guid: 6e653342ff7be3a409a730f3aaf51e93, type: 2}
   currentHP: 0
   skeleton: {fileID: 2123869013}
+  hpController: {fileID: 0}
   OnPlayerDead:
     m_PersistentCalls:
       m_Calls: []
