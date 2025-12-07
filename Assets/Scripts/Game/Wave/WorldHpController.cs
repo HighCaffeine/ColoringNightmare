@@ -24,20 +24,24 @@ public class WorldHpController : GenericSingleton<WorldHpController>
 
     public void SubHP()
     {
+        if (isGameOver) return;
+
         worldHP--;
 
-        if (worldHP <= 0 && !isGameOver)
-        {
-            isGameOver = true;
-            worldHP = 0;
+        UpdateUI();
 
+        if (worldHP <= 0)
+        {
+            worldHP = 0;
+            isGameOver = true;
             UpdateUI();
 
             OnGameOver?.Invoke();
-            GameManager.Instance.GameOver(1.5f);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.GameOver(1.5f);
+            }
         }
-
-        UpdateUI();
     }
 
     public void RecoverHP(int amount)
