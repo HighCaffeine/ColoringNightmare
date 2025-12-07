@@ -16,7 +16,7 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
     [SerializeField] private float minPointDis = 0.02f; // 포인트간 최소 거리
     [SerializeField] private Color lineColor = Color.white;
     [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f; // 채도
-    [Range(40.0f, 80.0f)][SerializeField] private float similarityLimit = 60.0f;
+    [Range(20.0f, 80.0f)][SerializeField] private float similarityLimit = 60.0f;
 
     [Space(1f)]
     [Header("Drawing Layer")]

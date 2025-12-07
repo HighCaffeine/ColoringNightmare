@@ -90,7 +90,7 @@ public class Character : MonoBehaviour
         TakeDamage(amount, null);
     }
 
-    public void Heal(int amount)
+    public virtual void Heal(int amount)
     {
         currentHP += amount;
         if (currentHP > info.maxHp) currentHP = info.maxHp;

@@ -16,7 +16,8 @@ public class ProjectileSkill : BaseSkillLogic
 
     public override void ActivateSkill(SkillController controller, Character character, Weapon weapon)
     {
-        GameObject projectilePrefab = controller.projectilePrefab;
+        WeaponInkData inkData = weapon.GetInkData();
+        GameObject projectilePrefab = inkData.projectilePrefab;
         Transform effectPivot = controller.GetEffectPivot();
 
         if (projectilePrefab == null || character == null || effectPivot == null) return;

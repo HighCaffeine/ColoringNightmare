@@ -28113,7 +28113,7 @@ MonoBehaviour:
   minPointDis: 0.02
   lineColor: {r: 1, g: 1, b: 1, a: 1}
   saturation: 1
-  similarityLimit: 40
+  similarityLimit: 30
   targetLayer:
     serializedVersion: 2
     m_Bits: 64

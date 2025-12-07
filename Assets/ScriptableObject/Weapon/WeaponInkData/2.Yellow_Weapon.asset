@@ -27,3 +27,4 @@ MonoBehaviour:
     attackEffect: {fileID: 11400000, guid: 3a31d3641c19bfc41bcd2855a22598d7, type: 2}
     hitEffect: {fileID: 11400000, guid: 0a19e5419ea79e049a95d8830f57e623, type: 2}
   passiveEffect: {fileID: 11400000, guid: c5407c7b3ea401941a1a69b6284eff5e, type: 2}
+  projectilePrefab: {fileID: 4053538593039705427, guid: b991c2cd1e45676408394666d396dae6, type: 3}

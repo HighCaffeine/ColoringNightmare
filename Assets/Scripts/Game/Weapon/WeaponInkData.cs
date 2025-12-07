@@ -27,6 +27,8 @@ public class WeaponInkData : ScriptableObject
     [Header("Passive Effect")]
     public PassiveEffectData passiveEffect;
 
+    public GameObject projectilePrefab;
+
     public WeaponVisualData GetVisualData(WeaponManager.WeaponType type)
     {
         if (visualEffects == null) return new WeaponVisualData();

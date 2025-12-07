@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colorType: 6
   baseDamage: 0
-  cooldown: 0
+  cooldown: 0.5
   projectileParams:
-    speed: 0
-    lifeTime: 0
-    size: 0
+    speed: 10
+    lifeTime: 2
+    size: 1
     piercingCount: 1

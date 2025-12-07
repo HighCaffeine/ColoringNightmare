@@ -3,8 +3,6 @@ using System.Collections;
 
 public class SkillController : MonoBehaviour
 {
-    [Header("외부 참조")]
-    public GameObject projectilePrefab;
     [SerializeField] private Transform effectPivot;
     [SerializeField] private WeaponController weaponController;
     [SerializeField] private EffectController effectController;

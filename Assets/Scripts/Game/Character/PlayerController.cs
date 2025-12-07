@@ -11,6 +11,9 @@ public enum PlayerType
 
 public class PlayerController : Character
 {
+    [Header("UI References")]
+    [SerializeField] private PlayerHPController hpController;
+
     [Header("TEST Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerDead;
     [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerRespawn;
@@ -103,6 +106,14 @@ public class PlayerController : Character
         {
             normalSkeletonData = skeleton.skeletonDataAsset;
             normalMaterial = meshRenderer.material;
+        }
+    }
+
+    void Start()
+    {
+        if (hpController != null && info != null)
+        {
+            hpController.Init(currentHP, info.maxHp);
         }
     }
 
@@ -367,6 +378,7 @@ public class PlayerController : Character
             rigid.linearVelocity = Vector2.zero;
             if (skeleton != null && groggySkeletonData != null && meshRenderer != null && groggyMaterial != null)
             {
+                skeleton.timeScale = 1.0f;
                 skeleton.skeletonDataAsset = groggySkeletonData;
                 meshRenderer.material = groggyMaterial;
                 skeleton.Initialize(true);
@@ -477,6 +489,17 @@ public class PlayerController : Character
         if (input.magnitude > 0)
         {
             if (spine != null) spine.TestPlayRunSpine();
+        }
+    }
+
+    public override void Heal(int amount)
+    {
+        base.Heal(amount); // 부모 클래스에서 체력 증가 처리
+
+        // UI 갱신
+        if (hpController != null)
+        {
+            hpController.UpdateHpGauge(currentHP, info.maxHp);
         }
     }
 
