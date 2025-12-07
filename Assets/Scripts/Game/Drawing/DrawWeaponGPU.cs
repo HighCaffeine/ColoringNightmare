@@ -391,11 +391,6 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
             similarityText.text = string.Format($"Sim - Cos: {cosine * 100f:F3}, Jac: {jaccard * 100f:F3}, Dice: {dice * 100f:F3}");
         }
 
-        if (similarityEffect != null)
-        {
-            similarityEffect.ShowEffect(dice);
-        }
-
         results.Dispose();
         isCalculating = false;
     }
@@ -422,6 +417,11 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
             {
                 SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Weapon_Fail.ToString(), false);
                 Debug.Log("유사도가 낮아 무기를 생성하지 않음.");
+            }
+
+            if (similarityEffect != null)
+            {
+                similarityEffect.ShowEffect(dice);
             }
         }
         catch (System.Exception e)

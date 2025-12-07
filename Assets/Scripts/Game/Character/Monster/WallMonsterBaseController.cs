@@ -134,6 +134,7 @@ public class WallMonsterBaseController<T> : Character, OnReturnPool<WallMonsterB
     private IEnumerator SelfDestructCoroutine(float delay)
     {
         yield return new WaitForSeconds(delay);
+        OnDeathCallback = null;
         isSelfDestruct = true;
         MonsterManager.Instance.SubWorldHpEvent();
         ChangeState(StateType.Dead);

@@ -177,6 +177,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
     private IEnumerator SelfDestructCoroutine(float delay)
     {
         yield return new WaitForSeconds(delay);
+        OnDeathCallback = null;
         isSelfDestruct = true;
         MonsterManager.Instance.SubWorldHpEvent();
         Dead();
@@ -342,7 +343,7 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             Spine.TrackEntry entry = skeleton.AnimationState.SetAnimation(0, animName, loop);
             if (!loop)
             {
-                entry.Complete += _ => SetSpineAnimation(ANIM_IDLE, true);
+                entry.Complete += _ => { skeleton.AnimationState.SetAnimation(0, ANIM_MOVE, false); skeleton.AnimationState.ClearTrack(0); };
             }
         }
     }

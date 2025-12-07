@@ -9,7 +9,7 @@ public class BossSpineController : MonoBehaviour
 
     // 보스 애니메이션 이름
     public const string IDLE = "idle";
-    public const string GROGGY = "groggy";
+    public const string GROGGY = "Groggy";
     public const string DEAD = "Dead";
     public const string ENTER = "enter";
 

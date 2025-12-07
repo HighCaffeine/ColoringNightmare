@@ -61,7 +61,8 @@ MonoBehaviour:
   returnDuration: 0.25
   warningPrefab: {fileID: 5152362679918131031, guid: 6b8d4b0ddcb08984fba0580f8b4c0138, type: 3}
   warningDuration: 0.5
-  warningWidth: 1
+  warningWidth: 0.3
+  attackDelay: 0.3
 --- !u!50 &3565113630341129257
 Rigidbody2D:
   serializedVersion: 5
@@ -203,7 +204,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aa8f23dfdf8d44d41a782266d7ed8b57, type: 2}
+  - {fileID: 2100000, guid: d414f4a36b475a640b16c710e550cd91, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
