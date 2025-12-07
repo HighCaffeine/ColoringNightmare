@@ -4,6 +4,9 @@ using System.Collections;
 
 public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
 {
+    [SerializeField] private System.Collections.Generic.List<GameObject> panels;
+
+
     [Header("Player Reference")]
     [SerializeField] private PlayerController player;
 
@@ -100,7 +103,7 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         UpdateEnhanceSlot(speedLevel, speedCostTxt, speedBarImage);
         UpdateEnhanceSlot(dmgLevel, dmgCostTxt, dmgBarImage);
 
-        if (exchangeCostTxt) exchangeCostTxt.text = inkExchangeCost.ToString();
+        if (exchangeCostTxt) exchangeCostTxt.text = string.Format($"X{inkExchangeCost}");
 
 #if UNITY_EDITOR_64
         Debug.Log($"HP: {player.info.maxHp}\nATK: {player.info.dmg}\nSPD: {player.info.speed:F1}");

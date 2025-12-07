@@ -6,9 +6,9 @@ public class DreamBearController : MonoBehaviour
     [SerializeField] private SkeletonAnimation skeleton;
 
     [Header("Animation Names")]
-    [SerializeField] private string animIdle = "idle";
-    [SerializeField] private string animResult = "result";
-    [SerializeField] private string animSelectIdle = "select_idle";
+    [SerializeField] private string animIdle = "IDLE";
+    [SerializeField] private string animResult = "RESULT";
+    [SerializeField] private string animSelectIdle = "SELECT_IDLE";
 
     private void Awake()
     {
