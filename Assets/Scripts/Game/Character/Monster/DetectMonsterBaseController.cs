@@ -51,6 +51,8 @@ public class DetectMonsterBaseController : WallMonsterBaseController<DetectMonst
             hasAttackToken = false;
         }
 
+        ClearAllStatusEffects();
+
         data.isSpine = true;
         base.Setup(data);
 

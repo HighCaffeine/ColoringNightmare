@@ -138,6 +138,8 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         DropManager.Instance.ProcessLootTable(table, spawnPos, acquireCallbacks);
     }
 
+    public UnityEngine.Events.UnityEvent OnBossSpawn;
+
     [ContextMenu("TEST_SpawnBoss")]
     public void TEST_SpawnBoss()
     {
@@ -147,6 +149,7 @@ public class MonsterManager : GenericSingleton<MonsterManager>
         {
             if (data != null)
             {
+                OnBossSpawn?.Invoke();
                 Vector2 spawnPos = bossSpawnPoint.position;
                 SpawnMonster(data, spawnPos);
                 BossUIController.Instance.SetActiveBossHP(true);

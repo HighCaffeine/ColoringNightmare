@@ -411,6 +411,7 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
             if (dice * 100.0f > similarityLimit)
             {
                 SpawnDrawObj();
+                WolfGuideBubble.Instance.ShowInkPhase();
                 SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Weapon_Suc_Good.ToString(), false);
             }
             else

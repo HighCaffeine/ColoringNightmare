@@ -47,6 +47,17 @@ public class StatusEffectManager : MonoBehaviour
         }
     }
 
+    public void ClearEffects()
+    {
+        foreach (var effect in activeEffects)
+        {
+            effect.Remove(character);
+        }
+
+        activeEffects.Clear();
+        currentSpeedMultiplier = 1.0f;
+    }
+
     public void ApplyEffect(IStatusEffect effect)
     {
         effect.Apply(character);

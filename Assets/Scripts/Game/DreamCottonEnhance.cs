@@ -173,6 +173,8 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
             dmgLevel++;
             player.info.dmg += Mathf.Max(1, Mathf.RoundToInt(player.info.dmg * dmgPercent));
             UpdateAllUI();
+
+            if (dreamBear != null) dreamBear.PlayResult();
         }
     }
 

@@ -184,6 +184,8 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
         Debug.Log($"off panel : {c1}, {c2}");
 
+        WolfGuideBubble.Instance.ShowPoolPhase();
+
         SubInk(c1);
         SubInk(c2);
         RailController.Instance.StartDuckSequence(c1, c2, railEvents[c1], railEvents[c2]);

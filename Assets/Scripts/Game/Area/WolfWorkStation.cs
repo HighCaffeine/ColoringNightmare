@@ -61,6 +61,7 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
     public bool IsSketchbookLocked() { return sketchLock; }
 
     private Coroutine moveCoroutine;
+
     public void OnMoveToInteractivePoint()
     {
         if (playerController == null)
@@ -143,6 +144,22 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         if (DrawWeaponGPU.Instance != null)
         {
             DrawWeaponGPU.Instance.ForceCancelDrawing();
+        }
+
+        switch (workStationType)
+        {
+            case WorkStationType.Design:
+                if (WolfGuideBubble.Instance != null) WolfGuideBubble.Instance.ShowPoolPhase();
+                break;
+
+            case WorkStationType.Palette:
+            case WorkStationType.None:
+                if (WolfGuideBubble.Instance != null) WolfGuideBubble.Instance.ShowInkPhase();
+                break;
+
+            case WorkStationType.Enhance:
+                if (WolfGuideBubble.Instance != null) WolfGuideBubble.Instance.Hide();
+                break;
         }
 
         AllWorkStationOff();

@@ -39,6 +39,8 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         info = data;
         currentHP = info.maxHp;
 
+        ClearAllStatusEffects();
+
         currentGroggyCoin = bossData.groggyCoinMax;
         isInvincible = true;
 

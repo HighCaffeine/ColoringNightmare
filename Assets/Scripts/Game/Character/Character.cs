@@ -162,6 +162,22 @@ public class Character : MonoBehaviour
         statusEffectManager?.ApplyEffect(effect);
     }
 
+    public void ClearAllStatusEffects()
+    {
+        StopAllCoroutines();
+
+        if (statusEffectManager != null)
+        {
+            statusEffectManager.ClearEffects();
+        }
+
+        if (spriteRenderer != null) spriteRenderer.color = Color.white;
+        if (skeleton != null && skeleton.skeleton != null)
+        {
+            skeleton.skeleton.SetColor(Color.white);
+        }
+    }
+
     protected void StopMove()
     {
         if (rigid != null) rigid.linearVelocity = Vector2.zero;

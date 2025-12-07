@@ -10,6 +10,9 @@ public class WaveManager : GenericSingleton<WaveManager>
         TimeLimit, Elimination, Boss,
     }
 
+    public int TotalWaveCount => waves.Count;
+    public int CurrentWaveIndex => currentWaveIndex;
+
     [Header("Test Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnWaveStart;
     [SerializeField] private UnityEngine.Events.UnityEvent OnWaveEnd;
@@ -22,6 +25,9 @@ public class WaveManager : GenericSingleton<WaveManager>
     [Space(5f)]
     [Header("TEST_CurrentWave")]
     [SerializeField] private int currentWaveIndex = 0;
+
+    public int GetWaveCount() => waves.Count;
+    public int GetCurrentWaveIndex() => currentWaveIndex;
 
     private Coroutine spawnCoroutine;
 
