@@ -15,6 +15,6 @@ MonoBehaviour:
   groupID: 1
   monsterCode: 8
   spawnCount: 2
-  spawnInterval: 2
+  spawnInterval: 0.2
   spawnPointIndex: 4
-  delayAfterGroup: 8
+  delayAfterGroup: 9

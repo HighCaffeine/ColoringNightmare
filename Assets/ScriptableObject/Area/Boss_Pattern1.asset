@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Boss_Pattern1
   m_EditorClassIdentifier: 
   pos: {x: -4.66, y: 0, z: 0}
-  size: {x: 8, y: 9, z: 0}
+  size: {x: 7.3, y: 8, z: 0}
   offset: {x: 0, y: 0, z: 0}
