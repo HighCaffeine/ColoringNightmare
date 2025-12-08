@@ -1199,7 +1199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   storageParent: {fileID: 1281304842}
   prefab: {fileID: 7435823286509950504, guid: 9cb3b81ecabffc14a8a881c8c9c6be5b, type: 3}
-  poolCount: 10
+  poolCount: 1
   bgms:
   - {fileID: 8300000, guid: 83024f018a5b44f4db363d5fea14eaff, type: 3}
   - {fileID: 8300000, guid: 3f681573e4b641c47b5edbdb2a5f7267, type: 3}

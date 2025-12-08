@@ -116,7 +116,6 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         {
             { "Main", BGM.BGM_Main_1.ToString() },  // 메인 화면 씬 이름
             { "Game", BGM.BGM_Game_1.ToString() },  // 게임 씬 이름
-            // 추가 씬들...
         };
     }
 
@@ -144,9 +143,6 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
     {
         base.Start();
 
-        // OnSceneLoaded에서 처리하므로 Start에서는 재생하지 않음
-        // 단, 씬 로드 이벤트보다 Start가 먼저 실행될 수 있으므로
-        // 현재 씬에 BGM이 없으면 기본 BGM 재생
         if (playSoundList.Count == 0)
         {
             string currentScene = SceneManager.GetActiveScene().name;
@@ -278,10 +274,22 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
             this.multiBGM = source;
         }
 
-        if (soundType[0] == "BGM")
+        if (type == SoundType.Bgm)
         {
             source.loop = true;
         }
+    }
+
+    public void ReturnSound(Sound sound)
+    {
+        if (sound == null) return;
+
+        if (playSoundList.Contains(sound))
+        {
+            playSoundList.Remove(sound);
+        }
+
+        sound.TestOnReturn();
     }
 
     // 모든 BGM 중지 및 정리

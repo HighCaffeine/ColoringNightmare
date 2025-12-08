@@ -131,7 +131,6 @@ public class CutSceneController : MonoBehaviour
 
         if (step.effectType == CutsceneEffectType.None)
         {
-            // 효과 없음: 바로 보여주고 대기
             ResetObjectState(step.targetObject);
             isPlayingEffect = false;
         }

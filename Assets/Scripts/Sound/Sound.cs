@@ -15,41 +15,63 @@ public class Sound : MonoBehaviour, OnReturnPool<Sound>,
 
     SoundManager.SoundType type;
     bool isMainBGM;
+    private Coroutine disableCoroutine;
 
-    public void Play(AudioClip clip, float vol, SoundManager.SoundType type, bool isMainBGM, bool playNoOffBGM)
+    private void OnEnable()
     {
-        audioSource.loop = false;
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+    }
+    // public void Play(AudioClip clip, float vol, SoundManager.SoundType type, bool isMainBGM, bool playNoOffBGM)
+    // {
+    //     audioSource.loop = false;
+    //     audioSource.clip = clip;
+    //     audioSource.volume = vol;
+    //     audioSource.Play();
+    //     this.type = type;
+    //     this.isMainBGM = isMainBGM;
+
+    //     if (isMainBGM) audioSource.loop = true;
+
+    //     StartCoroutine(Playing(playNoOffBGM));
+    // }
+
+    public void Play(AudioClip clip, float volume, SoundManager.SoundType type, bool isMainBGM, bool multiBGM)
+    {
+        gameObject.SetActive(true);
         audioSource.clip = clip;
-        audioSource.volume = vol;
+        audioSource.volume = volume;
         audioSource.Play();
-        this.type = type;
-        this.isMainBGM = isMainBGM;
 
-        if (isMainBGM) audioSource.loop = true;
+        // 기존 코루틴이 있다면 정지
+        if (disableCoroutine != null) StopCoroutine(disableCoroutine);
 
-        StartCoroutine(Playing(playNoOffBGM));
+        if (type == SoundManager.SoundType.Effect)
+        {
+            // [★핵심 수정] Invoke 대신 코루틴 사용 -> 시간 정지(0배속) 상태에서도 정상 반환됨
+            disableCoroutine = StartCoroutine(DisableSoundRoutine(clip.length + 0.1f));
+        }
+        else // BGM
+        {
+            audioSource.loop = true;
+        }
     }
 
-    private IEnumerator Playing(bool multiBGM)
+    private IEnumerator DisableSoundRoutine(float time)
     {
-        string[] names = audioSource.clip.name.Split("_");
+        yield return new WaitForSecondsRealtime(time);
+        DisableSound();
+    }
 
-        if (!multiBGM && names[0] == "BGM")
+    private void DisableSound()
+    {
+        if (SoundManager.Instance != null)
         {
-            OnEndBGMEvent(audioSource);
+            SoundManager.Instance.ReturnSound(this);
         }
-
-        while (isMainBGM || audioSource.isPlaying && audioSource.clip != null)
+        else
         {
-            yield return null;
+            gameObject.SetActive(false);
         }
-
-        if (multiBGM)
-        {
-            SoundManager.Instance.ReplayAudio();
-        }
-
-        OnReturnPool?.Invoke(this);
     }
 
     public void TestOnReturn()
