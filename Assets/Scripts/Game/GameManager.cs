@@ -29,14 +29,14 @@ public class GameManager : GenericSingleton<GameManager>
     {
         if (gameoverCoroutine != null) StopCoroutine(gameoverCoroutine);
 
-        gameOverPanel.gameObject.SetActive(true);
-
         if (delay > 0f)
         {
             gameoverCoroutine = StartCoroutine(TimeScaleDelayRoutine(delay));
         }
         else
         {
+            // 딜레이 없으면 바로 켜고 정지
+            if (gameOverPanel != null) gameOverPanel.SetActive(true);
             PauseGame();
         }
 
@@ -45,7 +45,21 @@ public class GameManager : GenericSingleton<GameManager>
 
     private IEnumerator TimeScaleDelayRoutine(float delay)
     {
+        // 1. 딜레이 대기
         yield return new WaitForSecondsRealtime(delay);
+
+        // 2. [★이동] 패널 켜기 (딜레이 끝난 후)
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            Debug.Log("Game Over Panel Activated!"); // 로그 확인용
+        }
+        else
+        {
+            Debug.LogError("GameOver Panel is NOT assigned in GameManager!");
+        }
+
+        // 3. 시간 정지
         Time.timeScale = 0.0f;
     }
 

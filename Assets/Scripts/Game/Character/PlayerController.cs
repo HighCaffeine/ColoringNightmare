@@ -477,6 +477,7 @@ public class PlayerController : Character
 
     private void LockMovement()
     {
+        if (playerInput == null) return;
         switch (playerType)
         {
             case PlayerType.Player1:
