@@ -462,6 +462,11 @@ public class PlayerController : Character
             meshRenderer.material = normalMaterial;
             skeleton.Initialize(true);
             skeleton.AnimationState.SetAnimation(0, SpineTest.AniName.idle_normal.ToString(), true);
+
+            if (weaponController != null && weaponController.GetCurrentWeapon() != null)
+            {
+                weaponController.SetupWeapon(weaponController.GetCurrentWeapon());
+            }
         }
 
         ChangeState(StateType.Idle);

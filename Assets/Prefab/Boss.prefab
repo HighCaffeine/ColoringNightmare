@@ -272,5 +272,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
-  effectPivot: {fileID: 0}
+  effectPivot: {fileID: 7865639996380949444}
   character: {fileID: -5899581110599946469}

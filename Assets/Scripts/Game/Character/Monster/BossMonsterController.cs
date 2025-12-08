@@ -107,8 +107,10 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     {
         if (GameManager.Instance != null)
         {
+            OnDeadEvent?.Invoke();
             GameManager.Instance.OnEndingPanel();
             GameManager.Instance.PauseGame();
+            Time.timeScale = 0f;
         }
         gameObject.SetActive(false);
     }

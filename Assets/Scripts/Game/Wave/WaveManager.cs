@@ -114,7 +114,7 @@ public class WaveManager : GenericSingleton<WaveManager>
 
         if (SoundManager.Instance != null)
         {
-            SoundManager.Instance.PauseBGM();
+            SoundManager.Instance.StopBGM();
         }
 
         float halfX = selectedArea.size.x * 0.5f;
@@ -148,7 +148,7 @@ public class WaveManager : GenericSingleton<WaveManager>
 
     public void BossSpawn_BGMStop()
     {
-        SoundManager.Instance.PauseBGM();
+        SoundManager.Instance.StopBGM();
     }
 
     // private IEnumerator SpawnWaveCoroutine(int waveIndex)

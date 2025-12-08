@@ -103,11 +103,11 @@ public class Sound : MonoBehaviour, OnReturnPool<Sound>,
 
         audioSource = GetComponent<AudioSource>();
 
-        SetEndBGMEvent(SoundManager.Instance.EndBGM);
-        SetOnChangeVol(SoundManager.Instance.VolChangeEvent);
-        SetRegistrationSound(SoundManager.Instance.RegistrationSoundComponent);
+        // SetEndBGMEvent(SoundManager.Instance.EndBGM);
+        // SetOnChangeVol(SoundManager.Instance.VolChangeEvent);
+        // SetRegistrationSound(SoundManager.Instance.RegistrationSoundComponent);
 
-        OnRegistrationSound(this);
+        //OnRegistrationSound(this);
     }
 
     public void SetEndBGMEvent(SoundManager.OnEndBGMEvent OnEndBGMEvent)

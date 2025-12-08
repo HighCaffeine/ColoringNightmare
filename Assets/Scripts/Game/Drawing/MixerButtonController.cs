@@ -283,19 +283,22 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
     public void SetCursor()
     {
+        Cursor.visible = false;
         //Cursor.SetCursor(defaultCursor.texture, defaultCursor.hotspot, defaultCursor.cursorMode);
-        Cursor.SetCursor(cursors[cursorIndex].texture, cursors[cursorIndex].hotspot, cursors[cursorIndex].cursorMode);
+        //Cursor.SetCursor(cursors[cursorIndex].texture, cursors[cursorIndex].hotspot, cursors[cursorIndex].cursorMode);
     }
 
     public void SetDefaultCursor()
     {
-        if (defaultCursor.texture != null)
-        {
-            Cursor.SetCursor(defaultCursor.texture, defaultCursor.hotspot, defaultCursor.cursorMode);
-        }
-        else
-        {
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-        }
+        // if (defaultCursor.texture != null)
+        // {
+        //     Cursor.SetCursor(defaultCursor.texture, defaultCursor.hotspot, defaultCursor.cursorMode);
+        // }
+        // else
+        // {
+        //     Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        // }
+
+        Cursor.visible = true;
     }
 }

@@ -18,6 +18,12 @@ public class GameManager : GenericSingleton<GameManager>
         DontDestroyOnLoad(this);
     }
 
+    private void Start()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
     public void PauseGame()
     {
         if (gameoverCoroutine != null) StopCoroutine(gameoverCoroutine);
@@ -91,12 +97,13 @@ public class GameManager : GenericSingleton<GameManager>
 
     public void Exit(bool showCredits = false)
     {
-        ResetTimeScale();
+        gameoverCoroutine = null;
 
         IsShowCredits = showCredits;
         if (SceneController.Instance != null)
         {
-            SceneController.Instance.GoToScene(SceneName.Menu.ToString());
+            Time.timeScale = 1.0f;
+            SceneController.Instance.GoToScene(SceneName.Main.ToString());
         }
     }
 

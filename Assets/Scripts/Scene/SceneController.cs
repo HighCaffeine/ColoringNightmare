@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 
 public enum SceneName
 {
-    Menu,
+    Main,
     Loading,
     Game,
 
@@ -69,10 +69,11 @@ public class SceneController : GenericSingleton<SceneController>
     IEnumerator StartLoad(string sceneName)
     {
         loadingBarProgress = null;
-        //if (SoundManager.Instance != null) SoundManager.Instance.PauseBGM();
 
-        SceneManager.LoadSceneAsync("Loading");
+        Time.timeScale = 1.0f;
+        yield return SceneManager.LoadSceneAsync("Loading");
 
+        if (SoundManager.Instance != null) SoundManager.Instance.StopBGM();
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
         async.allowSceneActivation = false;
         WaitForFixedUpdate wait = new WaitForFixedUpdate();

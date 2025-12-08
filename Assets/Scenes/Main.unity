@@ -1218,9 +1218,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 27dabc046d13d514fa59117732c26fa0, type: 3}
   - {fileID: 8300000, guid: 0e3501889ea1d0e4db3181a847a50f19, type: 3}
   - {fileID: 8300000, guid: 1e9de81a0c785c14eb52d97b4cf8c259, type: 3}
-  nowPlaySource: {fileID: 1189492485}
-  playSoundList: []
-  mixer: {fileID: 24100000, guid: 3e258bd949fd0dc4f8ef902a10f8b035, type: 2}
+  bgmSource: {fileID: 1189492485}
+  activeSFXList: []
 --- !u!82 &1189492485
 AudioSource:
   m_ObjectHideFlags: 0
