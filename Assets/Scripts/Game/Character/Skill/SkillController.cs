@@ -54,7 +54,22 @@ public class SkillController : MonoBehaviour
         {
             WeaponInkData inkData = weaponController.GetEquippedWeapon()?.GetInkData();
             Weapon currentWeapon = weaponController.GetEquippedWeapon();
-            Vector3 weaponScale = (currentWeapon != null) ? currentWeapon.transform.localScale : Vector3.one;
+            Vector3 weaponScale = Vector3.one;
+
+            if (currentWeapon != null)
+            {
+                Vector3 tempScale = currentWeapon.transform.localScale;
+
+                if (Mathf.Abs(tempScale.x) < 0.01f || Mathf.Abs(tempScale.y) < 0.01f)
+                {
+                    weaponScale = Vector3.one;
+                }
+                else
+                {
+                    weaponScale = tempScale;
+                }
+            }
+
             effectController.PlayEffect(visualData, skillLogic, inkData, weaponScale);
         }
     }

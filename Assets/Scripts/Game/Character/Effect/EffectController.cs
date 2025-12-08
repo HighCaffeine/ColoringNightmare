@@ -122,6 +122,7 @@ public class EffectController : MonoBehaviour
             }
         }
     }
+
     public void NoneWeapon(EffectVisualData effectVisualData)
     {
         if (effectVisualData == null) return;
