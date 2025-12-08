@@ -11,9 +11,21 @@ public class GameManager : GenericSingleton<GameManager>
 
     private Coroutine gameoverCoroutine;
 
+    public static GameManager Instance;
+
     private new void Awake()
     {
-        base.Awake();
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            base.Awake();
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
         Application.targetFrameRate = targetFrameRate;
         DontDestroyOnLoad(this);
     }

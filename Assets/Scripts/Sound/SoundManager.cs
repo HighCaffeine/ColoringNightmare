@@ -10,6 +10,7 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         BGM_Main_1,
         BGM_Game_1,
         BGM_Boss_1,
+        BGM_Clear_1,
 
         Count,
 
@@ -80,10 +81,23 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
     [SerializeField] private List<Sound> activeSFXList;
 
     private Dictionary<string, string> sceneBGMMap;
+    public static SoundManager Instance;
 
     private new void Awake()
     {
-        base.Awake();
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            base.Awake();
+
+            storageParent.gameObject.SetActive(true);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         activeSFXList = new List<Sound>();
 
@@ -142,9 +156,9 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         }
     }
 
-    public void PlaySound(string name, bool isSFX = true)
+    public void PlaySound(string name, bool isBGM = true)
     {
-        if (!isSFX || name.StartsWith("BGM"))
+        if (isBGM || name.StartsWith("BGM"))
         {
             PlayBGM(name);
         }
@@ -204,13 +218,32 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
     public AudioClip GetClip(SoundType type, string name)
     {
         AudioClip[] clips = (type == SoundType.Bgm) ? bgms : effects;
-        foreach (var clip in clips)
+        string nameWithoutExtension = name;
+        int dotIndex = name.LastIndexOf('.');
+
+        if (dotIndex > 0)
         {
-            if (clip.name.Contains(name)) return clip; // 이름 포함 여부로 검색
+            nameWithoutExtension = name.Substring(0, dotIndex);
         }
-        Debug.LogWarning($"[SoundManager] Clip not found: {name}");
+        foreach (AudioClip clip in clips)
+        {
+            if (clip.name == nameWithoutExtension)
+            {
+                return clip;
+            }
+        }
         return null;
     }
+
+    // public AudioClip GetClip(SoundType type, string name)
+    // {
+    //     AudioClip[] clips = (type == SoundType.Bgm) ? bgms : effects;
+    //     foreach (var clip in clips)
+    //     {
+    //         if (clip.name.Contains(name)) return clip; // 이름 포함 여부로 검색
+    //     }
+    //     return null;
+    // }
 
     public void OnChangedVol(SoundType type, float value)
     {

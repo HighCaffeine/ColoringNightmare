@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
                     else if (inkData.inkData.color == ColorMixer.ColorType.Black) hitSound = SoundManager.Effect.SFX_Weapon_Damaged_Black.ToString();
                 }
 
-                SoundManager.Instance.PlaySound(hitSound, false);
+                SoundManager.Instance.PlaySound(hitSound);
             }
         }
     }

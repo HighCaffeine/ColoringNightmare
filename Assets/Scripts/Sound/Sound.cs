@@ -42,15 +42,13 @@ public class Sound : MonoBehaviour, OnReturnPool<Sound>,
         audioSource.volume = volume;
         audioSource.Play();
 
-        // 기존 코루틴이 있다면 정지
         if (disableCoroutine != null) StopCoroutine(disableCoroutine);
 
         if (type == SoundManager.SoundType.Effect)
         {
-            // [★핵심 수정] Invoke 대신 코루틴 사용 -> 시간 정지(0배속) 상태에서도 정상 반환됨
             disableCoroutine = StartCoroutine(DisableSoundRoutine(clip.length + 0.1f));
         }
-        else // BGM
+        else
         {
             audioSource.loop = true;
         }

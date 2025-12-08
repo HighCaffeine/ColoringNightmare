@@ -32,7 +32,7 @@ public class SceneController : GenericSingleton<SceneController>
 
             if (creditObj != null)
             {
-                creditObj.SetActive(true);
+                creditObj.transform.GetChild(0).gameObject.SetActive(true);
             }
             GameManager.Instance.OffCreditsFlag();
         }
@@ -71,10 +71,10 @@ public class SceneController : GenericSingleton<SceneController>
         loadingBarProgress = null;
 
         Time.timeScale = 1.0f;
-        yield return SceneManager.LoadSceneAsync("Loading");
+        SceneManager.LoadSceneAsync("Loading");
 
-        if (SoundManager.Instance != null) SoundManager.Instance.StopBGM();
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
+
         async.allowSceneActivation = false;
         WaitForFixedUpdate wait = new WaitForFixedUpdate();
 

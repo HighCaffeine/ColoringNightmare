@@ -112,11 +112,6 @@ public class WaveManager : GenericSingleton<WaveManager>
             selectedArea = spawnAreas[group.spawnPointIndex - 1];
         }
 
-        if (SoundManager.Instance != null)
-        {
-            SoundManager.Instance.StopBGM();
-        }
-
         float halfX = selectedArea.size.x * 0.5f;
         float halfY = selectedArea.size.y * 0.5f;
         Vector2 pivot = selectedArea.pos;

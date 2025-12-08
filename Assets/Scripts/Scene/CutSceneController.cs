@@ -55,6 +55,7 @@ public class CutSceneController : MonoBehaviour
 
     private void Awake()
     {
+
         foreach (var step in steps)
         {
             if (step.targetObject != null)
@@ -77,6 +78,7 @@ public class CutSceneController : MonoBehaviour
 
     private void Start()
     {
+        SoundManager.Instance.StopBGM();
         if (steps.Count > 0)
         {
             ShowStep(0);
@@ -148,7 +150,7 @@ public class CutSceneController : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(step.soundName.ToString()))
         {
-            if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(step.soundName.ToString(), false);
+            //if (SoundManager.Instance != null) SoundManager.Instance.PlaySound(step.soundName.ToString(), false);
         }
     }
 
