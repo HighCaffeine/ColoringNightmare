@@ -29,6 +29,23 @@ public class WeaponController : MonoBehaviour
             default: return 1.0f;
         }
     }
+
+    public void RebindWeaponBone()
+    {
+        if (weaponFollowerHolder == null) return;
+
+        var boneFollower = weaponFollowerHolder.GetComponent<Spine.Unity.BoneFollower>();
+
+        if (boneFollower != null)
+        {
+            boneFollower.SkeletonRenderer = skeletonAni;
+
+            string savedBoneName = boneFollower.boneName;
+            boneFollower.bone = null;
+            boneFollower.boneName = "";
+            boneFollower.boneName = savedBoneName;
+        }
+    }
     public BaseSkillLogic GetEquippedWeaponSkillData()
     {
         return weapon?.GetSkillLogic();

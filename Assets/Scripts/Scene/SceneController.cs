@@ -16,6 +16,8 @@ public enum SceneName
 
 public class SceneController : GenericSingleton<SceneController>
 {
+    public bool IsShowCredits { get; set; }
+
     private new void Awake()
     {
         base.Awake();
@@ -25,16 +27,32 @@ public class SceneController : GenericSingleton<SceneController>
     void Start()
     {
         Time.timeScale = 1.0f;
+    }
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
-        if (GameManager.Instance != null && GameManager.Instance.IsShowCredits)
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Main" && IsShowCredits)
         {
             GameObject creditObj = GameObject.FindGameObjectWithTag("Credit");
 
             if (creditObj != null)
             {
-                creditObj.transform.GetChild(0).gameObject.SetActive(true);
+                if (creditObj.transform.childCount > 0)
+                {
+                    creditObj.transform.GetChild(0).gameObject.SetActive(true);
+                }
             }
-            GameManager.Instance.OffCreditsFlag();
+
+            IsShowCredits = false;
         }
     }
 
@@ -46,6 +64,7 @@ public class SceneController : GenericSingleton<SceneController>
     {
         StartCoroutine(StartLoad(sceneName));
     }
+
 
     //TEST
     public void ReloadGameScene()

@@ -329,7 +329,6 @@ public class PlayerController : Character
 
         ChangeState(StateType.Idle);
     }
-
     private System.Collections.IEnumerator DisablePunchHitboxAfter(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -463,9 +462,9 @@ public class PlayerController : Character
             skeleton.Initialize(true);
             skeleton.AnimationState.SetAnimation(0, SpineTest.AniName.idle_normal.ToString(), true);
 
-            if (weaponController != null && weaponController.GetCurrentWeapon() != null)
+            if (weaponController != null)
             {
-                weaponController.SetupWeapon(weaponController.GetCurrentWeapon());
+                weaponController.RebindWeaponBone();
             }
         }
 

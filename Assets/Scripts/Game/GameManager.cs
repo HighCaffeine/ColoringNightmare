@@ -7,25 +7,11 @@ public class GameManager : GenericSingleton<GameManager>
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject endingPanel;
 
-    public bool IsShowCredits { get; private set; } = false;
-
     private Coroutine gameoverCoroutine;
 
-    public static GameManager Instance;
 
     private new void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            base.Awake();
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
         Application.targetFrameRate = targetFrameRate;
         DontDestroyOnLoad(this);
     }
@@ -111,7 +97,7 @@ public class GameManager : GenericSingleton<GameManager>
     {
         gameoverCoroutine = null;
 
-        IsShowCredits = showCredits;
+        SceneController.Instance.IsShowCredits = showCredits;
         if (SceneController.Instance != null)
         {
             Time.timeScale = 1.0f;
@@ -120,5 +106,5 @@ public class GameManager : GenericSingleton<GameManager>
     }
 
     public void OnEndingPanel() { endingPanel.SetActive(true); }
-    public void OffCreditsFlag() { IsShowCredits = false; }
+    public void OffCreditsFlag() { SceneController.Instance.IsShowCredits = false; }
 }
