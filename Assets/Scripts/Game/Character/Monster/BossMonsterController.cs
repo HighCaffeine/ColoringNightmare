@@ -121,6 +121,13 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     void Update()
     {
         if (isDead) return;
+
+        if (currentHP <= 0)
+        {
+            Dead();
+            return;
+        }
+
         if (state == StateType.Idle) Idle();
     }
 
