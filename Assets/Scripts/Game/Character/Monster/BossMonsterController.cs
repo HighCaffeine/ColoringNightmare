@@ -84,6 +84,35 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         idleTimer = 0f;
     }
 
+    protected override void Dead()
+    {
+        if (state == StateType.Dead) return;
+        state = StateType.Dead;
+
+        SetDamageImmune(true);
+        StopAllCoroutines();
+        if (rigid != null) rigid.linearVelocity = Vector2.zero;
+        if (characterCollider != null) characterCollider.enabled = false;
+
+        StartCoroutine(BossDeathProcess());
+    }
+
+    private IEnumerator BossDeathProcess()
+    {
+        yield return null;
+        bossSpine.PlayDead(() => { BossDeadEvent(); });
+    }
+
+    private void BossDeadEvent()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnEndingPanel();
+            GameManager.Instance.PauseGame();
+        }
+        gameObject.SetActive(false);
+    }
+
     void Update()
     {
         if (isDead) return;
@@ -375,24 +404,6 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
             currentGroggyCoin--;
             if (bossUI != null) bossUI.UpdateCoins(currentGroggyCoin);
         }
-    }
-
-    protected override void Dead()
-    {
-        base.Dead();
-        if (bossUI != null) bossUI.SetActiveBossHP(false);
-
-        if (GameManager.Instance != null)
-        {
-            Invoke(nameof(End), 3f);
-        }
-
-        OnReturnPoolEvent?.Invoke(this);
-    }
-
-    private void End()
-    {
-        GameManager.Instance.OnEndingPanel();
     }
 
     public void Init(OnReturnPoolEvent<BossMonsterController> onReturnPoolEvent) { OnReturnPoolEvent = onReturnPoolEvent; }

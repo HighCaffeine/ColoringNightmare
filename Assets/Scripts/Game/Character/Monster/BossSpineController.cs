@@ -38,9 +38,9 @@ public class BossSpineController : MonoBehaviour
 
     public void PlayIdle() { SetAnimation(IDLE, true); }
     public void PlayGroggy() { SetAnimation(GROGGY, true); }
-    public void PlayDead(UnityEngine.Events.UnityEvent OnDeadEvent)
+    public void PlayDead(System.Action action)
     {
-        SetAnimation(DEAD, false, () => { OnDeadEvent?.Invoke(); });
+        SetAnimation(DEAD, false, () => { action?.Invoke(); });
     }
     public void PlayEnter() { SetAnimation(ENTER, false); }
 

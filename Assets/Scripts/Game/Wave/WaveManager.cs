@@ -137,22 +137,7 @@ public class WaveManager : GenericSingleton<WaveManager>
         yield return new WaitForSeconds(bossSpawnDelay);
 
         Debug.Log("Spawn Boss!");
-        SpawnBoss();
-    }
-
-    private void SpawnBoss()
-    {
-        Vector2 spawnPos = Vector2.zero;
-        if (bossSpawnPoint != null) spawnPos = bossSpawnPoint.position;
-        else if (spawnAreas.Count > 0) spawnPos = spawnAreas[0].pos;
-
-        SODataLoader.Instance.LoadSO<MonsterData>(bossMonsterName.ToString(), so =>
-        {
-            if (so != null)
-            {
-                MonsterManager.Instance.SpawnMonster(so, spawnPos);
-            }
-        });
+        MonsterManager.Instance.TEST_SpawnBoss();
     }
 
     private void InitWaveValue()
