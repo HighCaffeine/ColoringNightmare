@@ -14,22 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDropTable:
   - itemData: {fileID: 11400000, guid: acd949a5bcd61b946afd1bcc6bfc0eb3, type: 2}
-    dropChance: 0.1
+    dropChance: 0.211
     minDropAmount: 1
-    maxDropAmount: 1
+    maxDropAmount: 2
   - itemData: {fileID: 11400000, guid: cde5f4b62d330d54eba4a3209777fc91, type: 2}
-    dropChance: 0.5
+    dropChance: 0.469
     minDropAmount: 1
-    maxDropAmount: 5
+    maxDropAmount: 6
   - itemData: {fileID: 11400000, guid: c12c54a73a5ab314dafb8c3353f955c0, type: 2}
-    dropChance: 0.3
+    dropChance: 0.201
     minDropAmount: 1
     maxDropAmount: 2
   - itemData: {fileID: 11400000, guid: 2703c197b86ecdb40b1214c1d0e80493, type: 2}
-    dropChance: 0.3
+    dropChance: 0.205
     minDropAmount: 1
     maxDropAmount: 2
   - itemData: {fileID: 11400000, guid: fd015dcf4ae64244d94bce70d4033380, type: 2}
-    dropChance: 0.3
+    dropChance: 0.211
     minDropAmount: 1
     maxDropAmount: 2

@@ -15,7 +15,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: bdee9b3ba4b03dd4cac6e2315db4868e, type: 3}
   characterName: Player_Sheep
   maxHp: 5
-  dmg: 1
+  dmg: 30
   speed: 2.2
   attackDelay: 1
   isSpine: 1

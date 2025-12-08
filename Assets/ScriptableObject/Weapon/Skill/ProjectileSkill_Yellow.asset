@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ProjectileSkill_Yellow
   m_EditorClassIdentifier: 
   colorType: 2
-  baseDamage: 30
+  baseDamage: 40
   cooldown: 0.5
   projectileParams:
     speed: 10

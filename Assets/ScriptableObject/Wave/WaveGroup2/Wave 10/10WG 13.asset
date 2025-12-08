@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groupID: 8
   monsterCode: 6
-  spawnCount: 25
-  spawnInterval: 0.7
+  spawnCount: 22
+  spawnInterval: 0.5
   spawnPointIndex: 4
   delayAfterGroup: 2
