@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DoubleHitSkill_Red
   m_EditorClassIdentifier: 
   colorType: 1
-  baseDamage: 40
+  baseDamage: 50
   cooldown: 0.5

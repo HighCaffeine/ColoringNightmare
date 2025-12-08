@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 3.Blue_PassiveEffectData
   m_EditorClassIdentifier: 
   effectType: 1
-  effectValue1: 0.5
-  effectValue2: 3
+  effectValue1: 0.7
+  effectValue2: 5
   statusVisual: {fileID: 11400000, guid: a32e8adf67b898f4db5c4283c8b8c9df, type: 2}
   statusColorType: 3

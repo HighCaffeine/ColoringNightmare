@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BasicAttackSkill_Orange
   m_EditorClassIdentifier: 
   colorType: 5
-  baseDamage: 10
+  baseDamage: 50
   cooldown: 0.5

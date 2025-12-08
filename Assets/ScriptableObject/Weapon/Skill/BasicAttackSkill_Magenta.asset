@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BasicAttackSkill_Magenta
   m_EditorClassIdentifier: 
   colorType: 7
-  baseDamage: 0
+  baseDamage: 10
   cooldown: 0
