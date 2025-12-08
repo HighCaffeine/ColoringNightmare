@@ -462,6 +462,8 @@ public class PlayerController : Character
             skeleton.Initialize(true);
             skeleton.AnimationState.SetAnimation(0, SpineTest.AniName.idle_normal.ToString(), true);
 
+            yield return null;
+
             if (weaponController != null)
             {
                 weaponController.RebindWeaponBone();
