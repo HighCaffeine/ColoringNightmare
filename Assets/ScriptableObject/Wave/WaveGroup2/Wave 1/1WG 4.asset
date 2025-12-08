@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 1WG 4
   m_EditorClassIdentifier: 
   groupID: 1
-  monsterCode: 6
+  monsterCode: 4
   spawnCount: 1
   spawnInterval: 0.1
   spawnPointIndex: 4

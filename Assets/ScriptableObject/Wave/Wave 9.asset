@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86e3c53c45e9b4b4687c7d82df3562c5, type: 3}
+  m_Name: Wave 9
+  m_EditorClassIdentifier: 
+  waveNumber: 0
+  waveType: 0
+  typeValue: 0
+  monsterGroups:
+  - {fileID: 11400000, guid: 8d057ba9e1d43824a9aca4a4635527e6, type: 2}
+  - {fileID: 11400000, guid: 9c9eb674d1f85424c80046c4114a502e, type: 2}
+  - {fileID: 11400000, guid: 9ec3031ccbc23f444b06198b2150b539, type: 2}
+  - {fileID: 11400000, guid: 41fd4e7b30e7c2a48ac462770fdd379d, type: 2}
+  - {fileID: 11400000, guid: 10de019d540b62c4ba1f601f68d60d01, type: 2}
+  - {fileID: 11400000, guid: 8321dd53bd21f3f4894e2269541e2d86, type: 2}
+  - {fileID: 11400000, guid: 9c3595f4f6c67da4186767959c7f8c62, type: 2}
+  - {fileID: 11400000, guid: 41aa3eebbf4311644bc427146d9a5e2a, type: 2}
+  - {fileID: 11400000, guid: b4d2185d52b906842a72f470557d3412, type: 2}
+  - {fileID: 11400000, guid: 09083a03267cdc045a13f2f01015e8d2, type: 2}
+  - {fileID: 11400000, guid: 8b8006ab7c8e9da41b7318e4ccea77c6, type: 2}
+  - {fileID: 11400000, guid: 95dd6599725f659458fc55c21829b840, type: 2}

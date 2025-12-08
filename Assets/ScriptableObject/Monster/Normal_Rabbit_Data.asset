@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 0}
   characterName: Test_Monster2
-  maxHp: 100
+  maxHp: 125
   dmg: 1
   speed: 0.5
   attackDelay: 1

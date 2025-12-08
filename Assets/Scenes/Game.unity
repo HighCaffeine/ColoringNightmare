@@ -26736,6 +26736,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5cd93e64b77caf94ba6eb4743acf9357, type: 2}
   - {fileID: 11400000, guid: 9af29e69be494c343bc1527531eb2380, type: 2}
   - {fileID: 11400000, guid: d5d63e246cbe34f4380b513f2cecaa9c, type: 2}
+  - {fileID: 11400000, guid: 2033541905ce70c49a6ccfc1a5e5833c, type: 2}
+  - {fileID: 11400000, guid: 1ad1b8c60aa854843b019fe7def6f2e1, type: 2}
   waveInterval: 2
   spawnAreas:
   - {fileID: 11400000, guid: 0f95aaae4f389a44485b591c5e97c366, type: 2}
