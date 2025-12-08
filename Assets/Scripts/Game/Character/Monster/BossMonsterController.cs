@@ -110,6 +110,9 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
             OnDeadEvent?.Invoke();
             GameManager.Instance.OnEndingPanel();
             GameManager.Instance.PauseGame();
+
+            SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_Clear_1.ToString(), true);
+
             Time.timeScale = 0f;
         }
         gameObject.SetActive(false);
