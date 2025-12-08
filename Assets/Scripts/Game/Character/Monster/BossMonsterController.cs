@@ -118,12 +118,15 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         gameObject.SetActive(false);
     }
 
+    private bool bossIsDead = false;
+
     void Update()
     {
-        if (isDead) return;
+        if (bossIsDead) return;
 
         if (currentHP <= 0)
         {
+            bossIsDead = true;
             Dead();
             return;
         }
