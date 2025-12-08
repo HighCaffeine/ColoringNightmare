@@ -18,7 +18,6 @@ public class WaveManager : GenericSingleton<WaveManager>
     [SerializeField] private MonsterDataName bossMonsterName; // 보스 데이터 이름 (Enum or String)
     [SerializeField] private Transform bossSpawnPoint; // 보스 소환 위치
     [SerializeField] private UnityEngine.Events.UnityEvent OnAllWavesClear;
-    [SerializeField] private UnityEngine.Events.UnityEvent OnBossSpawnEvent;
 
     [Header("Test Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnWaveStart;
@@ -113,6 +112,11 @@ public class WaveManager : GenericSingleton<WaveManager>
             selectedArea = spawnAreas[group.spawnPointIndex - 1];
         }
 
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PauseBGM();
+        }
+
         float halfX = selectedArea.size.x * 0.5f;
         float halfY = selectedArea.size.y * 0.5f;
         Vector2 pivot = selectedArea.pos;
@@ -123,7 +127,6 @@ public class WaveManager : GenericSingleton<WaveManager>
         SODataLoader.Instance.LoadSO<MonsterData>(monsterName.ToString(), so =>
         {
             MonsterManager.Instance.SpawnMonster(so, spawnPos);
-            OnBossSpawnEvent?.Invoke();
         });
     }
 

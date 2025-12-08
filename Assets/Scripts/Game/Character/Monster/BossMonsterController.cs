@@ -69,6 +69,12 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
         state = StateType.Idle;
         if (bossSpine != null) bossSpine.PlayIdle();
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound(SoundManager.BGM.BGM_Boss_1.ToString(), true);
+        }
+
         SetIdleDuration();
     }
 

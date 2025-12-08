@@ -272,6 +272,8 @@ public class MixerButtonController : GenericSingleton<MixerButtonController>
 
         if (colorResultSprite != null) colorResultSprite.color = ColorMixer.Instance.GetColor(resultColor);
 
+        SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Mix.ToString(), false);
+
         //스케치북 이벤트로 변경
         //SetCursor();
         //Init();

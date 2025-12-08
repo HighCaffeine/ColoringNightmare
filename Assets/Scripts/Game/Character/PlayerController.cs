@@ -267,8 +267,21 @@ public class PlayerController : Character
 
         if (weaponController != null) currentAnimSpeed = weaponController.GetAttackSpeed();
         if (skeleton != null) skeleton.timeScale = currentAnimSpeed;
+        string soundName = SoundManager.Effect.SFX_Weapon_Attack_Light.ToString(); // 기본(노랑, 파랑)
 
-        SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_Weapon_Attack_Yellow.ToString(), false);
+        if (weaponController != null && weaponController.IsEquip())
+        {
+            var inkData = weaponController.GetEquippedWeapon()?.GetInkData();
+            if (inkData != null)
+            {
+                if (inkData.inkData.color == ColorMixer.ColorType.Red || inkData.inkData.color == ColorMixer.ColorType.Red)
+                {
+                    soundName = SoundManager.Effect.SFX_Weapon_Attack_Heavy.ToString();
+                }
+            }
+        }
+
+        SoundManager.Instance.PlaySound(soundName, false);
 
         if (weaponController != null && weaponController.IsEquip())
         {

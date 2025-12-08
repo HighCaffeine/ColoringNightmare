@@ -18,11 +18,18 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
     {
         UI_Default,
 
-        //Weapon
-        SFX_Weapon_Attack_Yellow,
-        SFX_Weapon_Damaged_Yellow,
+        SFX_Weapon_Attack_Light,  // Yellow, Blue (가벼운 휙 소리)
+        SFX_Weapon_Attack_Heavy,  // Red, Black (무거운 붕 소리)
+
+        SFX_Weapon_Damaged_Yellow, // 기본 타격
+        SFX_Weapon_Damaged_Red,    // 폭발/둔탁한 소리
+        SFX_Weapon_Damaged_Blue,   // 베는/날카로운 소리
+        SFX_Weapon_Damaged_Black,  // 강렬한 타격
+
 
         //WorkStation
+        SFX_WorkStation_Mix,       // 잉크 섞을 때 (물방울/찰박 소리)
+        SFX_WorkStation_Sketch,    // 그릴 때 소리
         SFX_WorkStation_Weapon_Fail,
         SFX_WorkStation_Weapon_Suc_Good,
         SFX_WorkStation_Weapon_Suc_Great,
@@ -259,6 +266,11 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
 
         AudioSource source = sound.GetAudioSource();
         source.loop = false;
+
+        if (type == SoundType.Effect)
+        {
+            source.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+        }
 
         if (multiBGM)
         {

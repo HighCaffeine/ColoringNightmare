@@ -50,6 +50,17 @@ public class Projectile : MonoBehaviour
 
                 piercingCount--;
                 if (piercingCount < 0) Destroy(gameObject);
+
+                string hitSound = SoundManager.Effect.SFX_Weapon_Damaged_Yellow.ToString(); // 기본
+
+                if (inkData != null)
+                {
+                    if (inkData.inkData.color == ColorMixer.ColorType.Red) hitSound = SoundManager.Effect.SFX_Weapon_Damaged_Red.ToString();
+                    else if (inkData.inkData.color == ColorMixer.ColorType.Blue) hitSound = SoundManager.Effect.SFX_Weapon_Damaged_Blue.ToString();
+                    else if (inkData.inkData.color == ColorMixer.ColorType.Black) hitSound = SoundManager.Effect.SFX_Weapon_Damaged_Black.ToString();
+                }
+
+                SoundManager.Instance.PlaySound(hitSound, false);
             }
         }
     }

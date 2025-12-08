@@ -109,7 +109,6 @@ public class Character : MonoBehaviour
     public virtual void TakeDamage(int amount, EffectVisualData hitEffect)
     {
         if (isDamageImmune || isDead) return;
-        SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_Weapon_Damaged_Yellow.ToString(), false);
         currentHP -= amount;
 
         if (hitEffectCoroutine != null) StopCoroutine(hitEffectCoroutine);

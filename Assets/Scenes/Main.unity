@@ -1202,13 +1202,22 @@ MonoBehaviour:
   poolCount: 10
   bgms:
   - {fileID: 8300000, guid: 83024f018a5b44f4db363d5fea14eaff, type: 3}
-  - {fileID: 8300000, guid: 5dbfe338deccb7b4cbbb08e15147ea2b, type: 3}
   - {fileID: 8300000, guid: 3f681573e4b641c47b5edbdb2a5f7267, type: 3}
+  - {fileID: 8300000, guid: e5bde480c6f400f469fc13674b2351ff, type: 3}
   effects:
+  - {fileID: 8300000, guid: ecab5008b8658fb4e9f7b67c9cf522d0, type: 3}
+  - {fileID: 8300000, guid: 18ce1390c836d8a4d9a07d7bd48d887f, type: 3}
   - {fileID: 8300000, guid: ab653a7467cdc4c489ecba8ba94a2208, type: 3}
+  - {fileID: 8300000, guid: 81af9da1be729364c90d5694b7aa9018, type: 3}
+  - {fileID: 8300000, guid: abf53c75da442da46bce869d15c4bf1b, type: 3}
+  - {fileID: 8300000, guid: 0f6dea80a1e614a4f81217b82cd6d659, type: 3}
   - {fileID: 8300000, guid: 5b42a5cf52290c14fb8e9a617f617634, type: 3}
+  - {fileID: 8300000, guid: 5a7b85b665d37f242bf4fd761ebe94cf, type: 3}
+  - {fileID: 8300000, guid: d07153420a99bf646983c53a2c7fbc5a, type: 3}
   - {fileID: 8300000, guid: 63327bc6477d98145b35be108a9c8294, type: 3}
   - {fileID: 8300000, guid: 27dabc046d13d514fa59117732c26fa0, type: 3}
+  - {fileID: 8300000, guid: 0e3501889ea1d0e4db3181a847a50f19, type: 3}
+  - {fileID: 8300000, guid: 1e9de81a0c785c14eb52d97b4cf8c259, type: 3}
   nowPlaySource: {fileID: 1189492485}
   playSoundList: []
   mixer: {fileID: 24100000, guid: 3e258bd949fd0dc4f8ef902a10f8b035, type: 2}

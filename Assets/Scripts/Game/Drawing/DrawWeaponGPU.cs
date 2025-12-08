@@ -215,6 +215,8 @@ public class DrawWeaponGPU : GenericSingleton<DrawWeaponGPU>
             points.Clear(); // 저장된 포인트 비움
             isCreated = false;
         }
+
+        SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Sketch.ToString(), false);
         Vector3 mousePos = GetMousePos();
         CreateNewLine(mousePos);
     }
