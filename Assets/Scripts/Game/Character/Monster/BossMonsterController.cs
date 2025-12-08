@@ -401,6 +401,7 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         }
 
         base.TakeDamage(amount, hitEffect);
+        if (currentHP <= 0) Dead();
         if (bossUI != null) bossUI.UpdateHP(currentHP, info.maxHp);
     }
 
