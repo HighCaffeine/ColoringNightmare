@@ -16,5 +16,5 @@ MonoBehaviour:
   monsterCode: 7
   spawnCount: 1
   spawnInterval: 0.1
-  spawnPointIndex: 4
-  delayAfterGroup: 2
+  spawnPointIndex: 2
+  delayAfterGroup: 4

@@ -24,6 +24,6 @@ MonoBehaviour:
   pushForce: 3
   monsterDataName: 5
   lootTable: {fileID: 11400000, guid: 376cb170a1be4714d844b32afbdaa325, type: 2}
-  detectRange: 2
+  detectRange: 3.5
   attackRange: 1
   dashSpeed: 1

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 324603339, guid: ae71f6e3939c6cd4b96ffb94ad49912f, type: 3}
   characterName: TestBoss
-  maxHp: 600
+  maxHp: 1200
   dmg: 1
   speed: 5
   attackDelay: 1
@@ -31,8 +31,8 @@ MonoBehaviour:
   p2Weight: 30
   p3Weight: 30
   idleDurationMin: 1
-  idleDurationMax: 3
-  warningDuration: 1.5
+  idleDurationMax: 2
+  warningDuration: 1.2
   castingDuration: 1
   warningBoxPrefab: {fileID: 5152362679918131031, guid: 6b8d4b0ddcb08984fba0580f8b4c0138, type: 3}
   warningCirclePrefab: {fileID: 5152362679918131031, guid: 6f266f62b53390741a82a545778dd631, type: 3}
@@ -44,10 +44,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 16402a9c6886c3b479faf5a314a40854, type: 2}
   - {fileID: 11400000, guid: 323ba4308d8e2bf42baa559323ea0deb, type: 2}
   - {fileID: 11400000, guid: 7be53b7b29b614b42b81b8bd9d4de0df, type: 2}
+  - {fileID: 11400000, guid: 066b821b04a3d85439db8b2c6cfecba6, type: 2}
+  - {fileID: 11400000, guid: 7be53b7b29b614b42b81b8bd9d4de0df, type: 2}
+  - {fileID: 11400000, guid: 066b821b04a3d85439db8b2c6cfecba6, type: 2}
   p1ExplosionEffect: {fileID: 11400000, guid: 4d11c1b10bb0e9148b71be7d7a7f2a7a, type: 2}
   p1ExplosionRadius: 2
   p2CymbalPrefab: {fileID: 93640428089957343, guid: 9d36ade07e190e643a47c3c784db358c, type: 3}
-  p2TravelSpeed: 10
+  p2TravelSpeed: 20
   p2DamageWidth: 1.5
   p2HitEffect: {fileID: 11400000, guid: 0d6cc63e20635184387111bd7fd9d7ea, type: 2}
   p3BoxPrefab: {fileID: 6831793127820150265, guid: d6b52557cba5d4140a97bd430f0c435f, type: 3}

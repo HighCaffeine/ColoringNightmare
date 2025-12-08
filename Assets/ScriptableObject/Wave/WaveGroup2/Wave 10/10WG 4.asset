@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 10WG 4
   m_EditorClassIdentifier: 
   groupID: 3
-  monsterCode: 4
-  spawnCount: 5
-  spawnInterval: 0.2
+  monsterCode: 7
+  spawnCount: 1
+  spawnInterval: 0.1
   spawnPointIndex: 4
   delayAfterGroup: 2

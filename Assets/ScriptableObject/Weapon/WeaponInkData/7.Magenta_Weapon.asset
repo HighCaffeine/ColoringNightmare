@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 7.Magenta_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 1383695343365d54998f757782b4ec96, type: 2}
-  durability: 25
+  durability: 27
   damage: 30
   skillLogic: {fileID: 11400000, guid: 124dc8e3e0f6fae48ad11fb3980b97b2, type: 2}
   visualEffects:
@@ -27,3 +27,4 @@ MonoBehaviour:
     attackEffect: {fileID: 11400000, guid: 98849f2ddf92b354185a0fb6c375a23d, type: 2}
     hitEffect: {fileID: 11400000, guid: f28de023a2b8d0d4d8cf270c61e0d1ae, type: 2}
   passiveEffect: {fileID: 11400000, guid: 78e5436945c142840ada7a41be63b671, type: 2}
+  projectilePrefab: {fileID: 0}

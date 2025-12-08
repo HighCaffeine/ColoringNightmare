@@ -57,9 +57,9 @@ MonoBehaviour:
   skeleton: {fileID: 1425772052551485675}
   bossData: {fileID: 11400000, guid: 3926cafa1ccfa9f4fa5ea34b0c1bb121, type: 2}
   bossSpine: {fileID: 3600902405029843704}
-  p1Area: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
-  p2Area: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
-  p3Area: {fileID: 11400000, guid: 13ce36cdfe235f448991085359b15496, type: 2}
+  p1Area: {fileID: 11400000, guid: fbee33ebdc03079449762c4b79c6ef95, type: 2}
+  p2Area: {fileID: 11400000, guid: f38f64b62ef0a2442b96aa901a23a99f, type: 2}
+  p3Area: {fileID: 11400000, guid: 98cadc7576f937543b3edd3c3837146c, type: 2}
 --- !u!50 &5318341489920535923
 Rigidbody2D:
   serializedVersion: 5
