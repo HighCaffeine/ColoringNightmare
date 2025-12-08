@@ -5,7 +5,7 @@ using System.Collections;
 
 public class BossSpineController : MonoBehaviour
 {
-    [SerializeField] private SkeletonAnimation skeletonAnimation;
+    public SkeletonAnimation skeletonAnimation;
 
     // 보스 애니메이션 이름
     public const string IDLE = "idle";
@@ -101,6 +101,7 @@ public class BossSpineController : MonoBehaviour
             entry.Complete += _ => action();
         }
     }
+
 
     public float GetAnimationDuration(string name)
     {

@@ -86,11 +86,23 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
 
     protected override void Dead()
     {
+        Invoke(nameof(BossDeadEvent), 1.0f);
+        return;
+
+        Debug.Log("dead");
         if (state == StateType.Dead) return;
         state = StateType.Dead;
 
         SetDamageImmune(true);
+
+        if (groggyCoroutine != null)
+        {
+            StopCoroutine(groggyCoroutine);
+            groggyCoroutine = null;
+        }
+
         StopAllCoroutines();
+
         if (rigid != null) rigid.linearVelocity = Vector2.zero;
         if (characterCollider != null) characterCollider.enabled = false;
 
@@ -100,6 +112,12 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
     private IEnumerator BossDeathProcess()
     {
         yield return null;
+
+        if (bossSpine != null)
+        {
+            bossSpine.skeletonAnimation.AnimationState.ClearTracks();
+        }
+
         bossSpine.PlayDead(() => { BossDeadEvent(); });
     }
 
@@ -132,11 +150,14 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         if (state == StateType.Idle) Idle();
     }
 
+    private Coroutine groggyCoroutine;
+
     protected override void Idle()
     {
         if (currentGroggyCoin <= 0)
         {
-            StartCoroutine(GroggyRoutine());
+            if (groggyCoroutine != null) StopCoroutine(groggyCoroutine);
+            groggyCoroutine = StartCoroutine(GroggyRoutine());
             return;
         }
 
@@ -367,6 +388,8 @@ public class BossMonsterController : Character, OnReturnPool<BossMonsterControll
         if (bossUI != null) bossUI.UpdateCoins(0);
 
         yield return new WaitForSeconds(bossData.groggyDuration);
+
+        if (state == StateType.Dead || isDead) yield break;
 
         isInvincible = true;
         currentGroggyCoin = bossData.groggyCoinMax;
