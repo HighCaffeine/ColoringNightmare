@@ -37,9 +37,10 @@ public class WorldHpController : GenericSingleton<WorldHpController>
             UpdateUI();
 
             OnGameOver?.Invoke();
+            SoundManager.Instance.PauseBGM();
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.GameOver(1.5f);
+                GameManager.Instance.GameOver(0.5f);
             }
         }
     }

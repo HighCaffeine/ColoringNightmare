@@ -8,8 +8,8 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
     public enum BGM
     {
         BGM_Main_1,
-        BGM_Loading_1,
         BGM_Game_1,
+        BGM_Boss_1,
 
         Count,
     }
@@ -109,7 +109,6 @@ public class SoundManager : ObjectPooling<SoundManager, Sound>
         {
             { "Main", BGM.BGM_Main_1.ToString() },  // 메인 화면 씬 이름
             { "Game", BGM.BGM_Game_1.ToString() },  // 게임 씬 이름
-            { "Loading", BGM.BGM_Loading_1.ToString() },  // 게임 씬 이름
             // 추가 씬들...
         };
     }
