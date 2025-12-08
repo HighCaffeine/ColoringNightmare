@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 7.Magenta_PassiveEffectData
   m_EditorClassIdentifier: 
   effectType: 2
-  effectValue1: 0
-  effectValue2: 0
+  effectValue1: 10
+  effectValue2: 15
   statusVisual: {fileID: 11400000, guid: 72dad417a84456049b0f06293dac80a0, type: 2}
   statusColorType: 7

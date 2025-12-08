@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 1.Red_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 6f3d8346e8f89d04485f396963772ccb, type: 2}
-  durability: 18
+  durability: 20
   damage: 40
   skillLogic: {fileID: 11400000, guid: 5058390f7a0a960449422b14e1560efa, type: 2}
   visualEffects:
@@ -27,3 +27,4 @@ MonoBehaviour:
     attackEffect: {fileID: 11400000, guid: 7cfe65ecc79c6374c8d05fc63f42a99d, type: 2}
     hitEffect: {fileID: 11400000, guid: ae6491ea480300445bd27c3b2a49d6d9, type: 2}
   passiveEffect: {fileID: 11400000, guid: 7f7df5203f1c6524faf7c81bd95057bb, type: 2}
+  projectilePrefab: {fileID: 0}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: bfbf3643c4014f84e854a9f84e46b779, type: 2}
   durability: 25
-  damage: 30
+  damage: 45
   skillLogic: {fileID: 11400000, guid: d814d6e6057881642a0ee309c123c4b0, type: 2}
   visualEffects:
   - weaponType: 0
@@ -27,3 +27,4 @@ MonoBehaviour:
     attackEffect: {fileID: 11400000, guid: 0075646f99bb5b2488953fdd4b62cb06, type: 2}
     hitEffect: {fileID: 11400000, guid: d57ef63f913580d49a6f69315876e1f9, type: 2}
   passiveEffect: {fileID: 11400000, guid: 678e7b52e7e639c40818400e68e87cce, type: 2}
+  projectilePrefab: {fileID: 0}

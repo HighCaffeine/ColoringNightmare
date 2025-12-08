@@ -17,4 +17,4 @@ MonoBehaviour:
   spawnCount: 5
   spawnInterval: 0.3
   spawnPointIndex: 2
-  delayAfterGroup: 3
+  delayAfterGroup: 15

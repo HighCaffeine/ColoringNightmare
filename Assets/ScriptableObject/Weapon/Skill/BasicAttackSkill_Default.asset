@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BasicAttackSkill_Default
   m_EditorClassIdentifier: 
   colorType: 0
-  baseDamage: 10
+  baseDamage: 30
   cooldown: 0.5
