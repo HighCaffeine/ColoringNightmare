@@ -43,6 +43,11 @@ public class Character : MonoBehaviour
         }
     }
 
+    protected virtual void OnDisable()
+    {
+        ClearAllStatusEffects();
+    }
+
     protected void OnCharacterDataLoaded(CharacterData data)
     {
         info = data;

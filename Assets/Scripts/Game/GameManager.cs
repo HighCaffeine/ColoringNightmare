@@ -29,6 +29,8 @@ public class GameManager : GenericSingleton<GameManager>
     {
         if (gameoverCoroutine != null) StopCoroutine(gameoverCoroutine);
 
+        gameOverPanel.gameObject.SetActive(true);
+
         if (delay > 0f)
         {
             gameoverCoroutine = StartCoroutine(TimeScaleDelayRoutine(delay));

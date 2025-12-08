@@ -56,6 +56,11 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
     [Header("UI - Gacha Panel")]
     [SerializeField] private TextMeshProUGUI gachaCostTxt;
 
+    [Header("Exchange Buttons")]
+    [SerializeField] private UnityEngine.UI.Button redInkExchangeButton;
+    [SerializeField] private UnityEngine.UI.Button blueInkExchangeButton;
+    [SerializeField] private UnityEngine.UI.Button yellowInkExchangeButton;
+
     [Header("Skill Settings")]
     [SerializeField] private float dmgBuffDuration = 15f;
     [SerializeField] private float dmgBuffRatio = 0.5f;
@@ -99,6 +104,7 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
             blackInkCountText.text = currentBlackInkCount.ToString();
         }
 
+        UpdateExchangeButtons();
         UpdateEnhanceSlot(hpLevel, hpCostTxt, hpBarImage);
         UpdateEnhanceSlot(speedLevel, speedCostTxt, speedBarImage);
         UpdateEnhanceSlot(dmgLevel, dmgCostTxt, dmgBarImage);
@@ -113,6 +119,15 @@ public class DreamCottonEnhance : GenericSingleton<DreamCottonEnhance>
         if (hpSkillCostTxt) hpSkillCostTxt.text = skillCostHeal.ToString();
         if (inkSkillCostTxt) inkSkillCostTxt.text = skillCostInk.ToString();
         if (gachaCostTxt) gachaCostTxt.text = GACHA_COST_BLACK_INK.ToString();
+    }
+
+    private void UpdateExchangeButtons()
+    {
+        bool canBuy = currentBlackInkCount >= inkExchangeCost;
+
+        if (redInkExchangeButton != null) redInkExchangeButton.interactable = canBuy;
+        if (blueInkExchangeButton != null) blueInkExchangeButton.interactable = canBuy;
+        if (yellowInkExchangeButton != null) yellowInkExchangeButton.interactable = canBuy;
     }
 
     private void UpdateEnhanceSlot(int level, TextMeshProUGUI costTxt, UnityEngine.UI.Image barImage)

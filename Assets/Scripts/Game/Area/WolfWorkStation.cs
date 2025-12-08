@@ -55,7 +55,11 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
     private bool sketchLock = true;
     public void SetPaletteType() { workStationType = WorkStationType.Palette; }
     public void SetEnhanceType() { workStationType = WorkStationType.Enhance; }
-    public void SetSketchType() { workStationType = WorkStationType.Sketch; }
+    public void SetSketchType()
+    {
+        workStationType = WorkStationType.Sketch;
+        if (!sketchLock && WolfGuideBubble.Instance != null) { WolfGuideBubble.Instance.ShowPoolPhase(); }
+    }
     public void SetDesingType() { workStationType = WorkStationType.Design; }
     public void SetSkechBookLock(bool isLock) { sketchLock = isLock; }
     public bool IsSketchbookLocked() { return sketchLock; }
@@ -64,14 +68,10 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
     public void OnMoveToInteractivePoint()
     {
-        if (playerController == null)
-        {
-            return;
-        }
-
+        if (playerController == null) return;
+        if (isOnInteractive || moveCoroutine != null) return;
         if (playerSpine == null) playerSpine = playerController.GetComponent<SpineTest>();
 
-        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
         moveCoroutine = StartCoroutine(MoveToInteractivePoint());
     }
 
@@ -94,6 +94,7 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
         if (targetPoint == null)
         {
+            moveCoroutine = null;
             yield break;
         }
 
@@ -123,6 +124,8 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         Interactive();
 
         playerController.GetPlayerInput()?.Player2.Enable();
+
+        moveCoroutine = null;
     }
 
 
@@ -141,6 +144,13 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
 
     public void ForceExitAll()
     {
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+            moveCoroutine = null;
+            playerController.GetPlayerInput()?.Player2.Enable();
+        }
+
         if (DrawWeaponGPU.Instance != null)
         {
             DrawWeaponGPU.Instance.ForceCancelDrawing();
@@ -149,21 +159,19 @@ public class WolfWorkStation : GenericSingleton<WolfWorkStation>
         switch (workStationType)
         {
             case WorkStationType.Design:
+            case WorkStationType.Sketch:
                 if (WolfGuideBubble.Instance != null) WolfGuideBubble.Instance.ShowPoolPhase();
                 break;
-
             case WorkStationType.Palette:
             case WorkStationType.None:
                 if (WolfGuideBubble.Instance != null) WolfGuideBubble.Instance.ShowInkPhase();
                 break;
-
             case WorkStationType.Enhance:
                 if (WolfGuideBubble.Instance != null) WolfGuideBubble.Instance.Hide();
                 break;
         }
 
         AllWorkStationOff();
-
         WeaponPatternSelector.Instance.CloseAllPattern();
 
         workStationType = WorkStationType.None;

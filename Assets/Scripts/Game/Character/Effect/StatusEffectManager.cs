@@ -14,6 +14,11 @@ public class StatusEffectManager : MonoBehaviour
         character = GetComponent<Character>();
     }
 
+    private void OnDisable()
+    {
+        ClearEffects();
+    }
+
     void Update()
     {
         List<IStatusEffect> finishedEffects = new List<IStatusEffect>();
