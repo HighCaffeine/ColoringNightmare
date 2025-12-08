@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 324603339, guid: ae71f6e3939c6cd4b96ffb94ad49912f, type: 3}
   characterName: TestBoss
-  maxHp: 5
+  maxHp: 600
   dmg: 1
   speed: 5
   attackDelay: 1
@@ -25,11 +25,11 @@ MonoBehaviour:
   monsterDataName: 10
   lootTable: {fileID: 11400000, guid: 376cb170a1be4714d844b32afbdaa325, type: 2}
   groggyCoinMax: 2
-  groggyDuration: 12
-  fixedDamageRatio: 0.08
-  p1Weight: 100
-  p2Weight: 0
-  p3Weight: 0
+  groggyDuration: 10
+  fixedDamageRatio: 0.1
+  p1Weight: 40
+  p2Weight: 30
+  p3Weight: 30
   idleDurationMin: 1
   idleDurationMax: 3
   warningDuration: 1.5

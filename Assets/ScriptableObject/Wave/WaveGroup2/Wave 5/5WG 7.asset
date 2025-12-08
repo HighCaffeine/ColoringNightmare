@@ -15,6 +15,6 @@ MonoBehaviour:
   groupID: 1
   monsterCode: 6
   spawnCount: 3
-  spawnInterval: 2
+  spawnInterval: 0.2
   spawnPointIndex: 4
   delayAfterGroup: 1
