@@ -468,6 +468,11 @@ public class PlayerController : Character
             {
                 weaponController.RebindWeaponBone();
             }
+
+            if (spine != null)
+            {
+                spine.RebindSpineEvent();
+            }
         }
 
         ChangeState(StateType.Idle);

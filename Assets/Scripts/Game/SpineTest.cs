@@ -148,6 +148,14 @@ public class SpineTest : MonoBehaviour
         }
     }
 
+    public void RebindSpineEvent()
+    {
+        if (skeleton == null) return;
+
+        skeleton.AnimationState.Event -= HandleSpineEvent;
+        skeleton.AnimationState.Event += HandleSpineEvent;
+    }
+
     private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
         if (e.Data.Name == SpineEvent.AttackEffect.ToString())
