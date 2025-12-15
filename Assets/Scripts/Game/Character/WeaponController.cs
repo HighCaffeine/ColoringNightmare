@@ -3,19 +3,52 @@ using System.Collections;
 
 public class WeaponController : MonoBehaviour
 {
+    private WeaponManager.WeaponType weaponType;
     [SerializeField] private Weapon weapon;
     [SerializeField] private Transform weaponPivot;
     [SerializeField] private Spine.Unity.SkeletonAnimation skeletonAni;
     private SpriteRenderer spriteRenderer;
 
+    [SerializeField] private Character player;
+
     [Header("Dependencies")]
     [SerializeField] private SkillController skillController;
+    [SerializeField] private SpineTest spineTest;
+
+    private GameObject weaponFollowerHolder; // 홀더 참조
 
     public bool IsEquip() => weapon != null;
 
-    public SkillData GetEquippedWeaponSkillData()
+    public float GetAttackSpeed()
     {
-        return weapon?.GetSKillData();
+        switch (weaponType)
+        {
+            case WeaponManager.WeaponType.Sword: return 1.0f;
+            case WeaponManager.WeaponType.Spear: return 0.9f;
+            case WeaponManager.WeaponType.Axe: return 1.1f;
+            default: return 1.0f;
+        }
+    }
+
+    public void RebindWeaponBone()
+    {
+        if (weaponFollowerHolder == null) return;
+
+        var boneFollower = weaponFollowerHolder.GetComponent<Spine.Unity.BoneFollower>();
+
+        if (boneFollower != null)
+        {
+            boneFollower.SkeletonRenderer = skeletonAni;
+
+            string savedBoneName = boneFollower.boneName;
+            boneFollower.bone = null;
+            boneFollower.boneName = "";
+            boneFollower.boneName = savedBoneName;
+        }
+    }
+    public BaseSkillLogic GetEquippedWeaponSkillData()
+    {
+        return weapon?.GetSkillLogic();
     }
 
     public Weapon GetEquippedWeapon()
@@ -23,49 +56,101 @@ public class WeaponController : MonoBehaviour
         return weapon;
     }
 
+    public void SetCurrentWeaponType(WeaponManager.WeaponType weaponType)
+    {
+        this.weaponType = weaponType;
+    }
+
     public void SetupWeapon(Weapon newWeapon)
     {
-        if (this.weapon) this.weapon.DestroyWeapon();
+        if (this.weapon != null && this.weapon.transform.parent != null)
+        {
+            Destroy(this.weapon.transform.parent.gameObject);
+        }
+        else if (this.weapon != null)
+        {
+            this.weapon.DestroyWeapon();
+        }
+
         this.weapon = newWeapon;
+        if (this.weapon == null)
+        {
+            spineTest?.ClearAttackAnimation();
+            return;
+        }
 
-        this.weapon.transform.SetParent(weaponPivot, false);
-        this.weapon.transform.localPosition = Vector3.zero;
-        this.weapon.transform.localRotation = Quaternion.identity;
-        this.weapon.transform.localScale = Vector3.one;
+        // BoneFollower를 위한 새 부모 오브젝트(홀더) 생성
+        weaponFollowerHolder = new GameObject(newWeapon.name + "_Follower");
+        weaponFollowerHolder.transform.SetParent(weaponPivot, false);
+        weaponFollowerHolder.transform.localPosition = Vector3.zero;
+        weaponFollowerHolder.transform.localRotation = Quaternion.identity;
+        weaponFollowerHolder.transform.localScale = Vector3.one;
 
-        var boneFollower = weapon.gameObject.AddComponent<Spine.Unity.BoneFollower>();
-        spriteRenderer = weapon.GetComponent<SpriteRenderer>();
+        // BoneFollower 컴포넌트를 홀더에 추가
+        var boneFollower = weaponFollowerHolder.AddComponent<Spine.Unity.BoneFollower>();
         boneFollower.SkeletonRenderer = skeletonAni;
-        boneFollower.boneName = "sword";
+        if (this.weapon.GetWeaponType() == WeaponManager.WeaponType.Sword)
+        {
+            boneFollower.boneName = "sword";
+        }
+        else
+        {
+            boneFollower.boneName = "sword2";
+        }
         boneFollower.followBoneRotation = true;
         boneFollower.followLocalScale = false;
-        boneFollower.followSkeletonFlip = true;
-        spriteRenderer.sortingOrder = 0;
+        boneFollower.followSkeletonFlip = false;
+
+        var weaponRigidBody = this.weapon.GetComponent<Rigidbody2D>();
+        if (weaponRigidBody != null)
+        {
+            weaponRigidBody.bodyType = RigidbodyType2D.Kinematic;
+        }
+
+        // 무기를 홀더의 자식으로 설정
+        this.weapon.transform.SetParent(weaponFollowerHolder.transform, false);
+        this.weapon.transform.localPosition = Vector3.zero;
+        this.weapon.transform.localRotation = Quaternion.identity;
+
+        // 스케일 계산 
+        float parentScaleX = weaponPivot.lossyScale.x;
+        float parentScaleY = weaponPivot.lossyScale.y;
+
+        weapon.Equip(player);
+
+        if (parentScaleX != 0 && parentScaleY != 0)
+        {
+            float desiredRatio = this.weapon.relativeScaleRatio;
+
+            this.weapon.transform.localScale = new Vector3(
+                desiredRatio / Mathf.Abs(parentScaleX),
+                desiredRatio / Mathf.Abs(parentScaleY),
+                1f
+            );
+        }
+        else
+        {
+            this.weapon.transform.localScale = Vector3.one * this.weapon.relativeScaleRatio;
+        }
+
+        spriteRenderer = weapon.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = 0;
+        }
 
         if (skillController != null && this.weapon != null)
         {
-            skillController.SetCurrentSkill(this.weapon.GetSKillData());
+            skillController.SetCurrentSkill(this.weapon.GetSkillLogic());
         }
 
-        CurrentColliderSetActive(false);
-    }
+        if (spineTest != null)
+        {
+            WeaponManager.WeaponType type = this.weapon.GetWeaponType();
+            spineTest.SetAttackAnimationByWeaponType(type);
+        }
 
-    public void CurrentColliderSetActive(bool activate)
-    {
-        if (weapon != null)
-            weapon.SetActiveCollider(activate);
-    }
-
-    public void ActivateHitboxForDuration(float duration)
-    {
-        StartCoroutine(HitboxCoroutine(duration));
-    }
-
-    private IEnumerator HitboxCoroutine(float duration)
-    {
-        CurrentColliderSetActive(true);
-        yield return new WaitForSeconds(duration);
-        CurrentColliderSetActive(false);
+        Flip(skeletonAni.skeleton.ScaleX < 0);
     }
 
     public void SubDurability()
@@ -78,11 +163,26 @@ public class WeaponController : MonoBehaviour
             {
                 skillController.SetCurrentSkill(null);
             }
+
+            if (spineTest != null)
+            {
+                spineTest.ClearAttackAnimation();
+            }
+        }
+    }
+    public Weapon GetCurrentWeapon()
+    {
+        return weapon;
+    }
+    public void Flip(bool isRight)
+    {
+        if (weaponFollowerHolder != null)
+        {
+            float scaleY = isRight ? 1f : -1f;
+            weaponFollowerHolder.transform.localScale = new Vector3(-1, scaleY, 1);
         }
     }
 
-    public void Flip(bool isRight)
-    {
-        // BoneFollower의 followSkeletonFlip이 true이므로 별도 처리 불필요
-    }
+    public void EnableHitbox() => weapon?.EnableHitbox();
+    public void DisableHitbox() => weapon?.DisableHitbox();
 }

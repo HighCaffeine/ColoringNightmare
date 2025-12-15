@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Spine.Unity;
+using Unity.Burst;
 using UnityEngine;
 
 public class DrawWeapon : GenericSingleton<DrawWeapon>
@@ -7,6 +8,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     [Header("Drawing")]
     [SerializeField] private Material lineMaterial; // Sprites / Default 사용
     [SerializeField] private float lineWidth = 0.1f;
+    public float LineWidth { get { return lineWidth; } }
     [SerializeField] private float minPointDis = 0.02f; // 포인트간 최소 거리
     [SerializeField] private Color lineColor = Color.white;
     [Range(0.0f, 1.0f)][SerializeField] private float saturation = 1.0f; //채도
@@ -41,6 +43,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
     private bool isCreated;
     private ColorMixer.ColorType colorType;
+    private WeaponManager.WeaponType weaponType;
     private int lastPointCount = 0;
     private bool isAllowDrawing = false;
 
@@ -143,6 +146,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         this.colorType = colorType;
     }
 
+    public void TEST_UpdateLineColor()
+    {
+        lineColor = ColorMixer.Instance.GetColor(colorType);
+    }
+
     private void CreateNewLine(Vector3 startPos)
     {
         lastPointCount = points.Count;
@@ -206,9 +214,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         if (dice * 100.0f > similarityLimit)
         {
             SpawnDrawObj();
+            SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Weapon_Suc_Good.ToString(), false);
         }
         else
         {
+            SoundManager.Instance.PlaySound(SoundManager.Effect.SFX_WorkStation_Weapon_Fail.ToString(), false);
             Debug.Log("유사도가 낮아 무기를 생성하지 않습니다.");
         }
 
@@ -222,8 +232,7 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         var lastLine = lineRenderers[lineRenderers.Count - 1];
         lineRenderers.RemoveAt(lineRenderers.Count - 1);
         // 게임 오브젝트 삭제
-        if (lastLine != null)
-            Destroy(lastLine.gameObject);
+        if (lastLine != null) Destroy(lastLine.gameObject);
     }
 
     private void InitLine()
@@ -241,6 +250,8 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
     {
         this.refSprite = refSprite;
     }
+
+    [SerializeField] private DrawSimilarityEffect similarityEffect;
 
     public (float cosine, float jaccard, float dice) CalculateSimilarity()
     {
@@ -286,6 +297,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
 
         if (similarityText != null)
             similarityText.text = string.Format($"Similarity - Cosine: {cosine * 100f:F3}, Jaccard: {jaccard * 100f:F3}, Dice: {dice * 100f:F3}");
+
+        if (similarityEffect != null)
+        {
+            similarityEffect.ShowEffect(dice); // dice는 0.0 ~ 1.0 사이의 값
+        }
 
         return (cosine, jaccard, dice);
     }
@@ -344,24 +360,59 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         rigid.gravityScale = 0.0f;
 
         AddEdgeCollider(obj, points);
-        obj.transform.localScale = Vector3.one * ratioFromSketchBook;
+        obj.transform.localScale = Vector3.one;
 
-        //잉크 데이터 셋업
-        WeaponInkData weaponData = weaponInkDataList.Find(data => data.inkData.color == colorType);
-
-        if (weaponData == null)
+        if (weapon != null)
         {
-            Debug.LogWarning($"'{colorType}' 색상의 무기 데이터가 없음. 기본 무기 데이터로 대체");
-            weaponData = defaultWeaponData;
+            weapon.relativeScaleRatio = ratioFromSketchBook;
         }
+        //잉크 데이터 셋업
+        WeaponInkData weaponDataAsset = weaponInkDataList.Find(data => data.inkData.color == colorType);
 
-        if (weaponData != null)
+        if (weaponDataAsset != null)
         {
-            weapon.SetupInkData(weaponData);
+            // ColorMixer에서 조합에 사용된 두 색상을 가져옴
+            ColorMixer.ColorType c1 = ColorMixer.Instance.GetLastMixedColor1();
+            ColorMixer.ColorType c2 = ColorMixer.Instance.GetLastMixedColor2();
+
+            WeaponInkData runtimeInkData = Instantiate(weaponDataAsset);
+            BaseSkillLogic runtimeSkillLogic;
+
+            if (runtimeInkData.skillLogic == null)
+            {
+                Debug.LogWarning($"'{colorType}' 색상의 스킬 데이터가 없음. 기본 무기 데이터로 대체");
+                runtimeSkillLogic = defaultWeaponData.skillLogic;
+            }
+            else
+            {
+                runtimeSkillLogic = Instantiate(weaponDataAsset.skillLogic);
+            }
+
+            // 스킬 로직에 색상 조합 적용
+            runtimeSkillLogic.ApplyColorModifier(c1, c2);
+
+            // 잉크 데이터가 복제된 스킬 로직을 참조
+            runtimeInkData.skillLogic = runtimeSkillLogic;
+            //runtimeInkData.weaponType = weaponType;
+
+            // Weapon에 원본 대신 복사본 설정
+            //weapon.SetupInkData(runtimeInkData);
+
+            if (WeaponStorageController.Instance != null)
+            {
+                WeaponStorageController.Instance.StoreNewWeapon(obj);
+            }
         }
         else
         {
-            Debug.LogError("기본 무기 데이터가 지정되지 않음. 무기를 생성할 수 없음");
+            if (weaponDataAsset == null)
+            {
+                Debug.LogError("기본 무기 데이터가 지정되지 않음. 무기를 생성할 수 없음");
+            }
+            else if (weaponDataAsset.skillLogic == null)
+            {
+                Debug.LogError($"'{weaponDataAsset.name}'에 skillLogic이 지정되지 않음. 무기를 생성할 수 없음");
+            }
             Destroy(obj);
             return;
         }
@@ -372,6 +423,11 @@ public class DrawWeapon : GenericSingleton<DrawWeapon>
         // }
 
         colorType = ColorMixer.ColorType.None;
+    }
+
+    public void SetWeaponType(WeaponManager.WeaponType weaponType)
+    {
+        this.weaponType = weaponType;
     }
 
     private Texture2D RenderDrawingToTexture(List<GameObject> lines, Bounds bounds, int width, int height)

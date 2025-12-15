@@ -5,7 +5,7 @@ public class MonsterGroupData : ScriptableObject
 {
     [Header("Monster Spawn Group")]
     public int groupID;                 // GroupID (그룹 번호)
-    public int monsterCode;             // Monster_Code (몬스터 식별 코드)
+    public MonsterDataName monsterCode;             // Monster_Code (몬스터 식별 코드)
     public int spawnCount;              // Spawn_Count (스폰할 몬스터 수)
     public float spawnInterval;         // Spawn_Interval (몬스터 개별 스폰 간격)
     public int spawnPointIndex;         // Spawn_Point_Index (스폰 지점 인덱스)

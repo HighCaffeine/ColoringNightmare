@@ -1,0 +1,73 @@
+bear1-3.png
+size:1877,516
+filter:Linear,Linear
+pma:true
+BACK
+bounds:155,14,90,117
+offsets:2,3,93,121
+BACK2
+bounds:2,6,125,151
+offsets:6,7,137,164
+rotate:90
+BODY
+bounds:1168,191,323,313
+offsets:0,1,330,314
+rotate:90
+BODY2
+bounds:1483,197,317,198
+offsets:1,1,319,200
+rotate:90
+BODY22
+bounds:604,163,351,346
+offsets:11,4,373,361
+rotate:90
+HEAD
+bounds:319,161,353,283
+rotate:90
+HEAD2
+bounds:2,133,381,315
+offsets:9,10,399,333
+rotate:90
+LARM
+bounds:1383,4,185,293
+offsets:2,10,187,303
+rotate:90
+LARM2
+bounds:952,188,214,326
+offsets:11,14,236,351
+RARM
+bounds:571,6,153,258
+offsets:0,1,154,259
+rotate:90
+RARM2
+bounds:1026,5,181,287
+offsets:9,9,200,305
+rotate:90
+STAR (1)
+bounds:1774,271,101,161
+offsets:1,3,104,165
+STAR (2)
+bounds:1683,210,222,89
+offsets:2,1,225,92
+rotate:90
+STAR (3)
+bounds:1315,2,66,187
+offsets:1,2,68,190
+STAR (4)
+bounds:1774,97,172,92
+offsets:2,2,175,95
+rotate:90
+STAR (5)
+bounds:1683,434,80,181
+offsets:1,2,82,185
+rotate:90
+STAR (6)
+bounds:1678,10,64,185
+offsets:1,1,67,187
+STAR (7)
+bounds:831,21,140,193
+offsets:1,1,142,195
+rotate:90
+양.몬스터 그림자
+bounds:247,28,322,103
+offsets:12,0,338,103

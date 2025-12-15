@@ -1,15 +1,20 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Spine.Unity;
 
 public enum PlayerType
 {
+    NONE,
     Player1,
     Player2,
 }
 
 public class PlayerController : Character
 {
+    [Header("UI References")]
+    [SerializeField] private PlayerHPController hpController;
+
     [Header("TEST Event")]
     [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerDead;
     [SerializeField] private UnityEngine.Events.UnityEvent OnPlayerRespawn;
@@ -22,6 +27,7 @@ public class PlayerController : Character
     [SerializeField] private float damageDelay = 2.0f;
 
     [Header("Attack")]
+    [SerializeField] private GameObject punchHitboxObj;
     [SerializeField] private UnityEngine.Events.UnityEvent OnAttack;
 
     [Header("Weapon")]
@@ -38,6 +44,14 @@ public class PlayerController : Character
     [Header("Groggy")]
     [SerializeField] private float groggyDuration = 5f;
     [SerializeField] private float invincibilityDuration = 2f;
+
+    [Header("Groggy Spine Assets")]
+    [SerializeField] private SkeletonDataAsset groggySkeletonData;
+    [SerializeField] private Material groggyMaterial;
+
+    private SkeletonDataAsset normalSkeletonData;
+    private Material normalMaterial;
+
     private bool isGroggy = false;
     private BoxCollider2D playerCollider;
 
@@ -58,24 +72,26 @@ public class PlayerController : Character
     public float axisY { private set; get; }
     public int GetHP() { return currentHP; }
     public int GetMaxHP() { return info.maxHp; }
+    public bool IsAttacking { get; set; } = false;
 
     private MonsterManager.OnPlayerStateUpdate onPlayerStateUpdate;
     private SpineTest spine;
+    private MeshRenderer meshRenderer;
 
-    // 공격 가능 상태를 제어하는 변수
-    private bool isAttackReady = true;
 
     protected new void Awake()
     {
         base.Awake();
         playerCollider = GetComponent<BoxCollider2D>();
         spine = GetComponent<SpineTest>();
+        meshRenderer = GetComponent<MeshRenderer>();
 
         SODataLoader.Instance.LoadSO<CharacterData>(addressableName.ToString(), so =>
         {
             if (so != null)
             {
-                OnCharacterDataLoaded(so);
+                CharacterData cloneData = Instantiate(so);
+                OnCharacterDataLoaded(cloneData);
             }
         });
 
@@ -86,6 +102,20 @@ public class PlayerController : Character
         playerInput = new PlayerInputActions();
         mouseHandler = GetComponent<PlayerMouseHandler>();
         ActivePlayerInput();
+
+        if (skeleton != null)
+        {
+            normalSkeletonData = skeleton.skeletonDataAsset;
+            normalMaterial = meshRenderer.material;
+        }
+    }
+
+    void Start()
+    {
+        if (hpController != null && info != null)
+        {
+            hpController.Init(1, 1);
+        }
     }
 
     private void ActivePlayerInput()
@@ -107,10 +137,13 @@ public class PlayerController : Character
                 break;
             case PlayerType.Player2:
                 playerInput.Player2.Enable();
-                OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
-                playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
+                //OnMoveAction = WolfWorkStation.Instance.CheckAreaEnter;
+                //playerInput.Player2.Mouse.started += callback => { OnMouseClick(); };
+
+                //playerInput.Player2.Mouse.started += callback => { WolfWorkStation.Instance.CheckAreaEnter(Mouse.current.position.ReadValue()); };
+
                 mainCam = Camera.main;
-                playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
+                //playerInput.Player2.Interact.started += callback => { OnInteractive?.Invoke(); };
                 moveAction = playerInput.FindAction("Move");
                 if (mouseHandler)
                 {
@@ -130,7 +163,7 @@ public class PlayerController : Character
     {
         if (playerType == PlayerType.Player1)
         {
-            if (isGroggy || isDead)
+            if (IsAttacking || isGroggy || isDead)
             {
                 StopMove();
                 return;
@@ -149,12 +182,16 @@ public class PlayerController : Character
                 if (spine != null) spine.TestPlayIdleSpine();
             }
 
+            int newSortingOrder = 11 + Mathf.RoundToInt(transform.position.y * -100f);
+            meshRenderer.sortingOrder = newSortingOrder;
+
             MoveCharacter(moveArea.GetBounds(), input, OnMoveAction);
 
             if (input.x != 0.0f)
             {
                 Flip(input.x > 0);
                 if (weaponController != null) weaponController.Flip(input.x > 0);
+                if (effectController != null) effectController.Flip(input.x > 0);
             }
         }
         else if (playerType == PlayerType.Player2 && isMouseMoving)
@@ -203,43 +240,105 @@ public class PlayerController : Character
         if (spine != null) spine.TestPlayRunSpine();
     }
 
+    public new void Flip(bool isRight)
+    {
+        base.Flip(isRight);
+    }
+
+    private void OnMousePerformed()
+    {
+        //늑대 마우스 영역 체크
+    }
+
     private void PerformAttack()
     {
-        if (isGroggy || !isAttackReady) return;
+        if (isGroggy || IsAttacking) return;
 
-        isAttackReady = false;
+        StartCoroutine(AttackRoutine());
+    }
+
+    private System.Collections.IEnumerator AttackRoutine()
+    {
         ChangeState(StateType.Attack);
-
         OnAttack?.Invoke();
+
+        float currentAnimSpeed = 1.0f;
+        float finalWaitTime = 0.5f;
+
+        if (weaponController != null) currentAnimSpeed = weaponController.GetAttackSpeed();
+        if (skeleton != null) skeleton.timeScale = currentAnimSpeed;
+        string soundName = SoundManager.Effect.SFX_Weapon_Attack_Light.ToString(); // 기본(노랑, 파랑)
 
         if (weaponController != null && weaponController.IsEquip())
         {
+            var inkData = weaponController.GetEquippedWeapon()?.GetInkData();
+            if (inkData != null)
+            {
+                if (inkData.inkData.color == ColorMixer.ColorType.Red || inkData.inkData.color == ColorMixer.ColorType.Red)
+                {
+                    soundName = SoundManager.Effect.SFX_Weapon_Attack_Heavy.ToString();
+                }
+            }
+        }
+
+        SoundManager.Instance.PlaySound(soundName, false);
+
+        if (weaponController != null && weaponController.IsEquip())
+        {
+            weaponController.EnableHitbox();
+
             if (skillController != null)
             {
-                SkillData currentSkillData = weaponController.GetEquippedWeaponSkillData();
-                if (currentSkillData != null)
+                BaseSkillLogic currentSkillLogic = weaponController.GetEquippedWeaponSkillData();
+                if (currentSkillLogic != null)
                 {
-                    skillController.SetCurrentSkill(currentSkillData);
+                    skillController.SetCurrentSkill(currentSkillLogic);
                     skillController.UseSkill();
                 }
             }
         }
         else
         {
-            effectController?.NoneWeapon(playerNoneEffect);
+
+            effectController?.NoneWeapon(playerNoneEffect); // 이펙트
+
+            if (punchHitboxObj != null)
+            {
+                punchHitboxObj.SetActive(true); // 히트박스 켜기
+                // 아주 짧은 순간만 켜서 판정 (0.1초)
+                StartCoroutine(DisablePunchHitboxAfter(0.1f));
+            }
         }
 
-        Invoke(nameof(ResetAttackCooldown), info.attackDelay);
+        if (skeleton != null)
+        {
+            yield return null;
+
+            var currentTrack = skeleton.AnimationState.GetCurrent(0);
+
+            if (currentTrack != null && currentTrack.Animation != null)
+            {
+                float animDuration = currentTrack.Animation.Duration / currentAnimSpeed;
+                finalWaitTime = Mathf.Max(animDuration, finalWaitTime);
+            }
+        }
+
+        yield return new WaitForSeconds(finalWaitTime);
+
+        if (skeleton != null) skeleton.timeScale = 1.0f;
+
+        ChangeState(StateType.Idle);
+    }
+    private System.Collections.IEnumerator DisablePunchHitboxAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (punchHitboxObj != null) punchHitboxObj.SetActive(false);
     }
 
     public void ResetAttackCooldown()
     {
-        isAttackReady = true;
-
-        // if (moveAction.ReadValue<Vector2>().magnitude < 0.1f)
-        // {
-        //     ChangeState(StateType.Idle);
-        // }
+        IsAttacking = false;
+        weaponController.DisableHitbox();
     }
 
     protected override void Attack()
@@ -262,6 +361,8 @@ public class PlayerController : Character
 
         base.TakeDamage(amount);
 
+        UpdateHP();
+
         OnDamaged?.Invoke();
         isAllowDamaged = false; // 짧은 시간 동안 무적
 
@@ -274,13 +375,37 @@ public class PlayerController : Character
             OnPlayerDead?.Invoke();
             LockMovement(); // 이동 및 공격 입력 비활성화
 
+            ChangeState(StateType.Dead);
+
+            StopAllCoroutines();
+
+            IsAttacking = false;
+
+            if (WolfWorkStation.Instance != null)
+            {
+                WolfWorkStation.Instance.ForceExitAll();
+            }
+
             // 충돌 판정 비활성화
             if (playerCollider != null)
             {
                 playerCollider.enabled = false;
             }
 
-            rigid.linearVelocity = Vector2.zero; // 움직임 즉시 정지
+            rigid.linearVelocity = Vector2.zero;
+            if (skeleton != null && groggySkeletonData != null && meshRenderer != null && groggyMaterial != null)
+            {
+                skeleton.timeScale = 1.0f;
+                skeleton.skeletonDataAsset = groggySkeletonData;
+                meshRenderer.material = groggyMaterial;
+                skeleton.Initialize(true);
+
+                skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy.ToString(), false, 0);
+                skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy2.ToString(), false, 0);
+                skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy3.ToString(), false, 0);
+            }
+
+            LockMovement();
 
             // 부활 코루틴 시작
             StartCoroutine(RespawnCoroutine(groggyDuration));
@@ -300,11 +425,17 @@ public class PlayerController : Character
         {
             case PlayerType.Player1:
                 playerInput.Player1.Enable();
+                ResetAttackCooldown();
                 break;
             case PlayerType.Player2:
                 playerInput.Player2.Enable();
                 break;
         }
+    }
+
+    public void UpdateHP()
+    {
+        hpController.Init(currentHP, info.maxHp);
     }
 
     private System.Collections.IEnumerator RespawnCoroutine(float delay)
@@ -314,6 +445,36 @@ public class PlayerController : Character
         currentHP = info.maxHp;
         OnPlayerRespawn?.Invoke();
 
+        state = StateType.Idle;
+
+        if (skeleton != null && normalSkeletonData != null && meshRenderer != null && normalMaterial != null)
+        {
+            skeleton.Initialize(true);
+            skeleton.AnimationState.AddAnimation(0, SpineTest.AniName.Groggy4.ToString(), false, 0);
+        }
+
+        yield return new WaitForSeconds(1.333f);
+
+        if (skeleton != null && normalSkeletonData != null && meshRenderer != null && normalMaterial != null)
+        {
+            skeleton.skeletonDataAsset = normalSkeletonData;
+            meshRenderer.material = normalMaterial;
+            skeleton.Initialize(true);
+            skeleton.AnimationState.SetAnimation(0, SpineTest.AniName.idle_normal.ToString(), true);
+
+            yield return null;
+
+            if (weaponController != null)
+            {
+                weaponController.RebindWeaponBone();
+            }
+
+            if (spine != null)
+            {
+                spine.RebindSpineEvent();
+            }
+        }
+
         ChangeState(StateType.Idle);
         UnlockMovement();
 
@@ -322,6 +483,8 @@ public class PlayerController : Character
 
         SetDamageImmune(true);
         StartCoroutine(GroggyCoroutine(invincibilityDuration));
+
+        UpdateHP();
     }
 
     private System.Collections.IEnumerator GroggyCoroutine(float duration)
@@ -338,6 +501,7 @@ public class PlayerController : Character
 
     private void LockMovement()
     {
+        if (playerInput == null) return;
         switch (playerType)
         {
             case PlayerType.Player1:
@@ -354,6 +518,8 @@ public class PlayerController : Character
 
     protected new void Move(Vector2 dir)
     {
+        if (IsAttacking) return;
+
         input = moveAction.ReadValue<Vector2>();
         axisX = input.x;
         axisY = input.y;
@@ -361,10 +527,16 @@ public class PlayerController : Character
         {
             if (spine != null) spine.TestPlayRunSpine();
         }
-        if (axisX != 0.0f)
+    }
+
+    public override void Heal(int amount)
+    {
+        base.Heal(amount); // 부모 클래스에서 체력 증가 처리
+
+        // UI 갱신
+        if (hpController != null)
         {
-            Flip(axisX > 0);
-            if (weaponController != null) weaponController.Flip(axisX > 0);
+            hpController.UpdateHpGauge(currentHP, info.maxHp);
         }
     }
 

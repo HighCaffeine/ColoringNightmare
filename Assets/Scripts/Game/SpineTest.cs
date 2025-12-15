@@ -13,17 +13,44 @@ public class SpineTest : MonoBehaviour
 
     public enum AniName
     {
+        //공용
         attack1,
         idle,
         walk,
+
+        //Sheep
+        idle_axe,
+        attack_axe2,
+        run_axe,
+
+        idle_spear,
+        attack_spear,
+        run_spear,
+
+        idle_normal,
+        attack_normal,
+        run_normal,
+
+        Groggy,
+        Groggy2,
+        Groggy3,
+        Groggy4,    //respawn
     }
 
     public SkeletonAnimation skeleton;
-    private Coroutine spineCoroutine;
 
     [Header("Dependencies")]
     [SerializeField] private SkillController skillController;
     private PlayerController playerController;
+    private AniName CurrentAttackAnimation => (!isSheep) ? AniName.attack1 : currentAttackAnimation;
+    private AniName CurrentWalkAnimation => (!isSheep) ? AniName.walk : currentWalkAnimation;
+    private AniName CurrentIdleAnimation => (!isSheep) ? AniName.idle : currentIdleAnimation;
+
+    private AniName currentAttackAnimation = AniName.attack_normal;
+    private AniName currentWalkAnimation = AniName.run_normal;
+    private AniName currentIdleAnimation = AniName.idle_normal;
+
+    [SerializeField] private bool isSheep = false;
 
     void Awake()
     {
@@ -39,58 +66,99 @@ public class SpineTest : MonoBehaviour
 
     public void TestPlayAttackSpine()
     {
-        CheckCoroutine();
-        spineCoroutine = StartCoroutine(PlaySpine(AniName.attack1, false, onComplete: () =>
+        if (playerController.IsAttacking) return;
+        playerController.IsAttacking = true;
+
+        PlaySpine(CurrentAttackAnimation, false, onComplete: () =>
         {
-            TestPlayIdleSpine();
             playerController?.ResetAttackCooldown();
-        }));
+            TestPlayIdleSpine();
+        });
+    }
+
+    public void SetAttackAnimationByWeaponType(WeaponManager.WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponManager.WeaponType.Sword:
+                currentAttackAnimation = AniName.attack_normal;
+                currentWalkAnimation = AniName.run_normal;
+                currentIdleAnimation = AniName.idle_normal;
+                break;
+            case WeaponManager.WeaponType.Axe:
+                currentAttackAnimation = AniName.attack_axe2;
+                currentWalkAnimation = AniName.run_axe;
+                currentIdleAnimation = AniName.idle_axe;
+                break;
+            case WeaponManager.WeaponType.Spear:
+                currentAttackAnimation = AniName.attack_spear;
+                currentWalkAnimation = AniName.run_spear;
+                currentIdleAnimation = AniName.idle_spear;
+                break;
+            default:
+                if (isSheep)
+                {
+                    currentAttackAnimation = AniName.attack_normal; // 기본값
+                }
+                else
+                {
+                    currentAttackAnimation = AniName.attack1; // 기본값
+                }
+                break;
+        }
+    }
+    public void ClearAttackAnimation()
+    {
+        currentAttackAnimation = AniName.attack_normal;
     }
 
     public void TestPlayRunSpine()
     {
-        if (skeleton.AnimationName != AniName.walk.ToString())
+        if (playerController.IsAttacking) return;
+
+        if (skeleton.AnimationName != CurrentWalkAnimation.ToString())
         {
-            CheckCoroutine();
-            spineCoroutine = StartCoroutine(PlaySpine(AniName.walk, true));
+            PlaySpine(CurrentWalkAnimation, true);
         }
     }
 
     public void TestPlayIdleSpine()
     {
-        if (skeleton.AnimationName != AniName.idle.ToString())
+        if (playerController.IsAttacking) return;
+
+        if (skeleton.AnimationName != CurrentIdleAnimation.ToString())
         {
-            CheckCoroutine();
-            spineCoroutine = StartCoroutine(PlaySpine(AniName.idle, true));
+            PlaySpine(CurrentIdleAnimation, true);
         }
     }
 
-    private void CheckCoroutine()
+    private void PlaySpine(AniName aniName, bool isLoop, System.Action onComplete = null)
     {
-        if (spineCoroutine != null) StopCoroutine(spineCoroutine);
-        spineCoroutine = null;
-    }
-
-    private IEnumerator PlaySpine(AniName aniName, bool isLoop, System.Action onComplete = null)
-    {
-        if (skeleton == null) yield break;
+        if (skeleton == null) return;
         var ani = skeleton.Skeleton.Data.FindAnimation(aniName.ToString());
         if (ani == null)
         {
             Debug.LogError($"Animation '{aniName}' not found");
-            yield break;
+            return;
         }
         TrackEntry entry = skeleton.AnimationState.SetAnimation(0, ani, isLoop);
         if (!isLoop && onComplete != null)
         {
             entry.Complete += _ => onComplete();
         }
-        yield return null;
+    }
+
+    public void RebindSpineEvent()
+    {
+        if (skeleton == null) return;
+
+        skeleton.AnimationState.Event -= HandleSpineEvent;
+        skeleton.AnimationState.Event += HandleSpineEvent;
     }
 
     private void HandleSpineEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        if (e.Data.Name == "AttackEffect")
+        if (e.Data.Name == SpineEvent.AttackEffect.ToString())
         {
             skillController?.OnAnimationHit();
         }

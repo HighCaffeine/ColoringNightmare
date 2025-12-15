@@ -1,0 +1,21 @@
+box.png
+size:1240,221
+filter:Linear,Linear
+pma:true
+Layer 10
+bounds:2,2,217,290
+offsets:1,0,219,290
+rotate:90
+Layer 11
+bounds:1086,37,152,182
+Layer 8
+bounds:642,8,211,225
+offsets:2,30,217,260
+rotate:90
+Layer 9
+bounds:294,68,346,151
+offsets:4,0,350,151
+레이어 2 복사
+bounds:869,3,216,215
+offsets:1,1,217,217
+rotate:90

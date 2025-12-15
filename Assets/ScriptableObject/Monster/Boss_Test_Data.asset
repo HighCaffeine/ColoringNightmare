@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0f35c0dd468b342bd4e939256bf174, type: 3}
+  m_Name: Boss_Test_Data
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 324603339, guid: ae71f6e3939c6cd4b96ffb94ad49912f, type: 3}
+  characterName: TestBoss
+  maxHp: 1200
+  dmg: 1
+  speed: 5
+  attackDelay: 1
+  isSpine: 0
+  colorType: 0
+  type: 2
+  pushForce: 0
+  monsterDataName: 10
+  lootTable: {fileID: 11400000, guid: 376cb170a1be4714d844b32afbdaa325, type: 2}
+  groggyCoinMax: 2
+  groggyDuration: 10
+  fixedDamageRatio: 0.1
+  p1Weight: 40
+  p2Weight: 30
+  p3Weight: 30
+  idleDurationMin: 1
+  idleDurationMax: 2
+  warningDuration: 1.2
+  castingDuration: 1
+  warningBoxPrefab: {fileID: 5152362679918131031, guid: 6b8d4b0ddcb08984fba0580f8b4c0138, type: 3}
+  warningCirclePrefab: {fileID: 5152362679918131031, guid: 6f266f62b53390741a82a545778dd631, type: 3}
+  p1BallPrefabs:
+  - {fileID: 8478765013045015133, guid: b8ed563316763184da8e2b1a062f3216, type: 3}
+  - {fileID: 7721385303035583584, guid: b5008c75d32c07644982567fdbf48a3d, type: 3}
+  - {fileID: 3687097435895942539, guid: f192c22026826004bba4296633807185, type: 3}
+  p1SummonMonsters:
+  - {fileID: 11400000, guid: 16402a9c6886c3b479faf5a314a40854, type: 2}
+  - {fileID: 11400000, guid: 323ba4308d8e2bf42baa559323ea0deb, type: 2}
+  - {fileID: 11400000, guid: 7be53b7b29b614b42b81b8bd9d4de0df, type: 2}
+  - {fileID: 11400000, guid: 066b821b04a3d85439db8b2c6cfecba6, type: 2}
+  - {fileID: 11400000, guid: 7be53b7b29b614b42b81b8bd9d4de0df, type: 2}
+  - {fileID: 11400000, guid: 066b821b04a3d85439db8b2c6cfecba6, type: 2}
+  p1ExplosionEffect: {fileID: 11400000, guid: 4d11c1b10bb0e9148b71be7d7a7f2a7a, type: 2}
+  p1ExplosionRadius: 2
+  p2CymbalPrefab: {fileID: 93640428089957343, guid: 9d36ade07e190e643a47c3c784db358c, type: 3}
+  p2TravelSpeed: 20
+  p2DamageWidth: 1.5
+  p2HitEffect: {fileID: 11400000, guid: 0d6cc63e20635184387111bd7fd9d7ea, type: 2}
+  p3BoxPrefab: {fileID: 6831793127820150265, guid: d6b52557cba5d4140a97bd430f0c435f, type: 3}
+  p3DamageHeight: 1.5
+  p3HitEffect: {fileID: 11400000, guid: 0cebf0456236ad04a9826bcb865a550b, type: 2}
+  p3AttackEffect: {fileID: 11400000, guid: dec3046a99bb0b64bbe0195672fbeed8, type: 2}
+  invincibleHitEffect: {fileID: 11400000, guid: 0d6cc63e20635184387111bd7fd9d7ea, type: 2}

@@ -6,13 +6,19 @@ using System.Collections.Generic;
 public class ColorMixer : GenericSingleton<ColorMixer>
 {
     public const int MaxColor = 2;
-
+    public static int MAX_INK_COUNT = 20;
 
     [Header("Blend Settings")]
     [SerializeField] private float blendDuration = 2f; // 혼합 완료까지 시간
     //[SerializeField] private UnityEngine.UI.Image result;
     [SerializeField] private SpriteRenderer result;
 
+
+    private ColorType lastMixedColor1 = ColorType.None;
+    private ColorType lastMixedColor2 = ColorType.None;
+
+    public ColorType GetLastMixedColor1() => lastMixedColor1;
+    public ColorType GetLastMixedColor2() => lastMixedColor2;
 
     public class HSV
     {
@@ -77,12 +83,12 @@ public class ColorMixer : GenericSingleton<ColorMixer>
         { ColorType.Magenta         , new HSV(300, 100, 75) },
         { ColorType.Gray            , new HSV(0, 0, 50) },
 
-        { ColorType.DarkRed         , new HSV(0, 100, 50) },
-        { ColorType.LightRed        , new HSV(0, 50, 100) },
-        { ColorType.DarkYellow      , new HSV(60, 100, 50) },
-        { ColorType.LightYellow     , new HSV(60, 50, 100) },
-        { ColorType.DarkBlue        , new HSV(240, 100, 50) },
-        { ColorType.LightBlue       , new HSV(240, 50, 100) },
+        { ColorType.DarkRed         , new HSV(0, 100, 80) },
+        { ColorType.LightRed        , new HSV(0, 30, 100) },
+        { ColorType.DarkYellow      , new HSV(60, 100, 80) },
+        { ColorType.LightYellow     , new HSV(60, 30, 100) },
+        { ColorType.DarkBlue        , new HSV(240, 100, 80) },
+        { ColorType.LightBlue       , new HSV(240, 30, 100) },
     };
 
     public Color GetColor(ColorType colorType)
@@ -93,6 +99,9 @@ public class ColorMixer : GenericSingleton<ColorMixer>
 
     public ColorType MixColor(ColorType c1, ColorType c2)
     {
+        lastMixedColor1 = c1;
+        lastMixedColor2 = c2;
+
         ColorType mixColor = MixColors(c1, c2);
         StartCoroutine(BlendTwoColors(c1, mixColor, blendDuration));
 

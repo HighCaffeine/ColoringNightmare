@@ -1,0 +1,99 @@
+doll_black.png
+size:516,142
+filter:Linear,Linear
+pma:true
+B_doll_L ear
+bounds:419,4,23,33
+offsets:1,1,25,35
+rotate:90
+B_doll_L hand
+bounds:454,5,23,27
+offsets:1,2,27,34
+rotate:90
+B_doll_R ear
+bounds:390,28,26,36
+offsets:1,1,28,38
+B_doll_R hand
+bounds:388,66,35,31
+offsets:3,0,38,55
+B_doll_back
+bounds:425,66,28,35
+B_doll_body
+bounds:2,2,57,40
+B_doll_color
+bounds:146,3,48,56
+offsets:9,1,58,92
+rotate:90
+B_doll_head
+bounds:143,53,58,87
+offsets:1,1,80,89
+Bl_doll_L ear
+bounds:342,66,26,44
+offsets:1,1,28,47
+rotate:90
+Bl_doll_L hand
+bounds:390,2,24,27
+offsets:1,1,26,29
+rotate:90
+Bl_doll_R ear
+bounds:342,94,26,46
+offsets:1,1,28,48
+Bl_doll_R hand
+bounds:451,30,34,31
+rotate:90
+Bl_doll_back
+bounds:370,99,27,41
+offsets:1,1,28,42
+Bl_doll_body
+bounds:243,13,46,37
+rotate:90
+Bl_doll_color
+bounds:322,5,66,59
+offsets:1,1,68,61
+Bl_doll_head
+bounds:282,3,61,38
+offsets:1,1,63,40
+rotate:90
+R_doll_L ear
+bounds:431,105,22,35
+R_doll_L hand
+bounds:484,40,27,28
+R_doll_R ear
+bounds:61,2,26,40
+R_doll_R hand
+bounds:418,29,35,31
+rotate:90
+R_doll_back
+bounds:399,103,30,37
+R_doll_body
+bounds:89,4,55,41
+R_doll_color
+bounds:73,47,68,93
+offsets:1,1,70,96
+R_doll_head
+bounds:203,61,79,66
+rotate:90
+Y_doll_L ear
+bounds:486,88,16,16
+Y_doll_L hand
+bounds:455,70,34,29
+rotate:90
+Y_doll_R ear
+bounds:486,70,16,15
+rotate:90
+Y_doll_R hand
+bounds:455,106,34,31
+offsets:0,0,34,48
+rotate:90
+Y_doll_back
+bounds:483,10,18,31
+offsets:6,0,24,31
+rotate:90
+Y_doll_body
+bounds:204,4,55,37
+rotate:90
+Y_doll_color
+bounds:2,44,69,96
+Y_doll_head
+bounds:271,66,74,69
+rotate:90

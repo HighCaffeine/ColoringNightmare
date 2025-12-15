@@ -15,43 +15,67 @@ public class Sound : MonoBehaviour, OnReturnPool<Sound>,
 
     SoundManager.SoundType type;
     bool isMainBGM;
+    private Coroutine disableCoroutine;
 
-    public void Play(AudioClip clip, float vol, SoundManager.SoundType type, bool isMainBGM, bool playNoOffBGM)
+    private void OnEnable()
     {
-        audioSource.clip = clip;
-        audioSource.volume = vol;
-        audioSource.Play();
-        this.type = type;
-        this.isMainBGM = isMainBGM;
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+    }
+    // public void Play(AudioClip clip, float vol, SoundManager.SoundType type, bool isMainBGM, bool playNoOffBGM)
+    // {
+    //     audioSource.loop = false;
+    //     audioSource.clip = clip;
+    //     audioSource.volume = vol;
+    //     audioSource.Play();
+    //     this.type = type;
+    //     this.isMainBGM = isMainBGM;
 
-        StartCoroutine(Playing(playNoOffBGM));
+    //     if (isMainBGM) audioSource.loop = true;
+
+    //     StartCoroutine(Playing(playNoOffBGM));
+    // }
+
+    public void Play(AudioClip clip, float volume, SoundManager.SoundType type, bool isMainBGM, bool multiBGM)
+    {
+        gameObject.SetActive(true);
+        audioSource.clip = clip;
+        audioSource.volume = volume;
+        audioSource.Play();
+
+        if (disableCoroutine != null) StopCoroutine(disableCoroutine);
+
+        if (type == SoundManager.SoundType.Effect)
+        {
+            disableCoroutine = StartCoroutine(DisableSoundRoutine(clip.length + 0.1f));
+        }
+        else
+        {
+            audioSource.loop = true;
+        }
     }
 
-    private IEnumerator Playing(bool multiBGM)
+    private IEnumerator DisableSoundRoutine(float time)
     {
-        string[] names = audioSource.clip.name.Split("_");
+        yield return new WaitForSecondsRealtime(time);
+        DisableSound();
+    }
 
-        if (!multiBGM && names[0] == "BGM")
+    private void DisableSound()
+    {
+        if (SoundManager.Instance != null)
         {
-            OnEndBGMEvent(audioSource);
+            SoundManager.Instance.ReturnSound(this);
         }
-
-        while (isMainBGM || audioSource.isPlaying && audioSource.clip != null)
+        else
         {
-            yield return null;
+            gameObject.SetActive(false);
         }
-
-        if (multiBGM)
-        {
-            SoundManager.Instance.ReplayAudio();
-        }
-
-        OnReturnPool?.Invoke(this);
     }
 
     public void TestOnReturn()
     {
         OnReturnPool?.Invoke(this);
+        gameObject.SetActive(false);
     }
 
     public void SetVol()
@@ -77,11 +101,11 @@ public class Sound : MonoBehaviour, OnReturnPool<Sound>,
 
         audioSource = GetComponent<AudioSource>();
 
-        SetEndBGMEvent(SoundManager.Instance.EndBGM);
-        SetOnChangeVol(SoundManager.Instance.VolChangeEvent);
-        SetRegistrationSound(SoundManager.Instance.RegistrationSoundComponent);
+        // SetEndBGMEvent(SoundManager.Instance.EndBGM);
+        // SetOnChangeVol(SoundManager.Instance.VolChangeEvent);
+        // SetRegistrationSound(SoundManager.Instance.RegistrationSoundComponent);
 
-        OnRegistrationSound(this);
+        //OnRegistrationSound(this);
     }
 
     public void SetEndBGMEvent(SoundManager.OnEndBGMEvent OnEndBGMEvent)

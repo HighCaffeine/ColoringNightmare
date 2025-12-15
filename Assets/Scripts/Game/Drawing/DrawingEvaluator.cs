@@ -7,6 +7,8 @@ public class DrawingEvaluator : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI similarityText;
     [Range(0.0f, 1.0f)][SerializeField] private float similarityLimit = 0.7f;
 
+    [SerializeField] private DrawSimilarityEffect similarityEffect;
+
     public bool IsDrawingValid()
     {
         var (cosine, jaccard, dice) = CalculateSimilarity();
@@ -59,6 +61,11 @@ public class DrawingEvaluator : MonoBehaviour
         float dice = (userCount + refCount == 0) ? 0f : (2f * intersection) / (userCount + refCount);
 
         similarityText.text = $"Similarity - Cosine: {cosine * 100f:F3}, Jaccard: {jaccard * 100f:F3}, Dice: {dice * 100f:F3}";
+
+        if (similarityEffect != null)
+        {
+            similarityEffect.ShowEffect(dice); // dice는 0.0 ~ 1.0 사이의 값
+        }
         return (cosine, jaccard, dice);
     }
 

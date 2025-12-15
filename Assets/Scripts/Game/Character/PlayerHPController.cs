@@ -1,36 +1,42 @@
 using UnityEngine;
+using UnityEngine.UI; // Image를 쓰려면 필요
 
 public class PlayerHPController : MonoBehaviour
 {
-    [SerializeField] private UnityEngine.UI.Image hpImage;
+    [Header("UI Components")]
+    [SerializeField] private Image hpImage;
 
+    [Header("Damage Effect")]
     [SerializeField] private Transform damagedPanel;
     [SerializeField] private float panelDisplayTime = 0.2f;
 
-    private PlayerController playerController;
-
-    void Awake()
+    public void Init(int currentHP, int maxHP)
     {
-        playerController = GetComponent<PlayerController>();
+        UpdateHpGauge(currentHP, maxHP);
+        if (damagedPanel != null) damagedPanel.gameObject.SetActive(false);
+    }
+
+    public void UpdateHpGauge(int currentHP, int maxHP)
+    {
+        if (hpImage != null && maxHP > 0)
+        {
+            hpImage.fillAmount = (float)currentHP / maxHP;
+        }
     }
 
     public void OnDamagedPanelEvent()
     {
-        SetActivePanel(true);
-        Invoke(nameof(OffPanel), panelDisplayTime);
+        if (damagedPanel != null)
+        {
+            damagedPanel.gameObject.SetActive(true);
 
-        UpdateHpGauge();
+            CancelInvoke(nameof(OffPanel));
+            Invoke(nameof(OffPanel), panelDisplayTime);
+        }
     }
 
-    public void UpdateHpGauge()
+    private void OffPanel()
     {
-        float currentHP = playerController.GetHP();
-        float maxHP = playerController.GetMaxHP();
-
-        hpImage.fillAmount = currentHP / maxHP;
+        if (damagedPanel != null) damagedPanel.gameObject.SetActive(false);
     }
-
-
-    private void SetActivePanel(bool active) { damagedPanel.gameObject.SetActive(active); }
-    private void OffPanel() { SetActivePanel(false); }
 }

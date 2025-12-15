@@ -13,7 +13,18 @@ MonoBehaviour:
   m_Name: 6.Cyan_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 026208c57ce84bb47a66f8c0d21676fc, type: 2}
-  durability: 8
-  damage: 1
-  weaponType: 0
+  durability: 18
+  damage: 35
+  skillLogic: {fileID: 11400000, guid: 6ee5b7ab4623d6843b5ea756a0e5c1fc, type: 2}
+  visualEffects:
+  - weaponType: 0
+    attackEffect: {fileID: 11400000, guid: cb89f5619aa705f4bbb86ecaf2653062, type: 2}
+    hitEffect: {fileID: 11400000, guid: 86596f1773672b947b6803d6a414d741, type: 2}
+  - weaponType: 1
+    attackEffect: {fileID: 11400000, guid: e8666d19ad4365f4797ec502d5ec581f, type: 2}
+    hitEffect: {fileID: 11400000, guid: 86596f1773672b947b6803d6a414d741, type: 2}
+  - weaponType: 2
+    attackEffect: {fileID: 11400000, guid: 4605abfd37c8e1342baaca3703c4496d, type: 2}
+    hitEffect: {fileID: 11400000, guid: 86596f1773672b947b6803d6a414d741, type: 2}
   passiveEffect: {fileID: 11400000, guid: d3630b6b94b851245a60f3c32750d86e, type: 2}
+  projectilePrefab: {fileID: 4366510550185701418, guid: 4fc4f0f9147b6de4e802a6ddc4ff7f75, type: 3}

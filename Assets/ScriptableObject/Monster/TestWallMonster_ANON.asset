@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c55ad8201244c744d91d3b108bf4b9fe, type: 3}
   m_Name: TestWallMonster_ANON
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  sprite: {fileID: 21300000, guid: 6791ea070d691644ab215de4e86621fd, type: 3}
+  sprite: {fileID: 0}
   characterName: Test_Monster2
-  maxHp: 19
+  maxHp: 1
   dmg: 1
   speed: 0.2
   attackDelay: 1
-  isSpine: 0
+  isSpine: 1
   colorType: 0
   type: 0
   pushForce: 3
+  lootTable: {fileID: 11400000, guid: 376cb170a1be4714d844b32afbdaa325, type: 2}

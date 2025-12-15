@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SheepArea
   m_EditorClassIdentifier: 
   pos: {x: -3.2, y: 0, z: 0}
-  size: {x: 10.9, y: 9, z: 0}
+  size: {x: 10.6, y: 8.1, z: 0}
   offset: {x: 0, y: 0, z: 0}

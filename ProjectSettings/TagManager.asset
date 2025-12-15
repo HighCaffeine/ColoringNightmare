@@ -8,6 +8,7 @@ TagManager:
   - Player1
   - Player2
   - Monster
+  - Credit
   layers:
   - Default
   - TransparentFX
@@ -21,8 +22,8 @@ TagManager:
   - Player
   - Effect
   - IgnoreHit
-  - 
-  - 
+  - Player_Effect
+  - Monster_Effect
   - 
   - 
   - 

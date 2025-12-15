@@ -2,10 +2,11 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public enum SceneName
 {
-    Menu,
+    Main,
     Loading,
     Game,
 
@@ -15,11 +16,46 @@ public enum SceneName
 
 public class SceneController : GenericSingleton<SceneController>
 {
+    public bool IsShowCredits { get; set; }
+
     private new void Awake()
     {
         base.Awake();
         DontDestroyOnLoad(this);
     }
+
+    void Start()
+    {
+        Time.timeScale = 1.0f;
+    }
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Main" && IsShowCredits)
+        {
+            GameObject creditObj = GameObject.FindGameObjectWithTag("Credit");
+
+            if (creditObj != null)
+            {
+                if (creditObj.transform.childCount > 0)
+                {
+                    creditObj.transform.GetChild(0).gameObject.SetActive(true);
+                }
+            }
+
+            IsShowCredits = false;
+        }
+    }
+
     public static bool IsLoadGameScene => isLoadGameScene;
 
     private static bool isLoadGameScene = false;
@@ -29,11 +65,17 @@ public class SceneController : GenericSingleton<SceneController>
         StartCoroutine(StartLoad(sceneName));
     }
 
+
     //TEST
     public void ReloadGameScene()
     {
         isLoadGameScene = false; // 초기화
         StartCoroutine(StartLoad(SceneName.Game.ToString()));
+    }
+
+    public void LoadCutScene()
+    {
+        SceneManager.LoadSceneAsync("IntroScene");
     }
 
     public void GameOff()
@@ -46,11 +88,12 @@ public class SceneController : GenericSingleton<SceneController>
     IEnumerator StartLoad(string sceneName)
     {
         loadingBarProgress = null;
-        //if (SoundManager.Instance != null) SoundManager.Instance.PauseBGM();
 
+        Time.timeScale = 1.0f;
         SceneManager.LoadSceneAsync("Loading");
 
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
+
         async.allowSceneActivation = false;
         WaitForFixedUpdate wait = new WaitForFixedUpdate();
 

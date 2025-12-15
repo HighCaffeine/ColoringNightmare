@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Spine.Unity;
 
-public enum StateType { None = -1, Idle, Attack, Move, Dead, Skill, Count }
+public enum StateType { None = -1, Idle, Attack, Move, Dead, Skill, Groggy, Count }
 
 public class Character : MonoBehaviour
 {
@@ -18,9 +18,16 @@ public class Character : MonoBehaviour
     protected Rigidbody2D rigid;
     public Spine.Unity.SkeletonAnimation skeleton;
     protected StatusEffectManager statusEffectManager;
+    protected EffectController effectController;
 
+    protected Collider2D characterCollider;
     private bool isDamageImmune = false;
     private Coroutine hitEffectCoroutine;
+
+    public Action OnDeathCallback;
+
+    public bool FlipX() => spriteRenderer.flipX;
+    public bool IsExistsSprite() => spriteRenderer != null;
 
     protected virtual void Awake()
     {
@@ -28,20 +35,32 @@ public class Character : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
         statusEffectManager = GetComponent<StatusEffectManager>();
+        effectController = GetComponent<EffectController>();
+        characterCollider = GetComponent<Collider2D>();
         if (statusEffectManager == null)
         {
             statusEffectManager = gameObject.AddComponent<StatusEffectManager>();
         }
     }
 
+    protected virtual void OnDisable()
+    {
+        ClearAllStatusEffects();
+    }
+
     protected void OnCharacterDataLoaded(CharacterData data)
     {
         info = data;
         currentHP = info.maxHp;
+
+        if (info != null)
+        {
+            info = Instantiate(info);
+        }
     }
 
     protected virtual void Idle() { }
-    protected virtual void Dead() { }
+    protected virtual void Dead() { if (OnDeathCallback != null) { OnDeathCallback?.Invoke(); OnDeathCallback = null; } }
     protected virtual void Move(Vector2 dir) { }
 
     protected void SetDamageImmune(bool isImmune) { isDamageImmune = isImmune; }
@@ -78,11 +97,23 @@ public class Character : MonoBehaviour
 
     public virtual void TakeDamage(int amount)
     {
+        TakeDamage(amount, null);
+    }
+
+    public virtual void Heal(int amount)
+    {
+        currentHP += amount;
+        if (currentHP > info.maxHp) currentHP = info.maxHp;
+    }
+
+    public virtual void TakeDamage(int amount, EffectVisualData hitEffect)
+    {
         if (isDamageImmune || isDead) return;
         currentHP -= amount;
 
         if (hitEffectCoroutine != null) StopCoroutine(hitEffectCoroutine);
-        hitEffectCoroutine = StartCoroutine(HitEffectCoroutine());
+
+        hitEffectCoroutine = StartCoroutine(HitEffectCoroutine(hitEffect));
 
         if (currentHP <= 0)
         {
@@ -91,8 +122,26 @@ public class Character : MonoBehaviour
         }
     }
 
-    private IEnumerator HitEffectCoroutine()
+    private IEnumerator HitEffectCoroutine(EffectVisualData hitEffect)
     {
+        if (effectController != null && hitEffect != null)
+        {
+            Vector3 hitPosition = (characterCollider != null) ? characterCollider.bounds.center : transform.position;
+
+            bool isFacingLeft = true;
+            if (skeleton != null && skeleton.skeleton != null)
+            {
+                isFacingLeft = skeleton.skeleton.ScaleX > 0;
+            }
+            else if (spriteRenderer != null)
+            {
+                isFacingLeft = !spriteRenderer.flipX;
+            }
+
+            effectController.PlayHitEffectAt(hitPosition, hitEffect, isFacingLeft);
+        }
+
+        // 빨간색 점멸 효과
         Color hitColor = Color.red;
         Color originalColor = Color.white;
         float duration = 0.1f;
@@ -115,6 +164,22 @@ public class Character : MonoBehaviour
     public void ApplyStatusEffect(IStatusEffect effect)
     {
         statusEffectManager?.ApplyEffect(effect);
+    }
+
+    public void ClearAllStatusEffects()
+    {
+        StopAllCoroutines();
+
+        if (statusEffectManager != null)
+        {
+            statusEffectManager.ClearEffects();
+        }
+
+        if (spriteRenderer != null) spriteRenderer.color = Color.white;
+        if (skeleton != null && skeleton.skeleton != null)
+        {
+            skeleton.skeleton.SetColor(Color.white);
+        }
     }
 
     protected void StopMove()

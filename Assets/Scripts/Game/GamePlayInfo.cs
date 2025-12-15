@@ -9,7 +9,7 @@ public class GamePlayInfo : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image targetImage;
     [SerializeField] private Sprite[] playInfo;
 
-    [SerializeField] private Transform endButton;
+    [SerializeField] private Transform prevButton;
     [SerializeField] private Transform nextButton;
 
     [SerializeField] private Transform startPanel;
@@ -31,12 +31,12 @@ public class GamePlayInfo : MonoBehaviour
 
     void Start()
     {
-        GameManager.Instance.GameOver();
+        GameManager.Instance.PauseGame();
     }
 
     public void Init()
     {
-        GameManager.Instance.GameOver();
+        GameManager.Instance.PauseGame();
         currentIndex = 0;
         UpdateInfo();
     }
@@ -50,11 +50,18 @@ public class GamePlayInfo : MonoBehaviour
     {
         if (!isAllowGameStart) return;
         if (!isFirst) return;
-        isFirst = true;
+        isFirst = false;
 
-        startPanel.gameObject.SetActive(true);
-        Invoke(nameof(PanelOff), panelOff);
-        Invoke(nameof(OnWaitTimeEnd), startTime);
+        GameManager.Instance.GameStart();
+
+        infoPanel.gameObject.SetActive(false);
+
+        if (startPanel != null)
+        {
+            startPanel.gameObject.SetActive(true);
+            Invoke(nameof(PanelOff), panelOff);
+            Invoke(nameof(OnWaitTimeEnd), startTime);
+        }
     }
 
     private void PanelOff()
@@ -68,20 +75,30 @@ public class GamePlayInfo : MonoBehaviour
         if (currentIndex == playInfo.Length - 1)
         {
             nextButton.gameObject.SetActive(true);
-            endButton.gameObject.SetActive(false);
         }
+
         currentIndex--;
+
+        if (currentIndex == 0)
+        {
+            prevButton.gameObject.SetActive(false);
+        }
+
         UpdateInfo();
     }
 
     public void NextInfo()
     {
+        if (currentIndex == 0)
+        {
+            prevButton.gameObject.SetActive(true);
+        }
+
         currentIndex++;
 
         if (currentIndex == playInfo.Length - 1)
         {
             nextButton.gameObject.SetActive(false);
-            endButton.gameObject.SetActive(true);
         }
 
         UpdateInfo();

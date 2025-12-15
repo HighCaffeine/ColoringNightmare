@@ -22,5 +22,8 @@ MonoBehaviour:
   colorType: 0
   type: 1
   pushForce: 0
+  monsterDataName: 1
+  lootTable: {fileID: 0}
+  detectRange: 2
   attackRange: 2
   dashSpeed: 2

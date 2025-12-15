@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: -4894609849395106151}
   - component: {fileID: -1744414191687617544}
   - component: {fileID: 5465608645082238125}
+  - component: {fileID: 1431503252311500774}
   m_Layer: 8
   m_Name: DetectMonster
   m_TagString: Monster
@@ -54,10 +55,8 @@ MonoBehaviour:
   currentHP: 0
   skeleton: {fileID: 0}
   spriteRender: {fileID: -6327373218514567981}
-  boxCollider: {fileID: 0}
+  polygonCollider: {fileID: 0}
   ani: {fileID: 8868520465897832926}
-  detectionRange: 5
-  targetPlayer: {fileID: 0}
 --- !u!95 &8868520465897832926
 Animator:
   serializedVersion: 7
@@ -222,7 +221,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -244,3 +243,18 @@ PolygonCollider2D:
       - {x: 0.58778536, y: -0.80901694}
       - {x: 0.9510565, y: 0.30901712}
   m_UseDelaunayMesh: 0
+--- !u!114 &1431503252311500774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5030641573151781587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb94c7037c3197458fd1074ba5dca31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectPrefab: {fileID: 2603388819296907128, guid: 68231a07ce2099c48bc19efc26510c05, type: 3}
+  effectPivot: {fileID: 6422502730690014320}
+  character: {fileID: 8812368558127021436}

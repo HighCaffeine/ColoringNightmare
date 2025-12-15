@@ -13,8 +13,18 @@ MonoBehaviour:
   m_Name: 2.Yellow_Weapon
   m_EditorClassIdentifier: 
   inkData: {fileID: 11400000, guid: 9fc8db38982b27443b2883e517b7d71a, type: 2}
-  durability: 5
-  damage: 3
-  weaponType: 0
-  skillData: {fileID: 11400000, guid: 73bb492ddc5ac1c41bdf62e772413664, type: 2}
+  durability: 17
+  damage: 35
+  skillLogic: {fileID: 11400000, guid: 1a38b0ebf15e52e48bcaad29125f75d0, type: 2}
+  visualEffects:
+  - weaponType: 0
+    attackEffect: {fileID: 11400000, guid: a5db5b81fcf8cbb419b416e96bf82520, type: 2}
+    hitEffect: {fileID: 11400000, guid: 0a19e5419ea79e049a95d8830f57e623, type: 2}
+  - weaponType: 1
+    attackEffect: {fileID: 11400000, guid: f63c7d99eb85fe94390b355593022359, type: 2}
+    hitEffect: {fileID: 11400000, guid: 0a19e5419ea79e049a95d8830f57e623, type: 2}
+  - weaponType: 2
+    attackEffect: {fileID: 11400000, guid: 3a31d3641c19bfc41bcd2855a22598d7, type: 2}
+    hitEffect: {fileID: 11400000, guid: 0a19e5419ea79e049a95d8830f57e623, type: 2}
   passiveEffect: {fileID: 11400000, guid: c5407c7b3ea401941a1a69b6284eff5e, type: 2}
+  projectilePrefab: {fileID: 4053538593039705427, guid: b991c2cd1e45676408394666d396dae6, type: 3}

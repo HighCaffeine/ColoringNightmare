@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d499a63f90aa5d5458822056600745fa, type: 3}
+  m_Name: Normal_Rabbit_Data
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 0}
+  characterName: Test_Monster2
+  maxHp: 125
+  dmg: 1
+  speed: 0.5
+  attackDelay: 1
+  isSpine: 1
+  colorType: 0
+  type: 1
+  pushForce: 3
+  monsterDataName: 6
+  lootTable: {fileID: 11400000, guid: 376cb170a1be4714d844b32afbdaa325, type: 2}
+  detectRange: 2.2
+  attackRange: 1
+  dashSpeed: 1

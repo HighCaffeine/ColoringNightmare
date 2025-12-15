@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db7cbb32e5669a340a6a86ef0cdbfd8a, type: 3}
+  m_Name: Item_Ink_Yellow
+  m_EditorClassIdentifier: 
+  itemType: 0
+  itemImage: {fileID: 1025825840, guid: f942a2519bbe0004e9b124ca9f49fdbc, type: 3}
+  itemName: YellowInk
+  colorType: 2
